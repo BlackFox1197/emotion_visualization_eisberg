@@ -3,34 +3,41 @@ import {Polygon} from "two.js/src/shapes/polygon";
 import {LinearGradient} from "two.js/src/effects/linear-gradient";
 import {Stop} from "two.js/src/effects/stop";
 import Two from "two.js";
+import {ColorService} from "./color.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class EisbergService {
 
-  constructor() { }
+  constructor(private cs: ColorService) { }
 
   /** generate our whole iceberg with customizable paramters
    *
    * @param radius
    * @param x
    * @param y
-   * @param options
+   * @param skewPara
+   * @param colorPara
+   * @param patternPara
+   * @param color1
+   * @param color2
    */
   generateEisberg(radius: number, x: number, y: number,
-                  options: {
-                    skewPara?: number,
-                    colorPara?: number,
-                    patternPara?: number,
-                    color1: string,
-                    color2: string}): Polygon{
+                    skewPara = 0,
+                    colorPara = 0,
+                    patternPara = 0,
+                    color1 = "00FF00",
+                    color2 = "0000FF"): Polygon{
     var poly = new Polygon(x, y ,radius, 3);
 
 
-    var gradLinB =  this.generateGradient(options.patternPara ?? 0);
+    // color1 = this.cs.getColorData(color1);
+    // color2 = this.cs.getColorData(color2);
+    // console.log(color1)
+    var gradLinB =  this.generateGradient(patternPara ?? 0, this.cs.sampleColor(colorPara, color1, color2));
     // -0.7 to 0.7
-    poly.skewX = this.generateSkewX(options.skewPara ?? 0, -1, 1)
+    poly.skewX = this.generateSkewX(skewPara ?? 0, -1, 1)
     //circle.height = 300;
     poly.fill = gradLinB;
     poly.stroke = 'orangered';
@@ -39,37 +46,8 @@ export class EisbergService {
 
   }
 
-  rgbToHex(r:number ,g:number,b:number): string{
-    var value = r*16^4 + g*16^2 + b;
-    return '#' + value.toString(16);
 
-    //return"#"+((1<<24)+(r<<16)+(g<<8)+ b).toString(16).slice(1);
-  }
 
-  sampleColor(value: number, color1: string, color2: string) : string {
-    // Convert x to the range 0-160
-    let colorIndex = Math.round((value + 1) * 80);
-
-    let color1Int = parseInt(color1, 16)
-    let color2Int = parseInt(color2, 16)
-
-    // Define the two colors to interpolate between
-    let color1Vec = [color1Int&&0xFF0000, color1Int&&0x00FF,color1Int&&0xFF];  // Red
-    let color2Vec = [color2Int&&0xFF0000, color2Int&&0x00FF,color2Int&&0xFF];  // Blue
-
-    // Interpolate the R, G, and B values
-    let r = (color2Vec[0] - color1Vec[0]) * (colorIndex/160) + color1Vec[0];
-    let g = (color2Vec[1] - color1Vec[1]) * (colorIndex/160) + color1Vec[1];
-    let b = (color2Vec[2] - color1Vec[2]) * (colorIndex/160) + color1Vec[2];
-
-    return `rgb(${r}, ${g}, ${b})`;
-  }
-
-  generateColorHex(value: number, color1: number, color2: number): string{
-    //generate 2 colors given by a number between -1 and 1
-    var hexCol = this.rgbToHex(252, 170, 0)
-    return "FFFFFF";
-  }
 
 
   /**generate the tilt of the triangle
@@ -89,6 +67,7 @@ export class EisbergService {
   /**generates the gradient and makes usage of generateStops
    *
    * @param value
+   * @param color
    */
   private generateGradient(value: number, color: number): LinearGradient{
     var tanhVal = Math.tanh(value);
@@ -106,12 +85,12 @@ export class EisbergService {
    */
   private generateStops(value: number, color: number): Array<Stop>{
 
-    let color1 = Math.max(color - 0x060606, 0);
-    let color2 = color;
+    let color1 = this.cs.generateSecondColor(color);
+    let color2 = this.cs.colorNumberToHexString(color);
     var stopsPredefined = [
-      new Two.Stop(0.0, "green", 1),
+      new Two.Stop(0.0, color2, 1),
       //new Two.Stop(0.2, "green", 1),
-      new Two.Stop(0.0, "blue", 1),
+      new Two.Stop(0.0, color1, 1),
     ]
     var grads=20
 
@@ -124,31 +103,31 @@ export class EisbergService {
 
     var gradsDist =  1/grads
 
-    var stops = [new Two.Stop(0.0, "green", 1)];
+    var stops = [new Two.Stop(0.0, color2, 1)];
 
     var distInLoop = 0
 
     for(let i = 0; i < grads; i++){
       if(i%2==1){
         stops.push(
-          new Two.Stop(distInLoop, "green", 1)
+          new Two.Stop(distInLoop, color2, 1)
         )
         distInLoop = distInLoop+gradsDist
-        //stops.push(new Two.Stop( distInLoop, "green", 1))
+        //stops.push(new Two.Stop( distInLoop, color2, 1))
       }else{
         stops.push(
-          new Two.Stop(distInLoop, "blue",1)
+          new Two.Stop(distInLoop, color1,1)
         )
         distInLoop = distInLoop+gradsDist
-        //stops.push(new Two.Stop( distInLoop, "blue", 1))
+        //stops.push(new Two.Stop( distInLoop, color1, 1))
       }
       stops.push()
     }
     if(grads % 2 == 1){
-      stops.push(new Two.Stop( 1, "green", 1))
+      stops.push(new Two.Stop( 1, color2, 1))
     }
     else {
-      stops.push(new Two.Stop( 1, "blue", 1))
+      stops.push(new Two.Stop( 1, color1, 1))
 
     }
     return stops

@@ -36,7 +36,9 @@ export class AppComponent implements OnInit, AfterViewInit{
     var radius = 500;
     var x = radius + 50;
     var y = radius + 50;
-    two.add(this.es.generateEisberg(radius, x, y, b, 0, a))
+    let color1 = "00FF00"
+    let color2 = "0000FF"
+    two.add(this.es.generateEisberg(radius, x, y, b, 0 , a, color1, color2))
 
 // Don’t forget to tell two to draw everything to the screen
     two.update();
