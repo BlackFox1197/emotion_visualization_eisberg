@@ -1,3 +1,14 @@
-<!--<mat-form-field appearance="fill">-->
-<!--  <input matInput type="number" min="-1" max="1" step="0.1" (change)="updateSkew($event)" [(ngModel)]="params.skew">-->
-<!--</mat-form-field>-->
+<mat-form-field appearance="outline">
+  <mat-label>Skew</mat-label>
+  <input matInput type="number" min="-1" max="1" step="0.1" (change)="updateSkew.emit(evToNu($event) )" >
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>Frequency</mat-label>
+  <input matInput type="number" min="-1" max="1" step="0.1" (change)="updateFrequency.emit(evToNu($event) )" >
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>Colorparameter</mat-label>
+  <input matInput type="number" min="-1" max="1" step="0.1" (change)="updateColorPara.emit(evToNu($event) )" >
+</mat-form-field>

@@ -1,2 +1,7 @@
-<app-iceberg></app-iceberg>
-<app-inputs></app-inputs>
+<app-iceberg [iceConfig]="icebergConfig"></app-iceberg>
+<app-inputs (updateSkew)="icebergConfig.params.skew = $event; copyConfig()"
+            (updateColorPara)="icebergConfig.params.colorParam = $event; copyConfig()"
+            (updateFrequency)="icebergConfig.params.frequency = $event; copyConfig()"
+></app-inputs>
+
+

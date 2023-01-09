@@ -6,6 +6,7 @@ import Two from "two.js";
 import {ColorService} from "./color.service";
 import {Color} from "../../entity/Color";
 import {IcebergParams} from "../../entity/Icebergparams";
+import {IceBergConfig} from "../../entity/IceBergConfig";
 
 @Injectable({
   providedIn: 'root'
@@ -22,25 +23,20 @@ export class EisbergService {
    * @param radius
    * @param x
    * @param y
-   * @param skewPara
-   * @param colorPara
-   * @param patternPara
+   * @param config
    */
-  generateEisberg(radius: number, x: number, y: number,
-                    skewPara = 0,
-                    colorPara = 0,
-                    patternPara = 0): Polygon{
+  generateEisberg(radius: number, x: number, y: number, config: IceBergConfig): Polygon{
     var poly = new Polygon(x, y ,radius, 3);
 
 
     // color1 = this.cs.getColorData(color1);
     // color2 = this.cs.getColorData(color2);
     // console.log(color1)
-    var gradLinB =  this.generateGradient(patternPara ?? 0, this.cs.sampleColor(colorPara, this.color1, this.color2));
+    var gradLinB =  this.generateGradient(config.params.frequency ?? 0, this.cs.sampleColor(config.params.colorParam ?? 0, this.color1, this.color2));
 
     //var gradLinB = color1.getHexString();
     // -0.7 to 0.7
-    poly.skewX = this.generateSkewX(skewPara ?? 0, -1, 1)
+    poly.skewX = this.generateSkewX(config.params.skew ?? 0, -1, 1)
     //circle.height = 300;
     poly.fill = gradLinB;
     poly.stroke = 'orangered';
@@ -57,7 +53,7 @@ export class EisbergService {
       //border update
     }
     if(newParams.colorParam != undefined || newParams.colorParam != null){
-      iceberg.fill = this.generateGradient(newParams.patternPara ?? 0, this.cs.sampleColor(newParams.colorParam, this.color1, this.color2));
+      iceberg.fill = this.generateGradient(newParams.frequency ?? 0, this.cs.sampleColor(newParams.colorParam, this.color1, this.color2));
     }
   }
 

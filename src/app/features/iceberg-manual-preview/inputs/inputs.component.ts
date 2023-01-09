@@ -1,4 +1,4 @@
-import {Component, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {IcebergParams} from "../../../entity/Icebergparams";
 
 @Component({
@@ -10,10 +10,19 @@ export class InputsComponent implements OnInit {
 
   constructor() { }
 
+  @Output() updateSkew: EventEmitter<number> = new EventEmitter<number>();
+  @Output() updateColorPara: EventEmitter<number> = new EventEmitter<number>();
+  @Output() updateFrequency: EventEmitter<number> = new EventEmitter<number>();
+  @Output() updateBorder: EventEmitter<number> = new EventEmitter<number>();
 
-  params: IcebergParams = {skew: 0}
+  params: IcebergParams = {}
 
   ngOnInit(): void {
+  }
+
+
+  evToNu(event: any): number{
+    return event.target.value as number;
   }
 
 }
