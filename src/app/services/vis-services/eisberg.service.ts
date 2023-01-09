@@ -5,11 +5,15 @@ import {Stop} from "two.js/src/effects/stop";
 import Two from "two.js";
 import {ColorService} from "./color.service";
 import {Color} from "../../entity/Color";
+import {IcebergParams} from "../../entity/Icebergparams";
 
 @Injectable({
   providedIn: 'root'
 })
 export class EisbergService {
+
+  color1 = new Color("#00FFBB")
+  color2 = new Color("#AA00FF")
 
   constructor(private cs: ColorService) { }
 
@@ -21,22 +25,18 @@ export class EisbergService {
    * @param skewPara
    * @param colorPara
    * @param patternPara
-   * @param color1
-   * @param color2
    */
   generateEisberg(radius: number, x: number, y: number,
                     skewPara = 0,
                     colorPara = 0,
-                    patternPara = 0,
-                    color1 = new Color("00FF00"),
-                    color2 = new Color("0000FF")): Polygon{
+                    patternPara = 0): Polygon{
     var poly = new Polygon(x, y ,radius, 3);
 
 
     // color1 = this.cs.getColorData(color1);
     // color2 = this.cs.getColorData(color2);
     // console.log(color1)
-    var gradLinB =  this.generateGradient(patternPara ?? 0, this.cs.sampleColor(colorPara, color1, color2));
+    var gradLinB =  this.generateGradient(patternPara ?? 0, this.cs.sampleColor(colorPara, this.color1, this.color2));
 
     //var gradLinB = color1.getHexString();
     // -0.7 to 0.7
@@ -47,6 +47,18 @@ export class EisbergService {
     poly.linewidth = 5;
     return poly;
 
+  }
+
+  updateIceberg(iceberg: Polygon, newParams: IcebergParams): void{
+    if(newParams.skew != undefined || newParams.skew != null){
+      iceberg.skewX = this.generateSkewX(newParams.skew, -1, 1)
+    }
+    if(newParams.borderParam != undefined || newParams.borderParam != null){
+      //border update
+    }
+    if(newParams.colorParam != undefined || newParams.colorParam != null){
+      iceberg.fill = this.generateGradient(newParams.patternPara ?? 0, this.cs.sampleColor(newParams.colorParam, this.color1, this.color2));
+    }
   }
 
 
