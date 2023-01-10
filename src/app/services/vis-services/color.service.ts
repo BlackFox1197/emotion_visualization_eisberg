@@ -8,11 +8,6 @@ export class ColorService {
 
   constructor() { }
 
-
-
-
-
-
   sampleColor(value: number, color1: Color, color2: Color) : Color {
     // Convert x to the range 0-160
     let colorIndex = Math.round((value + 1) * 80);

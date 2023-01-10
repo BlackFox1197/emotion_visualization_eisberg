@@ -14,6 +14,7 @@ export class InputsComponent implements OnInit {
   @Output() updateColorPara: EventEmitter<number> = new EventEmitter<number>();
   @Output() updateFrequency: EventEmitter<number> = new EventEmitter<number>();
   @Output() updateBorder: EventEmitter<number> = new EventEmitter<number>();
+  @Output() updateHeight: EventEmitter<number> = new EventEmitter<number>();
 
   params: IcebergParams = {}
 

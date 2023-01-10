@@ -22,29 +22,11 @@ export class IcebergManualPreviewComponent implements OnInit {
       skew: 0,
       frequency: 0,
       colorParam: 0,
-      borderParam: 0
+      borderParam: 0,
+      height: 0,
     }
   };
 
-  // icebergConfig1: Observable<IceBergConfig> = new Observable<IceBergConfig>(subscriber => {
-  //   let obj1 = {
-  //     color1: new Color('blue'),
-  //     color2: new Color('green'),
-  //     params: {
-  //       skew: 0,
-  //       frequency: 0,
-  //       colorParam: 0,
-  //       borderParam: 0
-  //     }
-  //   }
-  //   subscriber.next(obj1)
-  // });
-
-
-  updateSkew(skew: number): void{
-    this.icebergConfig.params.skew = skew;
-    this.icebergConfig = Object.assign({}, this.icebergConfig);
-  }
 
   copyConfig(){
     this.icebergConfig = Object.assign({}, this.icebergConfig);

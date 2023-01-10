@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Polygon} from "two.js/src/shapes/polygon";
 import {LinearGradient} from "two.js/src/effects/linear-gradient";
 import {Stop} from "two.js/src/effects/stop";
@@ -16,6 +16,9 @@ export class EisbergService {
   color1 = new Color("#00FFBB")
   color2 = new Color("#AA00FF")
 
+  borderCol1 = new Color("#FF00BB")
+  borderCol2 = new Color("#00FFAA")
+
   constructor(private cs: ColorService) { }
 
   /** generate our whole iceberg with customizable paramters
@@ -28,19 +31,20 @@ export class EisbergService {
   generateEisberg(radius: number, x: number, y: number, config: IceBergConfig): Polygon{
     var poly = new Polygon(x, y ,radius, 3);
 
-
     // color1 = this.cs.getColorData(color1);
     // color2 = this.cs.getColorData(color2);
     // console.log(color1)
     var gradLinB =  this.generateGradient(config.params.frequency ?? 0, this.cs.sampleColor(config.params.colorParam ?? 0, this.color1, this.color2));
-
+    this.changeTheme(this.color1.getHexString(), this.color2.getHexString())
     //var gradLinB = color1.getHexString();
     // -0.7 to 0.7
     poly.skewX = this.generateSkewX(config.params.skew ?? 0, -1, 1)
     //circle.height = 300;
     poly.fill = gradLinB;
-    poly.stroke = 'orangered';
-    poly.linewidth = 5;
+    poly.stroke = this.generateBorderColor(config.params.borderParam ?? 0, -1, 1 );
+    poly.linewidth = this.generateLineWidght(config.params.borderParam ?? 0, -1, 1);
+    poly.height= this.generatePolyHeight(poly,config.params.height?? 0, -1, 1)
+
     return poly;
 
   }
@@ -50,16 +54,16 @@ export class EisbergService {
       iceberg.skewX = this.generateSkewX(newParams.skew, -1, 1)
     }
     if(newParams.borderParam != undefined || newParams.borderParam != null){
-      //border update
+      iceberg.stroke = this.generateBorderColor(newParams.borderParam ?? 0, -1, 1)
+      iceberg.linewidth = this.generateLineWidght(newParams.borderParam ?? 0, -1, 1)
     }
     if(newParams.colorParam != undefined || newParams.colorParam != null){
       iceberg.fill = this.generateGradient(newParams.frequency ?? 0, this.cs.sampleColor(newParams.colorParam, this.color1, this.color2));
     }
+    if(newParams.height !=undefined || newParams.height !=null){
+      iceberg.height = this.generatePolyHeight(iceberg, newParams.height?? 0, -1, 1)
+    }
   }
-
-
-
-
 
   /**generate the tilt of the triangle
    *
@@ -142,5 +146,33 @@ export class EisbergService {
 
     }
     return stops
+  }
+  private changeTheme(primary: string, secondary: string) {
+    document.documentElement.style.setProperty('--primary-color', primary);
+    document.documentElement.style.setProperty('--secondary-color', secondary);
+  }
+
+  private generateBorderColor(borderParam: number, number: number, number2: number) {
+    return this.cs.sampleColor(borderParam, this.borderCol1, this.borderCol2).getHexString()
+  }
+
+  private generateLineWidght(borderParam: number, min: number, max: number) {
+    var minPix = 1
+    var maxPix = 10
+    //min -1 max 1
+    return (borderParam - min) / (max - min) * (maxPix - minPix) + minPix;
+  }
+
+  private generatePolyHeight(poly: Polygon, heightParam:number, min:number, max:number){
+    // 1/4 height to translation
+    //poly.translation.add(new Vector(0,80))
+
+    var minHeight =200
+    var maxHeight = 400
+    //min -1 max 1
+    var value = (heightParam - min) / (max - min) * (maxHeight - minHeight) + minHeight;
+    poly.translation.add(new Two.Vector(0,(poly.height-value)/4))
+    console.log(value)
+    return value
   }
 }

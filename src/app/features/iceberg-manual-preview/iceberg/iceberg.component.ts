@@ -22,7 +22,8 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
       skew: 0,
       frequency: 0,
       colorParam: 0,
-      borderParam: 0
+      borderParam: 0,
+      height: 0,
     }
   };
 
@@ -69,14 +70,19 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
     // //var elem = document.body;
     // var elem = this.myDiv?.nativeElement;
     // var two = new Two(params).appendTo(elem);
+    //untere ecken (x,y) + r *2,0944
 
     var radius = 200;
-    var x = radius + 50;
-    var y = radius + 10;
+    var x = 300;
+    var y = 240
+
+    var test = new Two.Polygon(300, 240+99, 10, 2)
+
     let color1 = new Color("#00FFBB")
     let color2 = new Color("#AA00FF")
     this.eisberg = this.es.generateEisberg(radius, x, y, this.iceConfig);
     this.twoCanvas.add(this.eisberg);
+    this.twoCanvas.add(test)
 
 
 // Don’t forget to tell two to draw everything to the screen

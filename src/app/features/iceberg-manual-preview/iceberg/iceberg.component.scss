@@ -1,6 +1,11 @@
+$primary: var(--primary-color);
+$secondary: var(--secondary-color);
 #tester{
   //float: right;
   height: 400px;
   width: 600px;
+  background: rgb(0,0,0);
+  background: linear-gradient(90deg, $primary 0%, $secondary 100%);
+
 }
 
