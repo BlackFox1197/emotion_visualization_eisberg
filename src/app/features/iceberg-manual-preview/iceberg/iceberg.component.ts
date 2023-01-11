@@ -27,9 +27,6 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
     }
   };
 
-
-
-
   twoCanvas = new Two();
   eisberg = new Polygon();
 
@@ -37,16 +34,13 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
 
 
   constructor(private es: EisbergService) {
-
   }
-
 
   ngOnChanges(changes: SimpleChanges): void{
     if (changes['iceConfig'] !== undefined) {
       this.updateIceberg(changes['iceConfig'].currentValue.params)
     }
   }
-
 
   ngAfterViewInit(): void{
     var params = {
@@ -76,13 +70,10 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
     var x = 300;
     var y = 240
 
-    var test = new Two.Polygon(300, 240+99, 10, 2)
-
     let color1 = new Color("#00FFBB")
     let color2 = new Color("#AA00FF")
     this.eisberg = this.es.generateEisberg(radius, x, y, this.iceConfig);
     this.twoCanvas.add(this.eisberg);
-    this.twoCanvas.add(test)
 
 
 // Don’t forget to tell two to draw everything to the screen
@@ -93,6 +84,7 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
     this.es.updateIceberg(this.eisberg, params)
     this.twoCanvas.update();
   }
+
 
   ngOnInit(): void {
   }

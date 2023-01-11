@@ -1,0 +1,6 @@
+<input type="file" class="file-upload"
+       accept="audio/mp3"
+       (change)="updateFile.emit(evToFile($event))" #fileUpload>
+
+<div #audioWavTest id="wave"></div>
+

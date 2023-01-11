@@ -11,13 +11,15 @@ import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {FormsModule} from "@angular/forms";
+import { AudioVisualizerComponent } from './features/iceberg-manual-preview/audio-visualizer/audio-visualizer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IcebergManualPreviewComponent,
     IcebergComponent,
-    InputsComponent
+    InputsComponent,
+    AudioVisualizerComponent
   ],
   imports: [
     BrowserModule,
