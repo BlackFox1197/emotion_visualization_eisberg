@@ -12,6 +12,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {FormsModule} from "@angular/forms";
 import { AudioVisualizerComponent } from './features/iceberg-manual-preview/audio-visualizer/audio-visualizer.component';
+import { CanvasjsCancerComponent } from './features/iceberg-manual-preview/canvasjs-cancer/canvasjs-cancer.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { AudioVisualizerComponent } from './features/iceberg-manual-preview/audi
     IcebergManualPreviewComponent,
     IcebergComponent,
     InputsComponent,
-    AudioVisualizerComponent
+    AudioVisualizerComponent,
+    CanvasjsCancerComponent
   ],
   imports: [
     BrowserModule,

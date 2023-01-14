@@ -14,10 +14,12 @@ import Two from "two.js";
 
 export class AudioVisualizerComponent implements OnInit {
 
+
+
   @ViewChild('audioWavTest') myDiv?: ElementRef;
 
   buttonStatus = "pause"
-  //fileName = "http://localhost/test.mp3"
+
   private chart: any;
   private margin= 100;
   private scaleFactor= 10;
@@ -84,23 +86,23 @@ export class AudioVisualizerComponent implements OnInit {
 
     return array
   }
-
-  togglePlaying = (event: any, audioContext: AudioContext) => {
-    if(audioContext.state === 'running') {
-      audioContext.suspend().then(() => {
-        this.buttonStatus = "Play";
-      });
-    }
-    else if(audioContext.state === 'suspended') {
-      audioContext.resume().then(() => {
-        this.buttonStatus = "Pause";
-      });
-    }
-  }
-
-  stopPlaying = (source: any) => {
-    source.stop();
-  }
+  //
+  // togglePlaying = (event: any, audioContext: AudioContext) => {
+  //   if(audioContext.state === 'running') {
+  //     audioContext.suspend().then(() => {
+  //       this.buttonStatus = "Play";
+  //     });
+  //   }
+  //   else if(audioContext.state === 'suspended') {
+  //     audioContext.resume().then(() => {
+  //       this.buttonStatus = "Pause";
+  //     });
+  //   }
+  // }
+  //
+  // stopPlaying = (source: any) => {
+  //   source.stop();
+  // }
 
   drawAudioWave(array: Array<number>):void{
     var curvePointsArray = []
@@ -121,7 +123,6 @@ export class AudioVisualizerComponent implements OnInit {
     for (let index in array) {
       dps.push({ x: this.margin + Number(index), y: [50 - array[index] * this.scaleFactor, 50 + array[index] * this.scaleFactor]});
     }
-
 
     //this.chart.options.data[0].dataPoints = dps;
     //this.chart.render();
