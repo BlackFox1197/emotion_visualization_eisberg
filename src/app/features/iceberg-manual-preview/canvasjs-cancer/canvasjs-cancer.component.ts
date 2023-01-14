@@ -133,14 +133,17 @@ export class CanvasjsCancerComponent implements OnInit{
   //@ViewChild('test') canvas?: ElementRef;
 
 
-  canvas: HTMLCanvasElement = new HTMLCanvasElement();
-  ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D();
+  canvas?: HTMLCanvasElement = document.querySelector("canvas") ?? undefined;
+  ctx?: CanvasRenderingContext2D = this.canvas?.getContext("2d") ?? undefined;
   click(event: any){
-    console.log(event)
+    let position = event.x - (this.canvas?.offsetLeft ?? 0);
+    this.drawLineSegment2(this.ctx, position, 300, 0, false);
+
     //this.drawLineSegment(this.ctx)
   }
 
   ngOnInit() {
+
     this.audioDrawer('/assets/test.mp3')
   }
 
