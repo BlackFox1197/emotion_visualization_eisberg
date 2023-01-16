@@ -17,4 +17,9 @@
   <input type="file" class="file-upload"
          accept="audio/mp3"
          (change)="evToFile($event)" #fileUpload>
-  <canvas (click)="click($event)"  #test id="tester"></canvas>
+  <!--<canvas (click)="drag($event)"  #test id="tester"></canvas>-->
+
+  <div (wheel)="zoom($event)"
+    (mouseover)="drag($event)"
+       (click)="click($event)"
+       #wavTwoJs id="wave"></div>

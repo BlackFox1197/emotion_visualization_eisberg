@@ -1,5 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import Two from "two.js";
+import {group} from "@angular/animations";
+import {Line} from "two.js/src/shapes/line";
+import {ZUI} from "two.js/extras/jsm/zui";
 
 @Component({
   selector: 'app-canvasjs-cancer',
@@ -8,158 +11,71 @@ import Two from "two.js";
 })
 export class CanvasjsCancerComponent implements OnInit{
 
-  // chart: Two;
-  // chartOptions = {
-  //   title: {
-  //     text: "Load MP3 File",
-  //     fontFamily: "Trebuchet MS, Helvetica, sans-serif",
-  //     dockInsidePlotArea: true,
-  //     verticalAlign: "center"
-  //   },
-  //   axisX: {
-  //     tickLength: 0,
-  //     lineThickness: 0,
-  //     labelFontSize: 0,
-  //     labelFormatter: function(e: any) {
-  //       return "";
-  //     }
-  //   },
-  //   axisY: {
-  //     tickLength: 0,
-  //     lineThickness: 0,
-  //     gridThickness: 0,
-  //     labelFontSize: 0,
-  //     labelFormatter: function(e: any) {
-  //       return "";
-  //     }
-  //   },
-  //   data: [{
-  //     type: "rangeArea",
-  //     toolTipContent: null,
-  //     highlightEnabled: false,
-  //     color: "#ff6862",
-  //     dataPoints: []
-  //   }]
-  // }
-  //
-  // getChartInstance = (chart: any) => {
-  //   this.chart = chart;
-  // }
-  //
-  // audioContext: any;
-  // source: any;
-  // buttonStatus: boolean = false;
-  // intervalId: any;
-  //
-  // onFileSelected = async (event: any) => {
-  //   let file:File = event.target.files[0];
-  //   if (file) {
-  //     this.chart.title.set("text", "Loading File...");
-  //     let margin = 10,
-  //       chunkSize = 500,
-  //       height = this.chart.get("height"),
-  //       scaleFactor = (height - margin * 2) / 2;
-  //
-  //     this.audioContext = new AudioContext();
-  //
-  //     let buffer = await file.arrayBuffer(),
-  //       audioBuffer = await this.audioContext.decodeAudioData(buffer),
-  //       float32Array = audioBuffer.getChannelData(0);
-  //
-  //     let array = [], i = 0, length = float32Array.length;
-  //
-  //     while (i < length) {
-  //       array.push(
-  //         float32Array.slice(i, i += chunkSize).reduce(function (total: any, value: any) {
-  //           return Math.max(total, Math.abs(value));
-  //         })
-  //       );
-  //     }
-  //     let dps = []
-  //     for (let index in array) {
-  //       dps.push({ x: margin + Number(index), y: [height / 2 - array[index] * scaleFactor, height / 2 + array[index] * scaleFactor]});
-  //     }
-  //     this.chart.options.data[0].dataPoints = dps;
-  //     this.chart.options.title.text = file.name;
-  //     this.chart.render();
-  //     this.chart.axisY[0].set("minimum", 0, false);
-  //     this.chart.axisY[0].set("maximum", dps[0].y[0] * 2, false);
-  //     this.chart.axisX[0].addTo("stripLines", {startValue: 0, endValue: 0, showOnTop: true, color: "#fff", opacity: 0.7});
-  //
-  //     this.source = this.audioContext.createBufferSource();
-  //     this.source.buffer = audioBuffer;
-  //     this.source.loop = false;
-  //     this.source.connect(this.audioContext.destination);
-  //
-  //     this.source.start();
-  //
-  //     this.source.onended = () => {
-  //       this.chart.axisX[0].stripLines[0].set("endValue", this.chart.axisX[0].get("maximum"));
-  //       clearInterval(this.intervalId);
-  //     }
-  //     this.intervalId = setInterval(() => {
-  //       this.chart.axisX[0].stripLines[0].set("endValue", this.audioContext.currentTime * (this.chart.data[0].dataPoints.length / audioBuffer.duration));
-  //     }, 50);
-  //   }
-  // }
-  //
-  // togglePlaying = (event: any) => {
-  //   if(this.audioContext) {
-  //     if(this.audioContext.state === 'running') {
-  //       this.audioContext.suspend().then(() => {
-  //         this.buttonStatus = !this.buttonStatus;
-  //       });
-  //     }
-  //     else if(this.audioContext.state === 'suspended') {
-  //       this.audioContext.resume().then(() => {
-  //         this.buttonStatus = !this.buttonStatus;
-  //       });
-  //     }
-  //   }
-  // }
-  //
-  // stopPlaying = (event: any) => {
-  //   this.source.stop();
-  // }
-  //
-  // ngOnDestroy = () => {
-  //   if(this.intervalId) {
-  //     clearInterval(this.intervalId);
-  //   }
-  //   if(this.chart)
-  //     this.chart.destroy();
-  // }
-
-  //@ViewChild('test') canvas?: ElementRef;
-
-
   canvas?: HTMLCanvasElement = document.querySelector("canvas") ?? undefined;
   ctx?: CanvasRenderingContext2D = this.canvas?.getContext("2d") ?? undefined;
-  click(event: any){
-    let position = event.x - (this.canvas?.offsetLeft ?? 0);
-    this.drawLineSegment2(this.ctx, position, 300, 0, false);
+
+  group = new Two.Group()
+  widthDiv=1900;
+  twoCanvas = new Two();
+  //the line to move/show
+  horizLine = new Two.Line(0,100, 1900, 100)
+  vertLine = new Two.Line(0,0,0,200)
+  leftLine = new Two.Line(0,0,0,200)
+  rightLine = new Two.Line(0,0,0,200)
+
+  zui = new ZUI()
+
+  clicked = false;
+  @ViewChild('wavTwoJs') myDiv?: ElementRef;
+
+  audioLengthInSec = 0;
+  normalizedDataLength = 0;
+
+  drag(event: any){
+    if(!this.clicked){
+      let positionX = event.x
+      this.setJsVertLines(positionX, this.convSecToPix(1.5))
+    }
+    //let position = event.x - (this.canvas?.offsetLeft ?? 0);
+    //this.drawLineSegment2(this.ctx, position, 300, 0, false);
 
     //this.drawLineSegment(this.ctx)
   }
+  click(event:any){
+    let positionX=event.x
+    this.setJsVertLines(positionX, this.convSecToPix(1.5))
+
+    this.clicked=!this.clicked
+    this.vertLine.visible=false
+  }
+
+  zoom(event:any){
+    if(this.clicked){
+      console.log("zoom")
+      var dy =(event.wheelDeltaY)/1000;
+      console.log(dy)
+      this.zui.zoomBy(dy, 1920/2, 200/2)
+      this.twoCanvas.update()
+    }
+  }
 
   ngOnInit() {
-
     this.audioDrawer('/assets/test.mp3')
+    //init our lines
+    this.initLines();
   }
 
   async evToFile(event: any){
     //var array = this.onFileSelected(event);
     //this.fileName = event.target.value
     const file:File = event.target.files[0];
+    console.log('file')
+    console.log(file)
     const fileURL = URL.createObjectURL(file);
     this.audioDrawer(fileURL)
 
-
     return event;
   }
-
-
-
 
   audioDrawer(url: string): void{
 
@@ -174,12 +90,7 @@ export class CanvasjsCancerComponent implements OnInit{
       fetch(url)
         .then(response => response.arrayBuffer())
         .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-        .then(audioBuffer => this.draw(this.normalizeData(this.filterData(audioBuffer))));
-
-
-
-
-
+        .then(audioBuffer => this.drawTwoJs(this.normalizeData(this.filterData(audioBuffer))));
   }
 
 
@@ -189,6 +100,7 @@ export class CanvasjsCancerComponent implements OnInit{
    * @returns {Array} an array of floating point numbers
    */
   filterData  (audioBuffer: AudioBuffer): Array<any>{
+    this.audioLengthInSec = audioBuffer.duration
     const rawData = audioBuffer.getChannelData(0); // We only need to work with one channel of data
     const samples = 3000; // Number of samples we want to have in our final data set
     const blockSize = Math.floor(rawData.length / samples); // the number of samples in each subdivision
@@ -247,6 +159,64 @@ export class CanvasjsCancerComponent implements OnInit{
     this.drawLineSegment2(ctx, 400, 300, width, false);
   };
 
+  drawTwoJs(normalizedData: Array<number>): void{
+    // our two js canvas to draw on
+    this.normalizedDataLength = normalizedData.length
+    var params = {
+      fitted: true
+    };
+    var elem = this.myDiv?.nativeElement;
+    this.twoCanvas = new Two(params).appendTo(elem);
+    const width = this.widthDiv / normalizedData.length;
+
+    this.group.add(this.horizLine)
+
+    //here we draw the lines
+    for(var i=0; i<normalizedData.length;i++){
+      const x = width*i
+      var lineHeight =100- normalizedData[i]*100
+      if(i%2==1){
+        lineHeight = 100 +normalizedData[i]*100
+      }
+      var line = new Two.Line(x,100,x, lineHeight)
+      line.linewidth =1
+      line.stroke = "#FFFFFF"
+      line.noFill()
+      this.group.add(line)
+    }
+
+    //add the linegroup to the scene
+    this.twoCanvas.add(this.group);
+    this.twoCanvas.add(this.vertLine)
+    this.twoCanvas.add(this.leftLine)
+    this.twoCanvas.add(this.rightLine)
+    this.addZUI()
+    this.twoCanvas.update()
+  }
+
+  setJsVertLines(x: number, dist: number){
+    this.moveLine(this.vertLine, x, 0)
+    this.moveLine(this.leftLine, x, -dist)
+    this.moveLine(this.rightLine, x, dist)
+
+    this.twoCanvas.update()
+  }
+
+  convPixToSec(pixX:number){
+    return (pixX*this.normalizedDataLength/this.widthDiv)/this.normalizedDataLength*this.audioLengthInSec
+  }
+
+  convSecToPix(sec:number){
+    return sec/this.normalizedDataLength*this.widthDiv*this.normalizedDataLength/this.audioLengthInSec
+  }
+
+  moveLine(line: Line, x: number, dist: number){
+    line.visible=true;
+    const[anchor1, anchor2] = line.vertices
+    anchor1.set(x+dist, anchor1.y)
+    anchor2.set(x+dist, anchor2.y)
+  }
+
 
   /**
    * A utility function for drawing our line segments
@@ -280,4 +250,28 @@ export class CanvasjsCancerComponent implements OnInit{
     ctx.lineTo(x + width, 100);
     ctx.stroke();
   };
+
+  addZUI(){
+    this.zui = new ZUI(this.group)
+    var mouse = new Two.Vector();
+    var touches = {};
+    var distance=0;
+    this.zui.addLimits(0.5,8)
+  }
+
+  private initLines() {
+    this.vertLine.stroke="green"
+    this.vertLine.linewidth =3
+    this.vertLine.visible =false
+
+    this.horizLine.linewidth =1
+    this.horizLine.fill = "#FFFFFF"
+
+    this.leftLine.stroke="red"
+    this.leftLine.linewidth =2
+    this.leftLine.visible = false
+    this.rightLine.stroke="red"
+    this.rightLine.linewidth =2
+    this.rightLine.visible = false
+  }
 }
