@@ -1,8 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import Two from "two.js";
-import {group} from "@angular/animations";
 import {Line} from "two.js/src/shapes/line";
-import {ZUI} from "two.js/extras/jsm/zui";
+import {AudioService} from "../../../services/data-service/audio.service";
 
 @Component({
   selector: 'app-canvasjs-cancer',
@@ -14,49 +13,68 @@ export class CanvasjsCancerComponent implements OnInit{
   canvas?: HTMLCanvasElement = document.querySelector("canvas") ?? undefined;
   ctx?: CanvasRenderingContext2D = this.canvas?.getContext("2d") ?? undefined;
 
-  group = new Two.Group()
+  groupWave = new Two.Group()
+  zoomedWaveGroup = new Two.Group()
+
   widthDiv=1900;
   twoCanvas = new Two();
   //the line to move/show
-  horizLine = new Two.Line(0,100, 1900, 100)
+  horizLine = new Two.Line(0,100, this.widthDiv, 100)
   vertLine = new Two.Line(0,0,0,200)
   leftLine = new Two.Line(0,0,0,200)
   rightLine = new Two.Line(0,0,0,200)
 
-  zui = new ZUI()
-
   clicked = false;
+  zoomedIn = false
   @ViewChild('wavTwoJs') myDiv?: ElementRef;
 
   audioLengthInSec = 0;
-  normalizedDataLength = 0;
+  normalizedData : Array<number> =[];
 
-  drag(event: any){
+
+  constructor(private audiService: AudioService) {
+  }
+
+  mouseover(event: any){
+    let positionX = event.x
+
     if(!this.clicked){
-      let positionX = event.x
       this.setJsVertLines(positionX, this.convSecToPix(1.5))
     }
-    //let position = event.x - (this.canvas?.offsetLeft ?? 0);
-    //this.drawLineSegment2(this.ctx, position, 300, 0, false);
-
-    //this.drawLineSegment(this.ctx)
   }
   click(event:any){
     let positionX=event.x
-    this.setJsVertLines(positionX, this.convSecToPix(1.5))
-
+    let dist = this.convSecToPix(1.5)
+    console.log(dist)
     this.clicked=!this.clicked
+    this.setJsVertLines(positionX, dist)
     this.vertLine.visible=false
+    this.twoCanvas.update()
+
+    if(!this.zoomedIn){
+      this.drawZoomedWave(this.leftLine.vertices[0].x, this.rightLine.vertices[0].x, positionX, dist);
+    }else {
+      this.twoCanvas.remove(this.zoomedWaveGroup)
+      this.twoCanvas.add(this.groupWave)
+      this.twoCanvas.update()
+      console.log(this.clicked)
+    }
   }
 
-  zoom(event:any){
-    if(this.clicked){
-      console.log("zoom")
-      var dy =(event.wheelDeltaY)/1000;
-      console.log(dy)
-      this.zui.zoomBy(dy, 1920/2, 200/2)
-      this.twoCanvas.update()
-    }
+
+  drawZoomedWave(leftX: number, rightX:number,posX: number, dist: number){
+    var normalizedDataLeft = this.convPixToDataPoint(leftX-dist*10)
+    var normalizedDataRight = this.convPixToDataPoint(rightX+dist*10)
+
+
+    var truncatedArray = this.normalizedData.slice(normalizedDataLeft, normalizedDataRight)
+
+    var distance=dist*(this.normalizedData.length/truncatedArray.length)
+    console.log(distance)
+
+    this.drawZoomedTwoJs(truncatedArray)
+    this.setJsVertLines(950,distance*10);
+    this.zoomedIn=true
   }
 
   ngOnInit() {
@@ -69,99 +87,72 @@ export class CanvasjsCancerComponent implements OnInit{
     //var array = this.onFileSelected(event);
     //this.fileName = event.target.value
     const file:File = event.target.files[0];
-    console.log('file')
-    console.log(file)
+    // console.log('file')
+    // console.log(file)
     const fileURL = URL.createObjectURL(file);
     this.audioDrawer(fileURL)
 
     return event;
   }
 
-  audioDrawer(url: string): void{
+  audioDrawer(file: string): void{
 
-    // Set up audio context
-    const audioContext = new AudioContext();
-
-    /**
-     * Retrieves audio from an external source, the initializes the drawing function
-     * @param {String} url the url of the audio we'd like to fetch
-     */
-
-      fetch(url)
-        .then(response => response.arrayBuffer())
-        .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-        .then(audioBuffer => this.drawTwoJs(this.normalizeData(this.filterData(audioBuffer))));
+    this.audiService.getAudioBufferFromFile(file).then(
+      buffer => {
+        this.audioLengthInSec = this.audiService.calculateAudioLenght(buffer);
+        this.drawTwoJs(this.audiService.generateDataPoints(buffer));
+      }
+    );
+    // // Set up audio context
+    // const audioContext = new AudioContext();
+    //
+    // /**
+    //  * Retrieves audio from an external source, the initializes the drawing function
+    //  * @param {String} url the url of the audio we'd like to fetch
+    //  */
+    //
+    //   fetch(url)
+    //     .then(response => response.arrayBuffer())
+    //     .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    //     .then(audioBuffer => this.drawTwoJs(this.normalizeData(this.filterData(audioBuffer))));
   }
 
 
-  /**
-   * Filters the AudioBuffer retrieved from an external source
-   * @param {AudioBuffer} audioBuffer the AudioBuffer from drawAudio()
-   * @returns {Array} an array of floating point numbers
-   */
-  filterData  (audioBuffer: AudioBuffer): Array<any>{
-    this.audioLengthInSec = audioBuffer.duration
-    const rawData = audioBuffer.getChannelData(0); // We only need to work with one channel of data
-    const samples = 3000; // Number of samples we want to have in our final data set
-    const blockSize = Math.floor(rawData.length / samples); // the number of samples in each subdivision
-    const filteredData = [];
-    for (let i = 0; i < samples; i++) {
-      let blockStart = blockSize * i; // the location of the first sample in the block
-      let sum = 0;
-      for (let j = 0; j < blockSize; j++) {
-        sum = sum + Math.abs(rawData[blockStart + j]); // find the sum of all the samples in the block
-      }
-      filteredData.push(sum / blockSize); // divide the sum by the block size to get the average
-    }
-    return filteredData;
-  };
+  // /**
+  //  * Filters the AudioBuffer retrieved from an external source
+  //  * @param {AudioBuffer} audioBuffer the AudioBuffer from drawAudio()
+  //  * @returns {Array} an array of floating point numbers
+  //  */
+  // filterData  (audioBuffer: AudioBuffer): Array<any>{
+  //   this.audioLengthInSec = audioBuffer.duration
+  //   const rawData = audioBuffer.getChannelData(0); // We only need to work with one channel of data
+  //   const samples = 3000; // Number of samples we want to have in our final data set
+  //   const blockSize = Math.floor(rawData.length / samples); // the number of samples in each subdivision
+  //   const filteredData = [];
+  //   for (let i = 0; i < samples; i++) {
+  //     let blockStart = blockSize * i; // the location of the first sample in the block
+  //     let sum = 0;
+  //     for (let j = 0; j < blockSize; j++) {
+  //       sum = sum + Math.abs(rawData[blockStart + j]); // find the sum of all the samples in the block
+  //     }
+  //     filteredData.push(sum / blockSize); // divide the sum by the block size to get the average
+  //   }
+  //   return filteredData;
+  // };
 
-  /**
-   * Normalizes the audio data to make a cleaner illustration
-   * @param {Array} filteredData the data from filterData()
-   * @returns {Array} an normalized array of floating point numbers
-   */
-  normalizeData (filteredData: Array<any>): Array<any> {
-    const multiplier = Math.pow(Math.max(...filteredData), -1);
-    return filteredData.map(n => n * multiplier);
-  }
-
-  /**
-   * Draws the audio file into a canvas element.
-   * @param {Array} normalizedData The filtered array returned from filterData()
-   * @returns {Array} a normalized array of data
-   */
-  draw (normalizedData: Array<any>): void {
-    // set up the canvas
-    this.canvas = document.querySelector("canvas") ?? new HTMLCanvasElement();
-    const dpr = window.devicePixelRatio || 1;
-    const padding = 5;
-    this.canvas.width = this.canvas.offsetWidth * dpr;
-    this.canvas.height = (this.canvas.offsetHeight + padding * 2) * dpr;
-    this.ctx = this.canvas.getContext("2d")!;
-    const ctx = this.ctx;
-    ctx.scale(dpr, dpr);
-    ctx.translate(0, this.canvas.offsetHeight / 2 + padding); // set Y = 0 to be in the middle of the canvas
-
-    // draw the line segments
-    const width = this.canvas.offsetWidth / normalizedData.length;
-    for (let i = 0; i < normalizedData.length; i++) {
-      const x = width * i;
-      let height = normalizedData[i] * this.canvas.offsetHeight - padding;
-      if (height < 0) {
-        height = 0;
-      } else if (height > this.canvas.offsetHeight / 2) {
-        height = this.canvas.offsetHeight / 2;
-      }
-      this.drawLineSegment(ctx, x, height, width, (i + 1) % 2 == 0);
-    }
-    this.drawLineSegment2(ctx, 300, 300, width, false);
-    this.drawLineSegment2(ctx, 400, 300, width, false);
-  };
+  // /**
+  //  * Normalizes the audio data to make a cleaner illustration
+  //  * @param {Array} filteredData the data from filterData()
+  //  * @returns {Array} an normalized array of floating point numbers
+  //  */
+  // normalizeData (filteredData: Array<any>): Array<any> {
+  //   const multiplier = Math.pow(Math.max(...filteredData), -1);
+  //   return filteredData.map(n => n * multiplier);
+  // }
 
   drawTwoJs(normalizedData: Array<number>): void{
     // our two js canvas to draw on
-    this.normalizedDataLength = normalizedData.length
+    this.normalizedData = normalizedData
     var params = {
       fitted: true
     };
@@ -169,7 +160,7 @@ export class CanvasjsCancerComponent implements OnInit{
     this.twoCanvas = new Two(params).appendTo(elem);
     const width = this.widthDiv / normalizedData.length;
 
-    this.group.add(this.horizLine)
+    this.groupWave.add(this.horizLine)
 
     //here we draw the lines
     for(var i=0; i<normalizedData.length;i++){
@@ -182,15 +173,42 @@ export class CanvasjsCancerComponent implements OnInit{
       line.linewidth =1
       line.stroke = "#FFFFFF"
       line.noFill()
-      this.group.add(line)
+      this.groupWave.add(line)
     }
 
     //add the linegroup to the scene
-    this.twoCanvas.add(this.group);
-    this.twoCanvas.add(this.vertLine)
-    this.twoCanvas.add(this.leftLine)
-    this.twoCanvas.add(this.rightLine)
-    this.addZUI()
+    this.groupWave.add(this.vertLine)
+    this.groupWave.add(this.leftLine)
+    this.groupWave.add(this.rightLine)
+    this.twoCanvas.add(this.groupWave);
+    //this.addZUI()
+    this.twoCanvas.update()
+  }
+
+  drawZoomedTwoJs(normalizedData: Array<number>) {
+    // our two js canvas to draw on
+    const width = this.widthDiv / normalizedData.length;
+    this.twoCanvas.remove(this.groupWave)
+
+    this.zoomedWaveGroup.add(this.horizLine)
+
+    //here we draw the lines
+    for (var i = 0; i < normalizedData.length; i++) {
+      const x = width * i
+      var lineHeight = 100 - normalizedData[i] * 100
+      if (i % 2 == 1) {
+        lineHeight = 100 + normalizedData[i] * 100
+      }
+      var line = new Two.Line(x, 100, x, lineHeight)
+      line.linewidth = 1
+      line.stroke = "#FFFFFF"
+      line.noFill()
+      this.zoomedWaveGroup.add(line)
+    }
+    this.zoomedWaveGroup.add(this.vertLine)
+    this.zoomedWaveGroup.add(this.leftLine)
+    this.zoomedWaveGroup.add(this.rightLine)
+    this.twoCanvas.add(this.zoomedWaveGroup)
     this.twoCanvas.update()
   }
 
@@ -198,16 +216,23 @@ export class CanvasjsCancerComponent implements OnInit{
     this.moveLine(this.vertLine, x, 0)
     this.moveLine(this.leftLine, x, -dist)
     this.moveLine(this.rightLine, x, dist)
-
     this.twoCanvas.update()
   }
 
   convPixToSec(pixX:number){
-    return (pixX*this.normalizedDataLength/this.widthDiv)/this.normalizedDataLength*this.audioLengthInSec
+    return (pixX*this.normalizedData.length/this.widthDiv)/this.normalizedData.length*this.audioLengthInSec
   }
 
   convSecToPix(sec:number){
-    return sec/this.normalizedDataLength*this.widthDiv*this.normalizedDataLength/this.audioLengthInSec
+    return sec/this.normalizedData.length*this.widthDiv*this.normalizedData.length/this.audioLengthInSec
+  }
+
+  convPixToDataPoint(pixX:number, dataLength = this.normalizedData.length){
+    return pixX/this.widthDiv*dataLength
+  }
+
+  convDataPointToPix(dataPoint:number, dataLength= this.normalizedData.length){
+    return  dataPoint/dataLength*this.widthDiv
   }
 
   moveLine(line: Line, x: number, dist: number){
@@ -215,7 +240,29 @@ export class CanvasjsCancerComponent implements OnInit{
     const[anchor1, anchor2] = line.vertices
     anchor1.set(x+dist, anchor1.y)
     anchor2.set(x+dist, anchor2.y)
+    this.twoCanvas.update()
   }
+  private initLines() {
+    this.vertLine.stroke="green"
+    this.vertLine.linewidth =3
+    this.vertLine.visible =false
+
+    this.horizLine.linewidth =1
+    this.horizLine.fill = "#FFFFFF"
+
+    this.leftLine.stroke="red"
+    this.leftLine.linewidth =2
+    this.leftLine.visible = false
+    this.rightLine.stroke="red"
+    this.rightLine.linewidth =2
+    this.rightLine.visible = false
+  }
+
+
+
+
+
+
 
 
   /**
@@ -251,27 +298,36 @@ export class CanvasjsCancerComponent implements OnInit{
     ctx.stroke();
   };
 
-  addZUI(){
-    this.zui = new ZUI(this.group)
-    var mouse = new Two.Vector();
-    var touches = {};
-    var distance=0;
-    this.zui.addLimits(0.5,8)
-  }
+  /**
+   * Draws the audio file into a canvas element.
+   * @param {Array} normalizedData The filtered array returned from filterData()
+   * @returns {Array} a normalized array of data
+   */
+  draw (normalizedData: Array<any>): void {
+    // set up the canvas
+    this.canvas = document.querySelector("canvas") ?? new HTMLCanvasElement();
+    const dpr = window.devicePixelRatio || 1;
+    const padding = 5;
+    this.canvas.width = this.canvas.offsetWidth * dpr;
+    this.canvas.height = (this.canvas.offsetHeight + padding * 2) * dpr;
+    this.ctx = this.canvas.getContext("2d")!;
+    const ctx = this.ctx;
+    ctx.scale(dpr, dpr);
+    ctx.translate(0, this.canvas.offsetHeight / 2 + padding); // set Y = 0 to be in the middle of the canvas
 
-  private initLines() {
-    this.vertLine.stroke="green"
-    this.vertLine.linewidth =3
-    this.vertLine.visible =false
-
-    this.horizLine.linewidth =1
-    this.horizLine.fill = "#FFFFFF"
-
-    this.leftLine.stroke="red"
-    this.leftLine.linewidth =2
-    this.leftLine.visible = false
-    this.rightLine.stroke="red"
-    this.rightLine.linewidth =2
-    this.rightLine.visible = false
-  }
+    // draw the line segments
+    const width = this.canvas.offsetWidth / normalizedData.length;
+    for (let i = 0; i < normalizedData.length; i++) {
+      const x = width * i;
+      let height = normalizedData[i] * this.canvas.offsetHeight - padding;
+      if (height < 0) {
+        height = 0;
+      } else if (height > this.canvas.offsetHeight / 2) {
+        height = this.canvas.offsetHeight / 2;
+      }
+      this.drawLineSegment(ctx, x, height, width, (i + 1) % 2 == 0);
+    }
+    this.drawLineSegment2(ctx, 300, 300, width, false);
+    this.drawLineSegment2(ctx, 400, 300, width, false);
+  };
 }
