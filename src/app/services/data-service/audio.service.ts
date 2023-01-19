@@ -17,6 +17,8 @@ export class AudioService {
 
     const audioContext = new AudioContext();
 
+
+
     return fetch(fileURL)
       .then(response => response.arrayBuffer())
       .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer));
@@ -24,12 +26,20 @@ export class AudioService {
   }
 
 
-  generateDataPoints(buffer: AudioBuffer): Array<any>{
-    return this._normalizeData(this._filterData(buffer));
+  generateDataPoints(buffer: AudioBuffer, sampleCount: number): Array<any>{
+    return this._normalizeData(this._filterData(buffer, sampleCount));
   }
 
   calculateAudioLenght(buffer: AudioBuffer) : number{
     return buffer.duration;
+  }
+
+  playSelection(buffer: AudioBuffer, offset: number, duration: number){
+    let context = new AudioContext()
+    var source = context.createBufferSource(); // creates a sound source
+    source.buffer = buffer;                    // tell the source which sound to play
+    source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+    source.start(0, offset, duration);
   }
 
 
@@ -48,11 +58,11 @@ export class AudioService {
   /**
    * Filters the AudioBuffer retrieved from an external source
    * @param {AudioBuffer} audioBuffer the AudioBuffer from drawAudio()
+   * @param samples the number of samples in the array
    * @returns {Array} an array of floating point numbers
    */
-  private _filterData  (audioBuffer: AudioBuffer): Array<any>{
+  private _filterData  (audioBuffer: AudioBuffer, samples: number): Array<any>{
     const rawData = audioBuffer.getChannelData(0); // We only need to work with one channel of data
-    const samples = 3000; // Number of samples we want to have in our final data set
     const blockSize = Math.floor(rawData.length / samples); // the number of samples in each subdivision
     const filteredData = [];
     for (let i = 0; i < samples; i++) {
@@ -65,4 +75,8 @@ export class AudioService {
     }
     return filteredData;
   };
+
+
+  generateFile(buffer: AudioBuffer){
+  }
 }

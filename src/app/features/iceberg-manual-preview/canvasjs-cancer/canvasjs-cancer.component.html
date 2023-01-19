@@ -18,7 +18,7 @@
          accept="audio/mp3"
          (change)="evToFile($event)" #fileUpload>
   <!--<canvas (click)="drag($event)"  #test id="tester"></canvas>-->
-
+  <div *ngIf="audioSrc != ''">{{audioSrc}}</div>
   <div
     (mouseover)="mouseover($event)"
        (click)="click($event)"
