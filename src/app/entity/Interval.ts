@@ -6,6 +6,7 @@ export class Interval{
   leftLine: Line =   new Two.Line(0,0,0,200);
   rightLine: Line =   new Two.Line(0,0,0,200);
   vertLine: Line =   new Two.Line(0,0,0,200);
+  group = new Two.Group(this.leftLine, this.rightLine, this.vertLine);
 
 
   constructor(public wt: widthTransport, public zoomer = false, public intervallSize: number = 0) {
@@ -30,6 +31,11 @@ export class Interval{
     }
   }
 
+  regenerate(wt: widthTransport, intervallsize:number){
+    this.wt = wt;
+    this.intervallSize = intervallsize;
+  }
+
   setInterVallzize(size: number): void{
     this.intervallSize = size;
   }
@@ -43,6 +49,14 @@ export class Interval{
 
       if(this.zoomer){
         this.vertLine.visible = false;
+      }
+    }
+    else{
+      if(positionX -this.intervallSize/2 < 0){
+        this.move( this.intervallSize/2 + 2);
+      }
+      if(positionX + this.intervallSize/2 > this.wt.width){
+        this.move(this.wt.width - this.intervallSize/2)
       }
     }
   }

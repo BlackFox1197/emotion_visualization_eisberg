@@ -12,6 +12,10 @@ export class AudioService {
   constructor() { }
 
 
+  source?: AudioBufferSourceNode;
+
+
+
   async getAudioBufferFromFile(fileURL: string): Promise<AudioBuffer> {
 
 
@@ -35,11 +39,28 @@ export class AudioService {
   }
 
   playSelection(buffer: AudioBuffer, offset: number, duration: number){
+    this.stopSource();
     let context = new AudioContext()
-    var source = context.createBufferSource(); // creates a sound source
-    source.buffer = buffer;                    // tell the source which sound to play
-    source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-    source.start(0, offset, duration);
+    this.source = context.createBufferSource(); // creates a sound source
+    this.source.buffer = buffer;                    // tell the source which sound to play
+    this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+    this.source.start(0, offset, duration);
+  }
+
+  playWhole(buffer: AudioBuffer){
+    this.stopSource();
+    let context = new AudioContext()
+    this.source = context.createBufferSource(); // creates a sound source
+    this.source.buffer = buffer;                    // tell the source which sound to play
+    this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+    //source.context.addEventListener("statechange", () => {console.log("asd")})
+    this.source.start(0);
+  }
+
+  stopSource(){
+    if(this.source??0 != 0){
+      this.source!.stop();
+    }
   }
 
 
