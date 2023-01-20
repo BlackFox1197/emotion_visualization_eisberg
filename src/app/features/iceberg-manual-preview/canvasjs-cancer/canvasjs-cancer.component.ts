@@ -118,10 +118,12 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   @HostListener('document:keydown.escape', ['$event']) unzoom(event: KeyboardEvent) {
+    this.stop();
     this.waveFormService.resetZoom(this.twoCanvas);
   }
 
   click(event: any) {
+    this.stop();
     this.waveFormService.click(event, this.twoCanvas)
     if(this.waveFormService.selectedInterval != undefined){
       this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
