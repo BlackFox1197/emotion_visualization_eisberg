@@ -139,17 +139,17 @@ export class WaveFormService {
   // ########################################################################################
 
 
-  timePlayed(halfseconds: number){
+  timePlayed(units: number, unitsPerSeconds = 2){
     if(this.selected){
       let start = (this.selectedInterval?.start??0) - this.currentZoomedOffsetInSec
       let fromIndex = Math.floor(this.samplesPerSecond * start);
-      let toIndex = Math.floor(this.samplesPerSecond * (start + halfseconds/2));
+      let toIndex = Math.floor(this.samplesPerSecond * (start + units/unitsPerSeconds));
       for(let i = fromIndex; i<= toIndex; i++){
         this.visData.waveGroup.children[i].stroke = "red"
       }
     }
     else {
-      this.percentagePlayed((halfseconds/2)/(this.currentData.length / this.samplesPerSecond))
+      this.percentagePlayed((units/unitsPerSeconds)/(this.currentData.length / this.samplesPerSecond))
     }
   }
 

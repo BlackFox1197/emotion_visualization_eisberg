@@ -28,7 +28,10 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   normalizedData: Array<number> = [];
   normalizedDataZoomed: Array<number> = [];
-  audioSrc = ''
+  audioSrc = '';
+
+
+  playState = new PLayState();
 
 
   constructor(private audiService: AudioService, public  waveFormService: WaveFormService) {
@@ -40,37 +43,9 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   }
 
-  /** This function plays the current selection
-   * it checks first, whether a small segment is selected,
-   * then if there is zoom and if neither is true assumes that the whole sound
-   * file has to be played
-   *
-   */
-  play(){
-    if(this.waveFormService.selected){
-      let startEnd = this.waveFormService.selectedInterval;
-      this.audiService.playSelection(this.audioBuffer!, startEnd!.start, startEnd!.end - startEnd!.start)
-    }
-    else{
-      if(this.waveFormService.zoomed){
-        let start = this.waveFormService.currentZoomedOffsetInSec;
-        let end = this.waveFormService.currentZoomedOffsetInSec + (this.zoomdistance * this.waveFormService.originalData.length /this.waveFormService.samplesPerSecond)
-        this.audiService.playSelection(this.audioBuffer!, start, end - start)
-      }
-      else{
-        this.audiService.playWhole(this.audioBuffer!)
-      }
-    }
-   this.playSelect();
 
-  }
 
-  /**
-   * this stops the sound if there is some running
-   */
-  stop(){
-    this.audiService.stopSource();
-  }
+
 
   async evToFile(event: any) {
     const file: File = event.target.files[0];
@@ -122,6 +97,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.waveFormService.resetZoom(this.twoCanvas);
   }
 
+
   click(event: any) {
     this.stop();
     this.waveFormService.click(event, this.twoCanvas)
@@ -132,24 +108,115 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
 
+
+  /** This function plays the current selection
+   * it checks first, whether a small segment is selected,
+   * then if there is zoom and if neither is true assumes that the whole sound
+   * file has to be played
+   *
+   */
+  play(){
+    let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
+    if(this.waveFormService.selected){
+      let startEnd = this.waveFormService.selectedInterval;
+      this.audiService.playSelection(this.audioBuffer!, startEnd!.start + playedSecs, startEnd!.end - (startEnd!.start + playedSecs))
+    }
+    else{
+      if(this.waveFormService.zoomed){
+        let start = this.waveFormService.currentZoomedOffsetInSec;
+        let end = this.waveFormService.currentZoomedOffsetInSec + (this.zoomdistance * this.waveFormService.originalData.length /this.waveFormService.samplesPerSecond)
+        this.audiService.playSelection(this.audioBuffer!, start + playedSecs, end - (start + playedSecs))
+      }
+      else{
+       this.audiService.playSelection(this.audioBuffer!, playedSecs, undefined)
+      }
+    }
+    this.playSelect();
+
+  }
+
+
+  /**
+   * this stops the sound if there is some running
+   */
+  stop(){
+    /** the stopped property is needed, because of the eventlistener that does listen on the ended event
+    * but the ended event is also thrown when pausing!
+    * but we do not need a reset every time
+    */
+    this.playState.paused = false;
+    this.audiService.stopSource();
+
+    // manually reset the graph and progress
+    this.clearAndResetPlayed(this.playState.intervallId)
+
+
+  }
+
   /**
    * as this code segment does not need anything specific from the caller it has been outsourced
    * to follow the dry principle
    */
   playSelect(){
-    let ms = 0;
-    let id = setInterval( ()=>{
-      ms++;
-      this.waveFormService.timePlayed(ms);
+    if(this.playState.intervallId??0 != 0){
+      this.clearAndResetPlayed(this.playState.intervallId)
+    }
+    // this is the main loop for the animation of the audioGraph
+    this.playState.intervallId = setInterval( ()=>{
+      // update the played units
+      this.playState.playedUnits++;
+      // redraw the graph
+      this.waveFormService.timePlayed(this.playState.playedUnits, this.playState.unitsPerSeconds);
       this.twoCanvas.update()
-    }, 500)
+      // the interval is calculated by the units per seconds, this calculates the milliseconds
+    }, 1000/this.playState.unitsPerSeconds)
+
+    // needed to end local loop and not the next loop or any other
+    let localId = this.playState.intervallId;
+
+    // is thrown when the audioSource ends, it is stopped or paused ('cause internally that's a stop)
     this.audiService.source!.addEventListener("ended", event => {
-      clearInterval(id);
-      this.waveFormService.resetPlayed(this.twoCanvas);
+      clearInterval(localId);
+      if(!this.playState.paused){
+        // reset the played units
+        this.playState.playedUnits = 0;
+        //reset the graph
+        this.waveFormService.resetPlayed(this.twoCanvas);
+        // reset to false, in case next time its a pause
+      }else {
+        // the paused state is reset, as it should be a one time reset protection only
+        // if not reset, the graph will stay colored
+        this.playState.paused = false;
+      }
     })
+  }
+
+  pauseSelect(){
+    //just to be sure we do not reset the graph
+    this.playState.paused = true;
+    this.audiService.stopSource()
+
+  }
+
+
+  clearAndResetPlayed(intervallId?: NodeJS.Timer){
+    clearInterval(intervallId)
+    this.waveFormService.resetPlayed(this.twoCanvas);
+    this.playState.playedUnits = 0;
   }
 
 
 
 }
 
+
+class PLayState{
+  playedUnits = 0;
+  unitsPerSeconds = 4;
+  /** the paused property is needed, because of the eventlistener that does listen on the ended event
+  * but the ended event is also thrown when pausing!
+  * but we do not need a reset every time
+  **/
+  paused = false;
+  intervallId?: NodeJS.Timer;
+}

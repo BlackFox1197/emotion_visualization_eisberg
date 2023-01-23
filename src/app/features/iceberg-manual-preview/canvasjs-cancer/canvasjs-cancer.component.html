@@ -1,24 +1,11 @@
-  <!--<div class="audio-player">-->
-  <!--  <div>-->
-  <!--    <input type="file" class="file-input"-->
-  <!--           accept="audio/mp3"-->
-  <!--           (change)="onFileSelected($event)" #fileUpload value="Browse MP3 File">-->
-  <!--  </div>-->
-  <!--  <div class="player-controls">-->
-  <!--    <button class="button" (click)="togglePlaying($event)" [ngClass]="buttonStatus ? 'is-play' : ''" title="Play / Pause"><span class="pp-icon"></span></button>-->
-  <!--    <button class="button" (click)="stopPlaying($event)" title="Stop"><span class="stop-icon"></span></button>-->
-  <!--  </div>-->
-  <!--  <div class="waveform">-->
-  <!--    <canvas></canvas>-->
-  <!--&lt;!&ndash;    <canvasjs-chart [options]="chartOptions" [styles]="{width: '50%', height:'180px', margin: 'auto'}" (chartInstance)="getChartInstance($event)"></canvasjs-chart>&ndash;&gt;-->
-  <!--  </div>-->
-  <!--</div>-->
+
 
   <input type="file" class="file-upload"
          accept="audio/mp3"
          (change)="evToFile($event)" #fileUpload>
   <button mat-icon-button (click)="play()"><mat-icon>play_arrow</mat-icon></button>
   <button mat-icon-button (click)="stop()"><mat-icon>stop</mat-icon></button>
+  <button mat-icon-button (click)="pauseSelect()"><mat-icon>pause</mat-icon></button>
 
   <div
     (mousemove)="mouseover($event)"
