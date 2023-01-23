@@ -40,7 +40,8 @@ export class WaveFormService {
 
 
 
-  init(samplesPerSecons: number, originalData: Array<number>){
+  init(samplesPerSecons: number, originalData: Array<number>, zoomPercentage: number){
+    this.zoomPercentage = zoomPercentage;
     this.samplesPerSecond = samplesPerSecons;
     this.originalData = originalData;
     this.currentData = originalData;

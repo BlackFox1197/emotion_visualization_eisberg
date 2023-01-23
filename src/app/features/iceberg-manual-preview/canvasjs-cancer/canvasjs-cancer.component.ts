@@ -17,7 +17,8 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   twoCanvas = new Two();
 
-  zoomdistance = 0.3;
+  //the percentage zoomed by the zoomer intervall
+  zoomdistance = 0.5;
 
 
 
@@ -67,7 +68,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
         this.normalizedData =this.audiService.generateDataPoints(buffer, this.sampleCount);
         let audioLengthInSec = this.audiService.calculateAudioLenght(buffer);
         let samplesPerSecond = this.sampleCount / audioLengthInSec;
-        this.waveFormService.init(samplesPerSecond, this.normalizedData);
+        this.waveFormService.init(samplesPerSecond, this.normalizedData, this.zoomdistance);
         this.waveFormService.drawTwoJs(this.normalizedData, false, this.twoCanvas);
       }
     );
