@@ -17,6 +17,7 @@ export class AudioVisualizerComponent implements OnInit {
 
 
   @ViewChild('audioWavTest') myDiv?: ElementRef;
+  @ViewChild('specTest') specDiv?: ElementRef;
 
   buttonStatus = "pause"
 

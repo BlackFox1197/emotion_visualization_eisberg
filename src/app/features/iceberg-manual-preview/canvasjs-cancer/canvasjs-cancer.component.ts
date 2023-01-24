@@ -4,6 +4,7 @@ import {Line} from "two.js/src/shapes/line";
 import {AudioService} from "../../../services/data-service/audio.service";
 import {Interval} from "../../../entity/Interval";
 import {WaveFormService} from "../../../services/vis-services/wave-form.service";
+import {SpectroService} from "../../../services/vis-services/spectro.service";
 
 @Component({
   selector: 'app-canvasjs-cancer',
@@ -12,17 +13,15 @@ import {WaveFormService} from "../../../services/vis-services/wave-form.service"
 })
 export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
-
-
-
   twoCanvas = new Two();
+  twoSpec = new Two();
 
   //the percentage zoomed by the zoomer intervall
   zoomdistance = 0.5;
 
 
-
   @ViewChild('wavTwoJs') myDiv?: ElementRef;
+  @ViewChild('specTest') specDiv?: ElementRef;
 
   sampleCount = 3000;
   audioBuffer?: AudioBuffer;
@@ -35,17 +34,13 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   playState = new PLayState();
 
 
-  constructor(private audiService: AudioService, public  waveFormService: WaveFormService) {
+  constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService) {
   }
 
 
   ngOnInit() {
     this.audioDrawer('/assets/test.mp3')
-
   }
-
-
-
 
 
   async evToFile(event: any) {
@@ -75,7 +70,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   }
 
-
   ngAfterViewInit() {
 
     var params = {
@@ -83,8 +77,9 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       type: Two.Types.canvas
     };
     var elem = this.myDiv?.nativeElement;
+    var spec = this.specDiv?.nativeElement
     this.twoCanvas = new Two(params).appendTo(elem);
-
+    this.twoSpec = new Two(params).appendTo(spec)
 
 
   }
@@ -133,7 +128,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       }
     }
     this.playSelect();
-
   }
 
 
@@ -168,7 +162,12 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       this.playState.playedUnits++;
       // redraw the graph
       this.waveFormService.timePlayed(this.playState.playedUnits, this.playState.unitsPerSeconds);
+      // spectrogram
+      let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
+
       this.twoCanvas.update()
+      this.twoSpec.add(group)
+      this.twoSpec.update()
       // the interval is calculated by the units per seconds, this calculates the milliseconds
     }, 1000/this.playState.unitsPerSeconds)
 

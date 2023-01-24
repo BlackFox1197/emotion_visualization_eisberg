@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-
-
-
-
+import {combineTransforms} from "@angular/cdk/drag-drop/drag-styling";
+import {coerceArray} from "@angular/cdk/coercion";
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +11,8 @@ export class AudioService {
 
 
   source?: AudioBufferSourceNode;
+  analyzer?: AnalyserNode;
+  sampleRate?: number;
 
 
 
@@ -41,34 +41,34 @@ export class AudioService {
   playSelection(buffer: AudioBuffer, offset: number, duration?: number){
     this.stopSource();
     let context = new AudioContext()
+
+    this.analyzer = context.createAnalyser()      //analyzer stuff
+    this.analyzer.fftSize = 2048                //size of our fft and /2 our frequency bin count
+
     this.source = context.createBufferSource(); // creates a sound source
     this.source.buffer = buffer;                    // tell the source which sound to play
     this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+    this.source.connect(this.analyzer)            //connect analyzer to our played sound
     this.source.start(0, offset, duration);
+    this.sampleRate = context.sampleRate;
+    this.source.buffer.getChannelData(0)
   }
 
-  // playWhole(buffer: AudioBuffer){
-  //   this.stopSource();
-  //   let context = new AudioContext()
-  //   this.source = context.createBufferSource(); // creates a sound source
-  //   this.source.buffer = buffer;                    // tell the source which sound to play
-  //   this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-  //   //source.context.addEventListener("statechange", () => {console.log("asd")})
-  //   this.source.start(0);
-  // }
+
+  getAnalyzerFrequ(){
+    const bufferLength = this.analyzer!.frequencyBinCount //length of our array
+    const data = new Uint8Array(bufferLength) // create new array with size equal to fftsize/2
+    this.analyzer!.getByteFrequencyData(data)   // fetch the frequency data
+    return data
+  }
 
   stopSource(){
     if(this.source??0 != 0){
+      this.getAnalyzerFrequ()
       this.source!.stop();
     }
   }
 
-  //
-  // resumeSource(time: number){
-  //   if(this.source??0 != 0){
-  //     this.source!.start(0, time);
-  //   }
-  // }
 
   /**
    * Normalizes the audio data to make a cleaner illustration
