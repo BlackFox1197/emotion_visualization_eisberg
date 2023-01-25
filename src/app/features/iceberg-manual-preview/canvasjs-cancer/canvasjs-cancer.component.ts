@@ -163,11 +163,12 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       // redraw the graph
       this.waveFormService.timePlayed(this.playState.playedUnits, this.playState.unitsPerSeconds);
       // spectrogram
-      let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
+      //is.audiService.getAnalyzerFrequ()
+      // let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
 
       this.twoCanvas.update()
-      this.twoSpec.add(group)
-      this.twoSpec.update()
+      // this.twoSpec.add(group)
+      // this.twoSpec.update()
       // the interval is calculated by the units per seconds, this calculates the milliseconds
     }, 1000/this.playState.unitsPerSeconds)
 

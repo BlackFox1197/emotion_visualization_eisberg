@@ -7,14 +7,13 @@ import {coerceArray} from "@angular/cdk/coercion";
 })
 export class AudioService {
 
-  constructor() { }
-
+  constructor() {}
 
   source?: AudioBufferSourceNode;
   analyzer?: AnalyserNode;
   sampleRate?: number;
 
-
+  ft = require('types-fourier-transform')
 
   async getAudioBufferFromFile(fileURL: string): Promise<AudioBuffer> {
 
@@ -52,6 +51,14 @@ export class AudioService {
     this.source.start(0, offset, duration);
     this.sampleRate = context.sampleRate;
     this.source.buffer.getChannelData(0)
+    let channelData =buffer.getChannelData(0)
+    this.padChannelDataToSquared(channelData)
+    //console.log(this.ft(buffer.getChannelData(0)))
+  }
+
+  padChannelDataToSquared(channelData: Float32Array){
+    var truncatedToSquare = channelData.copyWithin(0,0, 1000)
+    console.log(truncatedToSquare)
   }
 
 
@@ -59,12 +66,15 @@ export class AudioService {
     const bufferLength = this.analyzer!.frequencyBinCount //length of our array
     const data = new Uint8Array(bufferLength) // create new array with size equal to fftsize/2
     this.analyzer!.getByteFrequencyData(data)   // fetch the frequency data
+    console.log(bufferLength, new Uint8Array(bufferLength))
     return data
   }
 
+
+
   stopSource(){
     if(this.source??0 != 0){
-      this.getAnalyzerFrequ()
+      //this.getAnalyzerFrequ()
       this.source!.stop();
     }
   }

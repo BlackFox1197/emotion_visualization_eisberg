@@ -23,6 +23,7 @@
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "two.js": "^0.8.10",
+    "types-fourier-transform": "^1.1.5",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
