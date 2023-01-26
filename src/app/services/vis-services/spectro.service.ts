@@ -11,28 +11,7 @@ export class SpectroService {
   constructor() { }
 
   sampleRate = 44100
-  bins = 1024
-
- /*
-  function draw() {
-    // draw 1 time slice per column
-    analyser.getByteFrequencyData(dataArray);
-    for (var y = 1; y <= bufferLength; y++) {
-      var intensity = dataArray[y - 1];
-      canvasCtx.fillStyle = `rgb(${intensity},${intensity},${intensity})`
-
-      var rectY = canvas.height - (bufferLength/10) * Math.log(y)
-      var rectYNext = canvas.height - (bufferLength/10) * Math.log(y+1)
-
-      var rectHeight = rectYNext - rectY
-      canvasCtx.fillRect(canvas.width - 1, rectY, 1, rectHeight)
-    }
-    // shift canvas contents left by 1 pixel
-    canvasCtx.drawImage(canvasCtx.canvas, -1, 0);
-    requestAnimationFrame(draw);
-  }
-
- */
+  bins = 256
 
   calcFrequencies(sampleRate: number, bins:number){
     // samplerate/bins*currentbin = frequency

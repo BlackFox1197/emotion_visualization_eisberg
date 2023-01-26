@@ -5,6 +5,10 @@ import {AudioService} from "../../../services/data-service/audio.service";
 import {Interval} from "../../../entity/Interval";
 import {WaveFormService} from "../../../services/vis-services/wave-form.service";
 import {SpectroService} from "../../../services/vis-services/spectro.service";
+import {ModelOutput, ModelOutputs, ModelOutputsInterface} from "../../../entity/ModelOutput";
+import {EisbergService} from "../../../services/vis-services/eisberg.service";
+import {IcebergComponent} from "../iceberg/iceberg.component";
+import {IcebergParams} from "../../../entity/Icebergparams";
 
 @Component({
   selector: 'app-canvasjs-cancer',
@@ -56,6 +60,21 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * @param file
    */
   audioDrawer(file: string): void {
+    /*
+    const modelOutputArray: ModelOutput[] = [{x1: 0.5,x2: 0.3, x3: -0.1, x4: -1},
+      {x1: 0.2,x2: 0.0, x3: 0.1, x4: -0.5},
+      {x1: -0.5,x2: 0.1, x3: -0.3, x4: 1},
+      {x1: 0.8,x2: -0.3, x3: -1, x4: 0.5}]
+    const bar: ModelOutputsInterface = { sampleRate: 44100,
+      durationInSec: 200,
+      startInSec: 0,
+      outputCount: 4,
+      modelOutputs: modelOutputArray };
+    let testModeloutpus =new ModelOutputs(bar)
+    console.log(testModeloutpus)
+
+     */
+
     this.audioSrc = file;
     this.audiService.getAudioBufferFromFile(file).then(
       buffer => {
@@ -144,8 +163,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
     // manually reset the graph and progress
     this.clearAndResetPlayed(this.playState.intervallId)
-
-
   }
 
   /**
@@ -158,17 +175,24 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     }
     // this is the main loop for the animation of the audioGraph
     this.playState.intervallId = setInterval( ()=>{
+
       // update the played units
       this.playState.playedUnits++;
       // redraw the graph
       this.waveFormService.timePlayed(this.playState.playedUnits, this.playState.unitsPerSeconds);
+
       // spectrogram
-      //is.audiService.getAnalyzerFrequ()
-      // let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
+      /*
+      this.twoSpec.remove()
+      this.twoSpec.update()
+      let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
+      this.twoSpec.add(group)
+      this.twoSpec.update()
+
+       */
 
       this.twoCanvas.update()
-      // this.twoSpec.add(group)
-      // this.twoSpec.update()
+
       // the interval is calculated by the units per seconds, this calculates the milliseconds
     }, 1000/this.playState.unitsPerSeconds)
 

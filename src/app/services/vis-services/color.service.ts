@@ -11,7 +11,7 @@ export class ColorService {
   sampleColor(value: number, color1: Color, color2: Color) : Color {
     // Convert x to the range 0-160
     let colorIndex = Math.round((value + 1) * 80);
-    console.log(value, color1, color2, colorIndex)
+    //console.log(value, color1, color2, colorIndex)
 
 
     // Define the two colors to interpolate between
@@ -23,7 +23,7 @@ export class ColorService {
     let g = Math.round((color2Vec[1] - color1Vec[1]) * (colorIndex/160) + color1Vec[1]);
     let b = Math.round((color2Vec[2] - color1Vec[2]) * (colorIndex/160) + color1Vec[2]);
 
-    console.log(color1Vec)
+    //console.log(color1Vec)
     return Color.fromRGB(r, g, b);
   }
 

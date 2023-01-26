@@ -42,12 +42,12 @@ export class AudioService {
     let context = new AudioContext()
 
     this.analyzer = context.createAnalyser()      //analyzer stuff
-    this.analyzer.fftSize = 2048                //size of our fft and /2 our frequency bin count
+    this.analyzer.fftSize = 512              //size of our fft and /2 our frequency bin count
 
     this.source = context.createBufferSource(); // creates a sound source
     this.source.buffer = buffer;                    // tell the source which sound to play
     this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-    //this.source.connect(this.analyzer)            //connect analyzer to our played sound
+    this.source.connect(this.analyzer)            //connect analyzer to our played sound
     this.source.start(0, offset, duration);
     this.sampleRate = context.sampleRate;
     this.source.buffer.getChannelData(0)
@@ -61,6 +61,8 @@ export class AudioService {
     console.log(truncatedToSquare)
   }
 
+ */
+
 
   getAnalyzerFrequ(){
     const bufferLength = this.analyzer!.frequencyBinCount //length of our array
@@ -70,7 +72,7 @@ export class AudioService {
     return data
   }
 
- */
+
 
 
 

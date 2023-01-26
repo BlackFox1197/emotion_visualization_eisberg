@@ -172,7 +172,7 @@ export class EisbergService {
     //min -1 max 1
     var value = (heightParam - min) / (max - min) * (maxHeight - minHeight) + minHeight;
     poly.translation.add(new Two.Vector(0,(poly.height-value)/4))
-    console.log(value)
+    //console.log(value)
     return value
   }
 }

@@ -5,6 +5,7 @@ import {Color} from "../../../entity/Color";
 import {Polygon} from "two.js/src/shapes/polygon";
 import {IcebergParams} from "../../../entity/Icebergparams";
 import {IceBergConfig} from "../../../entity/IceBergConfig";
+import {Easing, Tween} from "@tweenjs/tween.js";
 
 @Component({
   selector: 'app-iceberg',
@@ -51,6 +52,8 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
     this.twoCanvas = new Two(params).appendTo(elem);
 
     this.drawIceberg();
+
+    this.generateDiffIcebergs();
   }
 
   updateSkew(event: any): void{
@@ -89,4 +92,31 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
   }
 
+
+  private generateDiffIcebergs() {
+    let vergangenezeit = 1;
+      const tween = new Tween(this.eisberg).to({opacity: 0},1000).start()
+
+        /*const iceBergParams: IcebergParams = {
+          skew: Math.random(),
+          colorParam: Math.random(),
+          borderParam: 0,
+          height: Math.random(),
+          frequency: Math.random(),
+        };
+        this.updateIceberg(iceBergParams)
+
+         */
+    /*
+    const iceBergParams: IcebergParams = {
+      skew: 1,
+      colorParam: 1,
+      borderParam: 0,
+      height: 1,
+      frequency: 1,
+    };
+    this.updateIceberg(iceBergParams)
+
+     */
+  }
 }
