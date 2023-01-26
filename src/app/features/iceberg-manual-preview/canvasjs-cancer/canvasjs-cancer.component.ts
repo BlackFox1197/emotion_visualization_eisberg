@@ -152,7 +152,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * as this code segment does not need anything specific from the caller it has been outsourced
    * to follow the dry principle
    */
-  playSelect(){
+  playSelect(){ // TODO: The vis of the audio seems to drift off a litte after time, that has to be fixed
     if(this.playState.intervallId??0 != 0){
       this.clearAndResetPlayed(this.playState.intervallId)
     }

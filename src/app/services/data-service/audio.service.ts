@@ -47,15 +47,15 @@ export class AudioService {
     this.source = context.createBufferSource(); // creates a sound source
     this.source.buffer = buffer;                    // tell the source which sound to play
     this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-    this.source.connect(this.analyzer)            //connect analyzer to our played sound
+    //this.source.connect(this.analyzer)            //connect analyzer to our played sound
     this.source.start(0, offset, duration);
     this.sampleRate = context.sampleRate;
     this.source.buffer.getChannelData(0)
-    let channelData =buffer.getChannelData(0)
-    this.padChannelDataToSquared(channelData)
+    //let channelData =buffer.getChannelData(0)
+    //this.padChannelDataToSquared(channelData)
     //console.log(this.ft(buffer.getChannelData(0)))
   }
-
+/*
   padChannelDataToSquared(channelData: Float32Array){
     var truncatedToSquare = channelData.copyWithin(0,0, 1000)
     console.log(truncatedToSquare)
@@ -69,6 +69,8 @@ export class AudioService {
     console.log(bufferLength, new Uint8Array(bufferLength))
     return data
   }
+
+ */
 
 
 
