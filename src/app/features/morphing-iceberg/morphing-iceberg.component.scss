@@ -1,0 +1,16 @@
+$primary: var(--primary-color);
+$secondary: var(--secondary-color);
+
+#icebergMorph{
+  //float: right;
+  height: 400px;
+  width: 600px;
+}
+#background {
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 5%;
+  background: linear-gradient(90deg, $primary 0%, $secondary 100%);
+  z-index: 1;
+}
