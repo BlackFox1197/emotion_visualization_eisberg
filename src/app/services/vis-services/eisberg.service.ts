@@ -42,12 +42,34 @@ export class EisbergService {
     //circle.height = 300;
     poly.fill = gradLinB;
     poly.stroke = this.generateBorderColor(config.params.borderParam ?? 0, -1, 1 );
-    poly.linewidth = this.generateLineWidght(config.params.borderParam ?? 0, -1, 1);
+    //poly.linewidth = this.generateLineWidght(config.params.borderParam ?? 0, -1, 1);
+    poly.linewidth = 6;
     poly.height= this.generatePolyHeight(poly,config.params.height?? 0, -1, 1)
 
     return poly;
 
   }
+
+
+  public genStepComplexParams(params1:IcebergParams, params2:IcebergParams, elapsed:number): IcebergParams{
+    let mapper = (valNew: number, valOld: number) => (valNew*elapsed)-(valOld*(1-elapsed))
+    let params: IcebergParams ={
+      frequency: mapper(params2.frequency!, params1.frequency!),
+      colorParam: mapper(params2.colorParam!, params1.colorParam!),
+      borderParam: mapper(params2.borderParam!, params1.borderParam!)
+    }
+    return params;
+  }
+
+  public getGradFromParams(params: IcebergParams){
+    return  this.generateGradient(params.frequency ?? 0, this.cs.sampleColor(params.colorParam ?? 0, this.color1, this.color2));
+  }
+
+
+  public getBorderFromParams(params: IcebergParams){
+    return this.generateBorderColor(params.borderParam ?? 0, -1, 1 );
+  }
+
 
   updateIceberg(iceberg: Polygon, newParams: IcebergParams): void{
     if(newParams.skew != undefined || newParams.skew != null){
