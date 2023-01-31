@@ -19,7 +19,6 @@ export class ModelOutput implements ModelOutputInterface{
     this.x3 = parameter.x3;
     this.x4 = parameter.x4;
   }
-
 }
 
 export interface ModelOutputsInterface{
@@ -45,5 +44,4 @@ export class ModelOutputs implements ModelOutputsInterface{
     this.outputCount = parameter.outputCount;
     this.modelOutputs = parameter.modelOutputs ?? [];
   }
-
 }

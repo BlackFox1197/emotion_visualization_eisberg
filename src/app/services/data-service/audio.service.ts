@@ -63,7 +63,6 @@ export class AudioService {
 
  */
 
-
   getAnalyzerFrequ(){
     const bufferLength = this.analyzer!.frequencyBinCount //length of our array
     const data = new Uint8Array(bufferLength) // create new array with size equal to fftsize/2
@@ -71,10 +70,6 @@ export class AudioService {
     console.log(bufferLength, new Uint8Array(bufferLength))
     return data
   }
-
-
-
-
 
   stopSource(){
     if(this.source??0 != 0){
@@ -115,7 +110,6 @@ export class AudioService {
     }
     return filteredData;
   };
-
 
   generateFile(buffer: AudioBuffer){
   }

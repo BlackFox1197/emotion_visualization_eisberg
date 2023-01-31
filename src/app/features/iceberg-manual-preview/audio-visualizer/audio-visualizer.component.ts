@@ -33,7 +33,6 @@ export class AudioVisualizerComponent implements OnInit {
 
 
   ngOnInit(): void {
-
   }
 
   ngOnChanges(changes: SimpleChanges): void{

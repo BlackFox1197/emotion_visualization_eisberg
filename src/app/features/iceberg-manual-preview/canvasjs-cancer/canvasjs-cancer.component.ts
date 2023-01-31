@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import Two from "two.js";
 import {Line} from "two.js/src/shapes/line";
 import {AudioService} from "../../../services/data-service/audio.service";
@@ -16,6 +25,8 @@ import {IcebergParams} from "../../../entity/Icebergparams";
   styleUrls: ['./canvasjs-cancer.component.scss']
 })
 export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
+
+  @Output() playMorph: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   twoCanvas = new Two();
   twoSpec = new Two();
@@ -131,6 +142,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    *
    */
   play(){
+    this.playMorph.emit(true)
     let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
     if(this.waveFormService.selected){
       let startEnd = this.waveFormService.selectedInterval;
@@ -218,6 +230,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   pauseSelect(){
     //just to be sure we do not reset the graph
+    this.playMorph.emit(false)
     this.playState.paused = true;
     this.audiService.stopSource()
 
