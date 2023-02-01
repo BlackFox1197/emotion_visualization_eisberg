@@ -155,7 +155,8 @@ export class WaveFormService {
   }
 
   percentagePlayed(percentage: number){
-    let tillIndex = Math.floor(this.visData.waveGroup.children.length * percentage);
+    //TODO: changed this to ceil, instead floor works a little bit better but no 100% fix
+    let tillIndex = Math.ceil(this.visData.waveGroup.children.length * percentage);
     for(let i = 0; i<= tillIndex; i++){
       this.visData.waveGroup.children[i].stroke = "red"
     }

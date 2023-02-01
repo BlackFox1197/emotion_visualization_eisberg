@@ -19,14 +19,29 @@ import {EisbergService} from "../../../services/vis-services/eisberg.service";
 import {IcebergComponent} from "../iceberg/iceberg.component";
 import {IcebergParams} from "../../../entity/Icebergparams";
 
+export interface CCCOutputToMorph {
+  start: boolean;
+  restart: boolean;
+  selected: boolean;
+  currentSec: number
+}
+
 @Component({
   selector: 'app-canvasjs-cancer',
   templateUrl: './canvasjs-cancer.component.html',
   styleUrls: ['./canvasjs-cancer.component.scss']
 })
+
 export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
-  @Output() playMorph: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() playMorph: EventEmitter<CCCOutputToMorph> = new EventEmitter<CCCOutputToMorph>();
+
+  cccOutputToMorph: CCCOutputToMorph={
+    start: false,
+    restart: false,
+    selected: false,
+    currentSec: 0
+  }
 
   twoCanvas = new Two();
   twoSpec = new Two();
@@ -52,11 +67,9 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService) {
   }
 
-
   ngOnInit() {
     this.audioDrawer('/assets/test.mp3')
   }
-
 
   async evToFile(event: any) {
     const file: File = event.target.files[0];
@@ -110,8 +123,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     var spec = this.specDiv?.nativeElement
     this.twoCanvas = new Two(params).appendTo(elem);
     this.twoSpec = new Two(params).appendTo(spec)
-
-
   }
 
   mouseover(event: any) {
@@ -119,10 +130,11 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   @HostListener('document:keydown.escape', ['$event']) unzoom(event: KeyboardEvent) {
+    this.cccOutputToMorph.selected = false
+    this.playMorph.emit(this.cccOutputToMorph)
     this.stop();
     this.waveFormService.resetZoom(this.twoCanvas);
   }
-
 
   click(event: any) {
     this.stop();
@@ -130,10 +142,11 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     if(this.waveFormService.selectedInterval != undefined){
       this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
       this.playSelect();
+      this.cccOutputToMorph.currentSec= this.waveFormService.selectedInterval.start
+      this.cccOutputToMorph.selected = true
+      this.playMorph.emit(this.cccOutputToMorph)
     }
   }
-
-
 
   /** This function plays the current selection
    * it checks first, whether a small segment is selected,
@@ -142,7 +155,11 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    *
    */
   play(){
-    this.playMorph.emit(true)
+    this.cccOutputToMorph.restart = false
+    this.cccOutputToMorph.start= true
+    this.cccOutputToMorph.currentSec = this.playState.playedUnits/this.playState.unitsPerSeconds
+    this.playMorph.emit(this.cccOutputToMorph)
+
     let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
     if(this.waveFormService.selected){
       let startEnd = this.waveFormService.selectedInterval;
@@ -161,11 +178,12 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.playSelect();
   }
 
-
   /**
    * this stops the sound if there is some running
    */
   stop(){
+    this.cccOutputToMorph.restart = true
+    this.playMorph.emit(this.cccOutputToMorph)
     /** the stopped property is needed, because of the eventlistener that does listen on the ended event
     * but the ended event is also thrown when pausing!
     * but we do not need a reset every time
@@ -183,8 +201,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    */
   playSelect(){ // TODO: The vis of the audio seems to drift off a litte after time, that has to be fixed
     if(this.playState.intervallId??0 != 0){
-      this.clearAndResetPlayed(this.playState.intervallId)
-    }
+        this.clearAndResetPlayed(this.playState.intervallId)}
     // this is the main loop for the animation of the audioGraph
     this.playState.intervallId = setInterval( ()=>{
 
@@ -223,14 +240,16 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       }else {
         // the paused state is reset, as it should be a one time reset protection only
         // if not reset, the graph will stay colored
-        this.playState.paused = false;
+        //TODO: commented this shit out because it resets our waveColoring
+        //this.playState.paused = false;
       }
     })
   }
 
   pauseSelect(){
     //just to be sure we do not reset the graph
-    this.playMorph.emit(false)
+    this.cccOutputToMorph.start= false
+    this.playMorph.emit(this.cccOutputToMorph)
     this.playState.paused = true;
     this.audiService.stopSource()
 
@@ -238,13 +257,13 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
 
   clearAndResetPlayed(intervallId?: NodeJS.Timer){
-    clearInterval(intervallId)
-    this.waveFormService.resetPlayed(this.twoCanvas);
-    this.playState.playedUnits = 0;
+    //TODO:also checked here
+    if(!this.playState.paused){
+      clearInterval(intervallId)
+      this.waveFormService.resetPlayed(this.twoCanvas);
+      this.playState.playedUnits = 0;
+    }
   }
-
-
-
 }
 
 

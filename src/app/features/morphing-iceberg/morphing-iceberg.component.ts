@@ -8,6 +8,8 @@ import TWEEN from "@tweenjs/tween.js";
 import {EisbergService} from "../../services/vis-services/eisberg.service";
 import {ModelOutputs} from "../../entity/ModelOutput";
 import Two from "two.js";
+import {CCCOutputToMorph} from "../iceberg-manual-preview/canvasjs-cancer/canvasjs-cancer.component";
+import {delay} from "rxjs";
 
 @Component({
   selector: 'app-morphing-iceberg',
@@ -19,14 +21,24 @@ export class MorphingIcebergComponent implements OnInit {
 
   @Input() modelOutputs: ModelOutputs = {
     sampleRate: 44100,
-    durationInSec: 202,
+    durationInSec: 201.3,
     startInSec: 0,
     outputCount: 200,
     modelOutputs: [],
   }
-  //anim durations
-  tweenAnimDurationInMs = 500;
-  morphDurationInMs = 3000;
+
+  //output from ccc
+  cccOutputToMorph : CCCOutputToMorph = {
+    start: false,
+    restart:false,
+    selected: false,
+    currentSec: 0
+  }
+
+  //anim durations calculate from modeloutputs and outputcount
+  oneIcebergDurationInMs = this.modelOutputs.durationInSec/this.modelOutputs.outputCount*1000
+  tweenAnimDurationInMs = this.oneIcebergDurationInMs*0.2;
+  delayDurationInMs = this.oneIcebergDurationInMs*0.8;
 
   //two objects
   twoCanvas = new Two();
@@ -42,12 +54,10 @@ export class MorphingIcebergComponent implements OnInit {
   constructor(private es: EisbergService, private httpClient: HttpClient) { }
 
   ngOnInit(): void {
-
   }
 
   ngAfterViewInit(): void{
     var params = {fitted:true}
-
     var elem = this.myDiv?.nativeElement;
     this.twoCanvas = new Two(params).appendTo(elem)
     this.loadAssetsJson()
@@ -60,28 +70,15 @@ export class MorphingIcebergComponent implements OnInit {
     });
   }
 
-  //here we wait for canvasjscancercomp to know when to stop, start playing
-  startMorph(start: boolean){
-    if(start){
-      //remove previous icebergs
-      this.twoCanvas.clear()
-      this.morphNext()
-    }else {
-      //stop the tween
-      this.t1.stop()
-    }
-
-  }
-
   morphNext(){
     //generate the iceconfs
     let iceConfs = this.genIceConfs()
     let iceConfigOld = iceConfs[0]
     let iceConfigNew = iceConfs[1]
-    this.eisberg = this.es.generateEisberg(200, 200, 240, iceConfigOld)
+    this.eisberg = this.es.generateEisberg(200, 300, 240, iceConfigOld)
     this.twoCanvas.add(this.eisberg)
 
-    const iceNew = this.es.generateEisberg(200, 200, 240, iceConfigNew)
+    const iceNew = this.es.generateEisberg(200, 300, 240, iceConfigNew)
 
     this.morphIcebergToAnother(this.eisberg, iceNew, iceConfigOld.params, iceConfigNew.params)
   }
@@ -101,23 +98,59 @@ export class MorphingIcebergComponent implements OnInit {
         poly.stroke = thisObject.es.getBorderFromParams(currParams);
         return poly;
       }).onComplete(()=>{
+        poly.opacity=1
         this.eisberg.remove()
-        this.morphNext()}).delay(this.morphDurationInMs-this.tweenAnimDurationInMs).start()    //delay the animation
-
+        this.morphNext()})
+      .delay(this.delayDurationInMs-this.tweenAnimDurationInMs)
+      .start()  //delay the animation
     //bind the update function so play gets called
     this.twoCanvas.bind('update', function (){
       TWEEN.update();
     }).play()
   }
 
+  onPlayMorph($event: CCCOutputToMorph) {
+    if(this.cccOutputToMorph.currentSec!=0){
+      var delayAndIndex=this.calcCurrentIcebergIndex()
+      this.t1.delay(delayAndIndex[0])
+      this.counterJson = delayAndIndex[1]
+    }
+    this.cccOutputToMorph = $event
+    if(this.cccOutputToMorph.selected){
+      if(this.cccOutputToMorph.start){
+        console.log(this.cccOutputToMorph.currentSec)
+        this.twoCanvas.clear()
+        this.t1.stop()
+        this.morphNext()
+      }
+      this.t1.stop()
+    }else {
+      if (this.cccOutputToMorph.start && !this.cccOutputToMorph.restart) {
+        //remove previous icebergs
+        this.twoCanvas.clear()
+        this.morphNext()
+
+      } else {
+        if (!this.cccOutputToMorph.start) {
+          //stop the tween
+          this.t1.stop()
+        }
+        if (this.cccOutputToMorph.restart) {
+          //restart so reset counter to 0 and stop
+          this.t1.stop()
+          this.counterJson = 0;
+        }
+      }
+    }
+  }
   //generate the iceconfs and params from the jsons we got and pass them
   genIceConfs(){
     const iceBergParamsOld: IcebergParams = {
       skew: this.jsonArray[this.counterJson].x1,
       colorParam: this.jsonArray[this.counterJson].x2,
-      borderParam: 1,
       height: this.jsonArray[this.counterJson].x3,
       frequency: this.jsonArray[this.counterJson].x4,
+      borderParam: 1,
     };
 
     this.counterJson++;
@@ -143,5 +176,17 @@ export class MorphingIcebergComponent implements OnInit {
     };
 
     return [iceConfigOld, iceConfigNew]
+  }
+
+  //calulates the current index of our json TODO: the lefttime for delaying the tween needs to be calculated properly
+  calcCurrentIcebergIndex(){
+    var indexFloat =this.secToIceberg()
+    var leftTimeNextIce = Math.ceil(indexFloat)-indexFloat
+    return [leftTimeNextIce, Math.ceil(indexFloat)]
+  }
+
+  //calculate our current iceberg index as float
+  secToIceberg(){
+    return this.cccOutputToMorph.currentSec/this.modelOutputs.durationInSec*this.modelOutputs.outputCount
   }
 }

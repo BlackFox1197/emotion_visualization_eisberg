@@ -30,6 +30,7 @@ export class AudioService {
 
 
   generateDataPoints(buffer: AudioBuffer, sampleCount: number): Array<any>{
+    console.log(buffer.duration)
     return this._normalizeData(this._filterData(buffer, sampleCount));
   }
 
