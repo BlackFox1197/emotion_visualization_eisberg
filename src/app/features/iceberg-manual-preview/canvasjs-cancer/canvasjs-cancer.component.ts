@@ -130,8 +130,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   @HostListener('document:keydown.escape', ['$event']) unzoom(event: KeyboardEvent) {
-    this.cccOutputToMorph.selected = false
-    this.playMorph.emit(this.cccOutputToMorph)
+    this.setCCCParamsAndEmit(false, false, true, undefined)
     this.stop();
     this.waveFormService.resetZoom(this.twoCanvas);
   }
@@ -142,9 +141,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     if(this.waveFormService.selectedInterval != undefined){
       this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
       this.playSelect();
-      this.cccOutputToMorph.currentSec= this.waveFormService.selectedInterval.start
-      this.cccOutputToMorph.selected = true
-      this.playMorph.emit(this.cccOutputToMorph)
+      this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval.start)
     }
   }
 
@@ -155,10 +152,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    *
    */
   play(){
-    this.cccOutputToMorph.restart = false
-    this.cccOutputToMorph.start= true
-    this.cccOutputToMorph.currentSec = this.playState.playedUnits/this.playState.unitsPerSeconds
-    this.playMorph.emit(this.cccOutputToMorph)
+    this.setCCCParamsAndEmit(true, true, undefined, this.playState.playedUnits/this.playState.unitsPerSeconds)
 
     let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
     if(this.waveFormService.selected){
@@ -182,8 +176,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * this stops the sound if there is some running
    */
   stop(){
-    this.cccOutputToMorph.restart = true
-    this.playMorph.emit(this.cccOutputToMorph)
+    this.setCCCParamsAndEmit(undefined,true )
     /** the stopped property is needed, because of the eventlistener that does listen on the ended event
     * but the ended event is also thrown when pausing!
     * but we do not need a reset every time
@@ -232,6 +225,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.audiService.source!.addEventListener("ended", event => {
       clearInterval(localId);
       if(!this.playState.paused){
+        this.setCCCParamsAndEmit(false)
         // reset the played units
         this.playState.playedUnits = 0;
         //reset the graph
@@ -248,8 +242,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   pauseSelect(){
     //just to be sure we do not reset the graph
-    this.cccOutputToMorph.start= false
-    this.playMorph.emit(this.cccOutputToMorph)
+    this.setCCCParamsAndEmit(false)
     this.playState.paused = true;
     this.audiService.stopSource()
 
@@ -263,6 +256,14 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       this.waveFormService.resetPlayed(this.twoCanvas);
       this.playState.playedUnits = 0;
     }
+  }
+
+  setCCCParamsAndEmit(start?:boolean, restart?:boolean, selected?:boolean, currentSec?: number ){
+    this.cccOutputToMorph.start=start??this.cccOutputToMorph.start;
+    this.cccOutputToMorph.restart=restart??this.cccOutputToMorph.restart;
+    this.cccOutputToMorph.selected=selected??this.cccOutputToMorph.selected;
+    this.cccOutputToMorph.currentSec=currentSec??this.cccOutputToMorph.currentSec;
+    this.playMorph.emit(this.cccOutputToMorph)
   }
 }
 

@@ -110,37 +110,25 @@ export class MorphingIcebergComponent implements OnInit {
   }
 
   onPlayMorph($event: CCCOutputToMorph) {
+    this.cccOutputToMorph = $event
+    console.log(this.cccOutputToMorph)
+
     if(this.cccOutputToMorph.currentSec!=0){
       var delayAndIndex=this.calcCurrentIcebergIndex()
       this.t1.delay(delayAndIndex[0])
       this.counterJson = delayAndIndex[1]
     }
-    this.cccOutputToMorph = $event
-    if(this.cccOutputToMorph.selected){
-      if(this.cccOutputToMorph.start){
-        console.log(this.cccOutputToMorph.currentSec)
-        this.twoCanvas.clear()
+    if(this.cccOutputToMorph.start){
+      this.twoCanvas.clear()
+      this.t1.stop()
+      this.morphNext()
+    }else{
+      if(this.cccOutputToMorph.restart){
+        //restart so reset counter to 0 and stop
         this.t1.stop()
-        this.morphNext()
+        this.counterJson = 0;
       }
       this.t1.stop()
-    }else {
-      if (this.cccOutputToMorph.start && !this.cccOutputToMorph.restart) {
-        //remove previous icebergs
-        this.twoCanvas.clear()
-        this.morphNext()
-
-      } else {
-        if (!this.cccOutputToMorph.start) {
-          //stop the tween
-          this.t1.stop()
-        }
-        if (this.cccOutputToMorph.restart) {
-          //restart so reset counter to 0 and stop
-          this.t1.stop()
-          this.counterJson = 0;
-        }
-      }
     }
   }
   //generate the iceconfs and params from the jsons we got and pass them
