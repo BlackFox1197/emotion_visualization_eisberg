@@ -8,6 +8,12 @@
 
   <button mat-icon-button (click)="pauseSelect()"><mat-icon>pause</mat-icon></button>
 
+  <mat-form-field appearance="fill">
+    <mat-label>Choose duration</mat-label>
+    <mat-select [(value)]="selectedDuration" (selectionChange)="onChange(selectedDuration)">
+      <mat-option [value]="duration.value" *ngFor="let duration of durations">{{duration.viewValue}}</mat-option>
+    </mat-select>
+  </mat-form-field>
   <div
     (mousemove)="mouseover($event)"
        (click)="click($event)"

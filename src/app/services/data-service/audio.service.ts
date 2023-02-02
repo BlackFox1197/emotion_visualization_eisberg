@@ -24,7 +24,9 @@ export class AudioService {
 
     return fetch(fileURL)
       .then(response => response.arrayBuffer())
-      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer));
+      .then(arrayBuffer =>
+        audioContext.decodeAudioData(arrayBuffer)
+      );
       //.then(audioBuffer => this.normalizeData(this.filterData(audioBuffer)));
   }
 
@@ -38,31 +40,22 @@ export class AudioService {
     return buffer.duration;
   }
 
-  playSelection(buffer: AudioBuffer, offset: number, duration?: number){
-    this.stopSource();
-    let context = new AudioContext()
+  playSelection(buffer: AudioBuffer, offset: number, duration?: number) {
+      this.stopSource();
+      let context = new AudioContext()
 
-    this.analyzer = context.createAnalyser()      //analyzer stuff
-    this.analyzer.fftSize = 512              //size of our fft and /2 our frequency bin count
+      //this.analyzer = context.createAnalyser()      //analyzer stuff
+      //this.analyzer.fftSize = 512              //size of our fft and /2 our frequency bin count
 
-    this.source = context.createBufferSource(); // creates a sound source
-    this.source.buffer = buffer;                    // tell the source which sound to play
-    this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-    this.source.connect(this.analyzer)            //connect analyzer to our played sound
-    this.source.start(0, offset, duration);
-    this.sampleRate = context.sampleRate;
-    this.source.buffer.getChannelData(0)
-    //let channelData =buffer.getChannelData(0)
-    //this.padChannelDataToSquared(channelData)
-    //console.log(this.ft(buffer.getChannelData(0)))
+      this.source = context.createBufferSource(); // creates a sound source
+      this.source.buffer = buffer;                    // tell the source which sound to play
+      this.source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+      //this.source.connect(this.analyzer)            //connect analyzer to our played sound
+      this.source.start(0, offset, duration);
+      this.sampleRate = context.sampleRate;
+      this.source.buffer.getChannelData(0)
+
   }
-/*
-  padChannelDataToSquared(channelData: Float32Array){
-    var truncatedToSquare = channelData.copyWithin(0,0, 1000)
-    console.log(truncatedToSquare)
-  }
-
- */
 
   getAnalyzerFrequ(){
     const bufferLength = this.analyzer!.frequencyBinCount //length of our array

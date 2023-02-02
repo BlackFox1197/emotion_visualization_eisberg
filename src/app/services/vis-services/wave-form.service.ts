@@ -3,6 +3,9 @@ import {Interval} from "../../entity/Interval";
 import {Line} from "two.js/src/shapes/line";
 import {Group} from "two.js/src/group";
 import Two from "two.js";
+import {Constants} from "two.js/src/constants";
+import {Vector} from "two.js/src/vector";
+
 
 @Injectable({
   providedIn: 'root'
@@ -39,17 +42,12 @@ export class WaveFormService {
   }
 
 
-
   init(samplesPerSecons: number, originalData: Array<number>, zoomPercentage: number){
     this.zoomPercentage = zoomPercentage;
     this.samplesPerSecond = samplesPerSecons;
     this.originalData = originalData;
     this.currentData = originalData;
   }
-
-
-
-
 
   drawZoomedWave(posX: number, canvas: Two) {
     // var normalizedDataLeft = this.convPixToDataPoint(leftX - dist )
@@ -68,6 +66,18 @@ export class WaveFormService {
     this.zoomed = true
   }
 
+  //redraw the fucking intervall for switching the duration
+  redraw(intervallSecs: number, two: Two){
+    if(this.zoomed){
+      two.remove(this.visData.interval!.group)
+      this.intervallSeconds = intervallSecs
+
+      this.regenerateIntervals();
+      this.visData.interval?.setPositionAndIntervalSize(this.visData.interval?.getVertlinePosition(), this.visData.interval?.intervallSize)
+      two.add(this.visData.interval!.group)
+      two.update()
+    }
+  }
 
   /**
    * Draws generic waveform
@@ -98,13 +108,7 @@ export class WaveFormService {
       this.visData.waveGroup.add(line)
     }
 
-    this.visData.interval?.regenerate({width: this.width},
-      this.convSecToPix(this.intervallSeconds, this.width, this.currentData.length / this.samplesPerSecond));
-
-
-    this.visData.intervalzoomer?.regenerate(
-      {width: this.width},
-      this.convSecToPix(this.currentData.length/this.samplesPerSecond*this.zoomPercentage, this.width, this.currentData.length / this.samplesPerSecond))
+    this.regenerateIntervals()
 
     two.add(this.visData.waveGroup);
     if(zoomed){
@@ -132,6 +136,14 @@ export class WaveFormService {
     //this.addZUI()
     two.update()
 
+  }
+
+  regenerateIntervals(){
+    this.visData.interval?.regenerate({width: this.width},
+      this.convSecToPix(this.intervallSeconds, this.width, this.currentData.length / this.samplesPerSecond));
+    this.visData.intervalzoomer?.regenerate(
+      {width: this.width},
+      this.convSecToPix(this.currentData.length/this.samplesPerSecond*this.zoomPercentage, this.width, this.currentData.length / this.samplesPerSecond))
   }
 
 

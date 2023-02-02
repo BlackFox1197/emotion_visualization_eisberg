@@ -17,6 +17,7 @@ export class BackendService {
 
   modelOutputs: ModelOutputs | undefined
   routes: Routes;
+  jsonArray: any;
 
   constructor(private http: HttpClient) {
     this.routes = new Routes();
@@ -52,5 +53,15 @@ export class BackendService {
       modelOutputs: data.modelOutputs,
     })
     return <ModelOutputs>this.modelOutputs;
+  }
+
+  //load our debug json
+  public loadAssetsJson(): Observable<any>{
+
+    return new Observable<any>( subscriber =>
+      this.http.get('./assets/modelOutputs.json').subscribe(
+        (response)=>{
+              subscriber.next(response)
+        }))
   }
 }

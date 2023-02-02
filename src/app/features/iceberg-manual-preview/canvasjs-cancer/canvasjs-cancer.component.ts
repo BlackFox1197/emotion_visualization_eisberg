@@ -24,6 +24,12 @@ export interface CCCOutputToMorph {
   restart: boolean;
   selected: boolean;
   currentSec: number
+  audioBuffered: boolean;
+}
+
+export interface DurationInSec{
+  value: number,
+  viewValue: string,
 }
 
 @Component({
@@ -34,13 +40,22 @@ export interface CCCOutputToMorph {
 
 export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
+  durations: DurationInSec[]=[{value: 0.03, viewValue:"30ms"},
+    {value: 1, viewValue:"1sec"},
+    {value: 3, viewValue:"3sec"},
+    {value: 10, viewValue:"10sec"},]
+
+  selectedDuration = this.durations[2].value
+
+  @Output() durationSelected: EventEmitter<number> = new EventEmitter<number>();
   @Output() playMorph: EventEmitter<CCCOutputToMorph> = new EventEmitter<CCCOutputToMorph>();
 
   cccOutputToMorph: CCCOutputToMorph={
     start: false,
     restart: false,
     selected: false,
-    currentSec: 0
+    currentSec: 0,
+    audioBuffered: false,
   }
 
   twoCanvas = new Two();
@@ -48,7 +63,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   //the percentage zoomed by the zoomer intervall
   zoomdistance = 0.5;
-
 
   @ViewChild('wavTwoJs') myDiv?: ElementRef;
   @ViewChild('specTest') specDiv?: ElementRef;
@@ -61,14 +75,19 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   audioSrc = '';
 
 
-  playState = new PLayState();
 
+  playState = new PLayState();
 
   constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService) {
   }
 
   ngOnInit() {
     this.audioDrawer('/assets/test.mp3')
+  }
+
+  onChange(value: any) {
+    console.log(value)
+    this.waveFormService.redraw(value, this.twoCanvas)
   }
 
   async evToFile(event: any) {
@@ -96,13 +115,14 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       modelOutputs: modelOutputArray };
     let testModeloutpus =new ModelOutputs(bar)
     console.log(testModeloutpus)
-
      */
 
     this.audioSrc = file;
     this.audiService.getAudioBufferFromFile(file).then(
       buffer => {
         this.audioBuffer = buffer;
+        this.setCCCParamsAndEmit(undefined,undefined, undefined, undefined)
+        console.log(this.cccOutputToMorph)
         this.normalizedData =this.audiService.generateDataPoints(buffer, this.sampleCount);
         let audioLengthInSec = this.audiService.calculateAudioLenght(buffer);
         let samplesPerSecond = this.sampleCount / audioLengthInSec;
@@ -130,7 +150,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   @HostListener('document:keydown.escape', ['$event']) unzoom(event: KeyboardEvent) {
-    this.setCCCParamsAndEmit(false, false, true, undefined)
+    this.setCCCParamsAndEmit(false, false, false)
     this.stop();
     this.waveFormService.resetZoom(this.twoCanvas);
   }
@@ -152,31 +172,37 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    *
    */
   play(){
-    this.setCCCParamsAndEmit(true, true, undefined, this.playState.playedUnits/this.playState.unitsPerSeconds)
-
-    let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
-    if(this.waveFormService.selected){
-      let startEnd = this.waveFormService.selectedInterval;
-      this.audiService.playSelection(this.audioBuffer!, startEnd!.start + playedSecs, startEnd!.end - (startEnd!.start + playedSecs))
-    }
-    else{
-      if(this.waveFormService.zoomed){
-        let start = this.waveFormService.currentZoomedOffsetInSec;
-        let end = this.waveFormService.currentZoomedOffsetInSec + (this.zoomdistance * this.waveFormService.originalData.length /this.waveFormService.samplesPerSecond)
-        this.audiService.playSelection(this.audioBuffer!, start + playedSecs, end - (start + playedSecs))
+    if(this.audioBuffer!=undefined){
+      let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
+      if(this.waveFormService.selected){
+        this.setCCCParamsAndEmit(true, true, true, this.playState.playedUnits/this.playState.unitsPerSeconds)
+        let startEnd = this.waveFormService.selectedInterval;
+        this.audiService.playSelection(this.audioBuffer!, startEnd!.start + playedSecs, startEnd!.end - (startEnd!.start + playedSecs))
       }
       else{
-       this.audiService.playSelection(this.audioBuffer!, playedSecs, undefined)
+        if(this.waveFormService.zoomed){
+          this.setCCCParamsAndEmit(true, true, undefined, this.playState.playedUnits/this.playState.unitsPerSeconds)
+          let start = this.waveFormService.currentZoomedOffsetInSec;
+          let end = this.waveFormService.currentZoomedOffsetInSec + (this.zoomdistance * this.waveFormService.originalData.length /this.waveFormService.samplesPerSecond)
+          this.audiService.playSelection(this.audioBuffer!, start + playedSecs, end - (start + playedSecs))
+        }
+        else{
+
+          this.audiService.playSelection(this.audioBuffer!, playedSecs, undefined)
+
+        }
       }
+      this.setCCCParamsAndEmit(true, true, undefined, this.playState.playedUnits/this.playState.unitsPerSeconds)
+      this.playSelect();
     }
-    this.playSelect();
+
   }
 
   /**
    * this stops the sound if there is some running
    */
   stop(){
-    this.setCCCParamsAndEmit(undefined,true )
+    this.setCCCParamsAndEmit(false,true)
     /** the stopped property is needed, because of the eventlistener that does listen on the ended event
     * but the ended event is also thrown when pausing!
     * but we do not need a reset every time
@@ -193,51 +219,55 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * to follow the dry principle
    */
   playSelect(){ // TODO: The vis of the audio seems to drift off a litte after time, that has to be fixed
-    if(this.playState.intervallId??0 != 0){
+    if(this.audioBuffer!=undefined){
+      if(this.playState.intervallId??0 != 0){
         this.clearAndResetPlayed(this.playState.intervallId)}
-    // this is the main loop for the animation of the audioGraph
-    this.playState.intervallId = setInterval( ()=>{
+      // this is the main loop for the animation of the audioGraph
+      this.playState.intervallId = setInterval( ()=>{
 
-      // update the played units
-      this.playState.playedUnits++;
-      // redraw the graph
-      this.waveFormService.timePlayed(this.playState.playedUnits, this.playState.unitsPerSeconds);
+        // update the played units
+        this.playState.playedUnits++;
+        // redraw the graph
+        this.waveFormService.timePlayed(this.playState.playedUnits, this.playState.unitsPerSeconds);
 
-      // spectrogram
-      /*
-      this.twoSpec.remove()
-      this.twoSpec.update()
-      let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
-      this.twoSpec.add(group)
-      this.twoSpec.update()
+        // spectrogram
+        /*
+        this.twoSpec.remove()
+        this.twoSpec.update()
+        let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
+        this.twoSpec.add(group)
+        this.twoSpec.update()
 
-       */
+         */
 
-      this.twoCanvas.update()
+        this.twoCanvas.update()
 
-      // the interval is calculated by the units per seconds, this calculates the milliseconds
-    }, 1000/this.playState.unitsPerSeconds)
+        // the interval is calculated by the units per seconds, this calculates the milliseconds
+      }, 1000/this.playState.unitsPerSeconds)
 
-    // needed to end local loop and not the next loop or any other
-    let localId = this.playState.intervallId;
+      // needed to end local loop and not the next loop or any other
+      let localId = this.playState.intervallId;
 
-    // is thrown when the audioSource ends, it is stopped or paused ('cause internally that's a stop)
-    this.audiService.source!.addEventListener("ended", event => {
-      clearInterval(localId);
-      if(!this.playState.paused){
-        this.setCCCParamsAndEmit(false)
-        // reset the played units
-        this.playState.playedUnits = 0;
-        //reset the graph
-        this.waveFormService.resetPlayed(this.twoCanvas);
-        // reset to false, in case next time its a pause
-      }else {
-        // the paused state is reset, as it should be a one time reset protection only
-        // if not reset, the graph will stay colored
-        //TODO: commented this shit out because it resets our waveColoring
-        //this.playState.paused = false;
-      }
-    })
+      // is thrown when the audioSource ends, it is stopped or paused ('cause internally that's a stop)
+      this.audiService.source!.addEventListener("ended", event => {
+        clearInterval(localId);
+        if(!this.playState.paused){
+          this.setCCCParamsAndEmit(false)
+          // reset the played units
+          this.playState.playedUnits = 0;
+          //reset the graph
+          this.waveFormService.resetPlayed(this.twoCanvas);
+          // reset to false, in case next time its a pause
+        }else {
+          this.setCCCParamsAndEmit(false)
+          // the paused state is reset, as it should be a one time reset protection only
+          // if not reset, the graph will stay colored
+          //TODO: commented this shit out because it resets our waveColoring
+          //this.playState.paused = false;
+        }
+      })
+    }
+
   }
 
   pauseSelect(){
@@ -258,11 +288,13 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setCCCParamsAndEmit(start?:boolean, restart?:boolean, selected?:boolean, currentSec?: number ){
+  setCCCParamsAndEmit(start?:boolean, restart?:boolean, selected?:boolean, currentSec?: number){
     this.cccOutputToMorph.start=start??this.cccOutputToMorph.start;
     this.cccOutputToMorph.restart=restart??this.cccOutputToMorph.restart;
     this.cccOutputToMorph.selected=selected??this.cccOutputToMorph.selected;
     this.cccOutputToMorph.currentSec=currentSec??this.cccOutputToMorph.currentSec;
+    this.cccOutputToMorph.audioBuffered= (this.audioBuffer!=undefined)
+    console.log(this.cccOutputToMorph)
     this.playMorph.emit(this.cccOutputToMorph)
   }
 }

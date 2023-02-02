@@ -15,6 +15,7 @@ import { AudioVisualizerComponent } from './features/iceberg-manual-preview/audi
 import { CanvasjsCancerComponent } from './features/iceberg-manual-preview/canvasjs-cancer/canvasjs-cancer.component';
 import { HttpClientModule} from "@angular/common/http";
 import { MorphingIcebergComponent } from './features/morphing-iceberg/morphing-iceberg.component';
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -26,16 +27,17 @@ import { MorphingIcebergComponent } from './features/morphing-iceberg/morphing-i
     CanvasjsCancerComponent,
     MorphingIcebergComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    FormsModule,
-    HttpClientModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatInputModule,
+        MatIconModule,
+        MatButtonModule,
+        FormsModule,
+        HttpClientModule,
+        MatSelectModule,
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })
