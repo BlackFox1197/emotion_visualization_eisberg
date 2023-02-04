@@ -9,13 +9,13 @@ import {ModelOutput} from "../../entity/ModelOutput";
 })
 export class MorphService {
 
-  constructor() { }
+  constructor() {}
 
   //calulates the current index of our json TODO: the lefttime for delaying the tween needs to be calculated properly
   calcCurrentIcebergIndex(currentSec: number, durationInSec: number, outputCount: number, oneIcebergDuration: number){
-    var indexFloat =this.secToIceberg(currentSec, durationInSec, outputCount)
+    var indexFloat = this.secToIceberg(currentSec, durationInSec, outputCount);
     var leftTimeNextIce = (Math.ceil(indexFloat)-indexFloat)*oneIcebergDuration/1000*durationInSec/currentSec;
-    return [leftTimeNextIce* oneIcebergDuration/1000*durationInSec/currentSec, Math.ceil(indexFloat)]
+    return [leftTimeNextIce* oneIcebergDuration/1000*durationInSec/currentSec, Math.ceil(indexFloat)];
   }
 
   //calculate our current iceberg index as float

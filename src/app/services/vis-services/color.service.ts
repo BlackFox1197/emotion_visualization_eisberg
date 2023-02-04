@@ -6,7 +6,7 @@ import {Color} from "../../entity/Color";
 })
 export class ColorService {
 
-  constructor() { }
+  constructor() {}
 
   sampleColor(value: number, color1: Color, color2: Color) : Color {
     // Convert x to the range 0-160

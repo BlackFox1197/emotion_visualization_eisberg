@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {IcebergParams} from "../../entity/Icebergparams";
 import {IceBergConfig} from "../../entity/IceBergConfig";
@@ -23,8 +23,10 @@ export interface DurationsInMs{
   templateUrl: './morphing-iceberg.component.html',
   styleUrls: ['./morphing-iceberg.component.scss']
 })
+
 export class MorphingIcebergComponent implements OnInit {
   @ViewChild('iceberg') myDiv?: ElementRef;
+  @Output() data: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() modelOutputs: ModelOutputs = {
     sampleRate: 44100,
@@ -40,7 +42,7 @@ export class MorphingIcebergComponent implements OnInit {
     restart:false,
     selected: false,
     currentSec: 0,
-    audioBuffered: false,
+    audioBuffered: false
   }
 
   //anim durations calculate from modeloutputs and outputcount
@@ -62,10 +64,9 @@ export class MorphingIcebergComponent implements OnInit {
   //the tween animation as variable so we can stop it
   public t1 = new TWEEN.Tween(this.eisberg)
 
-  constructor(private es: EisbergService, private httpClient: HttpClient, private backend: BackendService, private  morph: MorphService) { }
+  constructor(private es: EisbergService, private httpClient: HttpClient, private backend: BackendService, private  morph: MorphService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void{
     var params = {fitted:true}
@@ -75,6 +76,7 @@ export class MorphingIcebergComponent implements OnInit {
       (next) => {
         this.jsonArray = next
         this.isLoadin = false;
+        this.data.emit(this.jsonArray)
       }
     )
   }

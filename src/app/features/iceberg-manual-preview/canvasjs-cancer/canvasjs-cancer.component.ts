@@ -74,8 +74,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   normalizedDataZoomed: Array<number> = [];
   audioSrc = '';
 
-
-
   playState = new PLayState();
 
   constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService) {
@@ -86,7 +84,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   onChange(value: any) {
-    console.log(value)
     this.waveFormService.redraw(value, this.twoCanvas)
   }
 
@@ -113,8 +110,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       startInSec: 0,
       outputCount: 4,
       modelOutputs: modelOutputArray };
-    let testModeloutpus =new ModelOutputs(bar)
-    console.log(testModeloutpus)
      */
 
     this.audioSrc = file;

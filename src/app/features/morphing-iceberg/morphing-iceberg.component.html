@@ -1,5 +1,13 @@
-<div #iceberg id="icebergMorph"></div>
+<div style="display: table;">
+  <div style="display: table-row">
+    <div style="display: table-cell">
+      <div #iceberg id="icebergMorph"></div>
+    </div>
+    <app-iceberg-overview [jsonArray]="data" > style="display: table-cell"</app-iceberg-overview>
+  </div>
+</div>
 <div id="background"></div>
+
 <br>
 <app-canvasjs-cancer (playMorph)="onPlayMorph($event)" ></app-canvasjs-cancer>
 

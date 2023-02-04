@@ -19,6 +19,8 @@ export class BackendService {
   routes: Routes;
   jsonArray: any;
 
+  isLoadin = true;
+
   constructor(private http: HttpClient) {
     this.routes = new Routes();
   }
@@ -41,6 +43,16 @@ export class BackendService {
   //http request
   public getModelOutputsHttp(){
     return this.http.get<ModelOutputs>(this.routes.modelOutputsRoute)
+  }
+
+  public getModelOutputsForSelected (startInSec: number, stopInSec: number, durationInSec: number){
+    this.http.get<ModelOutputs>(this.routes.modelOutputsRoute+"/"+startInSec+"/"+stopInSec+"/"+durationInSec)
+      .subscribe((next) => {
+        this.modelOutputs = next;
+        this.isLoadin = false;
+      }
+    )
+    return this.modelOutputs
   }
 
   //get the modeloutputs

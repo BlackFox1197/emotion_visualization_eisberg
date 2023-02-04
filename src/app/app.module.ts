@@ -16,6 +16,7 @@ import { CanvasjsCancerComponent } from './features/iceberg-manual-preview/canva
 import { HttpClientModule} from "@angular/common/http";
 import { MorphingIcebergComponent } from './features/morphing-iceberg/morphing-iceberg.component';
 import {MatSelectModule} from "@angular/material/select";
+import { IcebergOverviewComponent } from './features/iceberg-overview/iceberg-overview.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {MatSelectModule} from "@angular/material/select";
     InputsComponent,
     AudioVisualizerComponent,
     CanvasjsCancerComponent,
-    MorphingIcebergComponent
+    MorphingIcebergComponent,
+    IcebergOverviewComponent
   ],
     imports: [
         BrowserModule,

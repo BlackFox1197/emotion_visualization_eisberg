@@ -15,9 +15,7 @@ export class WaveFormService {
   constructor() {
     this.visData.horizLine.linewidth = 1
     this.visData.horizLine.fill = "#FFFFFF"
-
   }
-
 
   width = 0;
   zoomed = false;
@@ -76,6 +74,8 @@ export class WaveFormService {
       this.visData.interval?.setPositionAndIntervalSize(this.visData.interval?.getVertlinePosition(), this.visData.interval?.intervallSize)
       two.add(this.visData.interval!.group)
       two.update()
+    }else {
+      this.intervallSeconds=intervallSecs
     }
   }
 
@@ -118,24 +118,9 @@ export class WaveFormService {
     else{
       two.remove(this.visData.interval!.group);
       two.add(this.visData.intervalzoomer!.group);
-
     }
 
-    //add the linegroup to the scene
-
-
-
-    // let countown = this.visData.waveGroup.children.length;
-    // two.bind("update", () => {
-    //
-    //   let index  = this.visData.waveGroup.children.length - countown;
-    //   countown -= 1;
-    //   this.visData.waveGroup.children[index].stroke = "red"
-    // })
-
-    //this.addZUI()
     two.update()
-
   }
 
   regenerateIntervals(){
@@ -145,7 +130,6 @@ export class WaveFormService {
       {width: this.width},
       this.convSecToPix(this.currentData.length/this.samplesPerSecond*this.zoomPercentage, this.width, this.currentData.length / this.samplesPerSecond))
   }
-
 
   // #########################################################################################
   // ############################################ playing ###########################
