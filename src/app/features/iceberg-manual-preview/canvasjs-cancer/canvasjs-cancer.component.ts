@@ -69,6 +69,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   sampleCount = 3000;
   audioBuffer?: AudioBuffer;
+  sec= "0";
 
   normalizedData: Array<number> = [];
   normalizedDataZoomed: Array<number> = [];
@@ -117,7 +118,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       buffer => {
         this.audioBuffer = buffer;
         this.setCCCParamsAndEmit(undefined,undefined, undefined, undefined)
-        console.log(this.cccOutputToMorph)
+        //console.log(this.cccOutputToMorph)
         this.normalizedData =this.audiService.generateDataPoints(buffer, this.sampleCount);
         let audioLengthInSec = this.audiService.calculateAudioLenght(buffer);
         let samplesPerSecond = this.sampleCount / audioLengthInSec;
@@ -156,6 +157,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     if(this.waveFormService.selectedInterval != undefined){
       this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
       this.playSelect();
+      this.sec=this.waveFormService.selectedInterval.start.toFixed(1)
       this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval.start)
     }
   }
@@ -289,7 +291,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.cccOutputToMorph.selected=selected??this.cccOutputToMorph.selected;
     this.cccOutputToMorph.currentSec=currentSec??this.cccOutputToMorph.currentSec;
     this.cccOutputToMorph.audioBuffered= (this.audioBuffer!=undefined)
-    console.log(this.cccOutputToMorph)
+    //console.log(this.cccOutputToMorph)
     this.playMorph.emit(this.cccOutputToMorph)
   }
 }

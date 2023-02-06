@@ -17,6 +17,7 @@ import { HttpClientModule} from "@angular/common/http";
 import { MorphingIcebergComponent } from './features/morphing-iceberg/morphing-iceberg.component';
 import {MatSelectModule} from "@angular/material/select";
 import { IcebergOverviewComponent } from './features/iceberg-overview/iceberg-overview.component';
+import {ScrollingModule} from "@angular/cdk/scrolling";
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { IcebergOverviewComponent } from './features/iceberg-overview/iceberg-ov
         FormsModule,
         HttpClientModule,
         MatSelectModule,
+        ScrollingModule,
     ],
   providers: [],
   bootstrap: [AppComponent]

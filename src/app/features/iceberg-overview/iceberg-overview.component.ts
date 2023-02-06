@@ -1,29 +1,92 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CCCOutputToMorph} from "../iceberg-manual-preview/canvasjs-cancer/canvasjs-cancer.component";
-import {delay} from "rxjs";
+import {
+  ChangeDetectionStrategy,
+  Component, ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
+import {EisbergService} from "../../services/vis-services/eisberg.service";
+import Two from "two.js";
+import {IcebergParams} from "../../entity/Icebergparams";
+import {IceBergConfig} from "../../entity/IceBergConfig";
+import {Color} from "../../entity/Color";
+import {Vector} from "two.js/src/vector";
+import {ColorService} from "../../services/vis-services/color.service";
+import {LinearGradient} from "two.js/src/effects/linear-gradient";
 
 @Component({
   selector: 'app-iceberg-overview',
   templateUrl: './iceberg-overview.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./iceberg-overview.component.scss']
 })
-export class IcebergOverviewComponent implements OnInit {
+export class IcebergOverviewComponent implements OnChanges {
+  @ViewChild('icebergOverview') myDiv?: ElementRef;
+  @Input('jsonArray') jsonArray: any
 
-  @Input() jsonArray: any;
-  @Output() onLoadedD: EventEmitter<Array<any>> = new EventEmitter<Array<any>>();
+  //two objects
+  twoCanvas = new Two();
+  icebergGroup = new Two.Group()
+  width=1300
 
-  constructor() { }
+  constructor(private es: EisbergService, private cs: ColorService) { }
 
   ngOnInit(): void {
-    console.log(this.jsonArray)
   }
 
-  ngAfterViewInit(): void {
-    console.log(this.jsonArray)
+  ngAfterViewInit():void {
   }
 
-  onLoadedData($event: any){
-
+  ngOnChanges(changes:SimpleChanges): void{
+    if(!changes['jsonArray'].firstChange){
+      this.onLoadedData(changes['jsonArray'].currentValue);
+    }
   }
 
+  onLoadedData(jsonArray: any){
+
+    const singleWidth= this.width/jsonArray.length
+    const elem = document.getElementById("iceberg-overview")
+
+    var calcWidht = jsonArray.length *150 +380
+    elem!.style.width = calcWidht+"px";
+
+    var params = {fitted:true}
+    var elemIn = this.myDiv?.nativeElement;
+    this.twoCanvas = new Two(params).appendTo(elemIn)
+
+    let fillSave: any
+
+
+    for(let i=0; i<jsonArray.length; i++){
+      const iceBergParamsOld: IcebergParams = {
+        skew: jsonArray[i].x1,
+        colorParam: jsonArray[i].x2,
+        height: jsonArray[i].x3,
+        frequency: jsonArray[i].x4,
+        borderParam: 1,
+      };
+
+
+      const iceConfigOld: IceBergConfig = {
+        color1: new Color('blue'),
+        color2: new Color('green'),
+        params: iceBergParamsOld
+      };
+
+      var ice= this.es.generateEisberg(200, 250+i*150, 240, iceConfigOld)
+      ice.opacity=0.9
+
+      this.icebergGroup.add(ice)
+    }
+    //refill the iceberg, because of width of div gets changed
+    this.icebergGroup.children[8].fill = this.es.generateGradient(jsonArray[8].x4 ?? 0, this.cs.sampleColor(jsonArray[8].x2 ?? 0, new Color("#00FFBB"), new Color("#AA00FF")));
+
+    this.twoCanvas.add(this.icebergGroup)
+    this.twoCanvas.update()
+
+  }
 }

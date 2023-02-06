@@ -106,7 +106,7 @@ export class EisbergService {
    * @param value
    * @param color
    */
-  private generateGradient(value: number, color: Color): LinearGradient{
+  public generateGradient(value: number, color: Color): LinearGradient{
     var tanhVal = Math.tanh(value);
     var stops = this.generateStops(tanhVal, color);
     return new LinearGradient(0, 0,

@@ -1,5 +1,11 @@
 #iceberg-overview{
-  float: left;
   height: 400px;
-  width: 600px;
+  //width: 200*150 +380px;
+}
+
+#scroll-div{
+  margin-left: 50px;
+  height: 400px;
+  width: 1200px;
+  overflow-x: scroll;
 }
