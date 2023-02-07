@@ -18,6 +18,8 @@ import { MorphingIcebergComponent } from './features/morphing-iceberg/morphing-i
 import {MatSelectModule} from "@angular/material/select";
 import { IcebergOverviewComponent } from './features/iceberg-overview/iceberg-overview.component';
 import {ScrollingModule} from "@angular/cdk/scrolling";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatSliderModule} from "@angular/material/slider";
 
 @NgModule({
   declarations: [
@@ -41,6 +43,8 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
         HttpClientModule,
         MatSelectModule,
         ScrollingModule,
+        MatCheckboxModule,
+        MatSliderModule,
     ],
   providers: [],
   bootstrap: [AppComponent]

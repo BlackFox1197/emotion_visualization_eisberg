@@ -18,6 +18,8 @@ import {ModelOutput, ModelOutputs, ModelOutputsInterface} from "../../../entity/
 import {EisbergService} from "../../../services/vis-services/eisberg.service";
 import {IcebergComponent} from "../iceberg/iceberg.component";
 import {IcebergParams} from "../../../entity/Icebergparams";
+import {TimeUtilsService} from "../../../services/data-service/time-utils.service";
+import {MatSliderChange} from "@angular/material/slider";
 
 export interface CCCOutputToMorph {
   start: boolean;
@@ -46,6 +48,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     {value: 10, viewValue:"10sec"},]
 
   selectedDuration = this.durations[2].value
+  selectWithoutZoom:boolean = false
 
   @Output() durationSelected: EventEmitter<number> = new EventEmitter<number>();
   @Output() playMorph: EventEmitter<CCCOutputToMorph> = new EventEmitter<CCCOutputToMorph>();
@@ -70,6 +73,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   sampleCount = 3000;
   audioBuffer?: AudioBuffer;
   sec= "0";
+  audioLengthInSec="0";
 
   normalizedData: Array<number> = [];
   normalizedDataZoomed: Array<number> = [];
@@ -77,7 +81,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   playState = new PLayState();
 
-  constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService) {
+  constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService, public tus: TimeUtilsService) {
   }
 
   ngOnInit() {
@@ -101,22 +105,11 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * @param file
    */
   audioDrawer(file: string): void {
-    /*
-    const modelOutputArray: ModelOutput[] = [{x1: 0.5,x2: 0.3, x3: -0.1, x4: -1},
-      {x1: 0.2,x2: 0.0, x3: 0.1, x4: -0.5},
-      {x1: -0.5,x2: 0.1, x3: -0.3, x4: 1},
-      {x1: 0.8,x2: -0.3, x3: -1, x4: 0.5}]
-    const bar: ModelOutputsInterface = { sampleRate: 44100,
-      durationInSec: 200,
-      startInSec: 0,
-      outputCount: 4,
-      modelOutputs: modelOutputArray };
-     */
-
     this.audioSrc = file;
     this.audiService.getAudioBufferFromFile(file).then(
       buffer => {
         this.audioBuffer = buffer;
+        this.audioLengthInSec = this.tus.convSecToMinutesAndSec( buffer.duration.toFixed(0))
         this.setCCCParamsAndEmit(undefined,undefined, undefined, undefined)
         //console.log(this.cccOutputToMorph)
         this.normalizedData =this.audiService.generateDataPoints(buffer, this.sampleCount);
@@ -152,13 +145,23 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   click(event: any) {
+
     this.stop();
-    this.waveFormService.click(event, this.twoCanvas)
-    if(this.waveFormService.selectedInterval != undefined){
-      this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
-      this.playSelect();
-      this.sec=this.waveFormService.selectedInterval.start.toFixed(1)
-      this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval.start)
+
+    if(this.selectWithoutZoom){
+      var zoomStartSec =this.waveFormService.convPixToSec(this.waveFormService.visData.intervalzoomer?.group.children[0].vertices[0].x, this.waveFormService.width, this.sampleCount, this.waveFormService.samplesPerSecond)
+      var zoomEndSec = this.waveFormService.convPixToSec(this.waveFormService.visData.intervalzoomer?.group.children[1].vertices[0].x, this.waveFormService.width, this.sampleCount, this.waveFormService.samplesPerSecond)
+      this.audiService.playSelection(this.audioBuffer!, zoomStartSec, zoomEndSec-zoomStartSec)
+      //this.playSelect()
+    }
+    else{
+      this.waveFormService.click(event, this.twoCanvas)
+      if(this.waveFormService.selectedInterval != undefined){
+        this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
+        this.playSelect();
+        this.sec=this.tus.convSecToMinutesAndSec(this.waveFormService.selectedInterval.start.toFixed(1))
+        this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval.start)
+      }
     }
   }
 
@@ -184,9 +187,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
           this.audiService.playSelection(this.audioBuffer!, start + playedSecs, end - (start + playedSecs))
         }
         else{
-
           this.audiService.playSelection(this.audioBuffer!, playedSecs, undefined)
-
         }
       }
       this.setCCCParamsAndEmit(true, true, undefined, this.playState.playedUnits/this.playState.unitsPerSeconds)
@@ -218,9 +219,12 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   playSelect(){ // TODO: The vis of the audio seems to drift off a litte after time, that has to be fixed
     if(this.audioBuffer!=undefined){
       if(this.playState.intervallId??0 != 0){
+        console.log("cleard")
         this.clearAndResetPlayed(this.playState.intervallId)}
       // this is the main loop for the animation of the audioGraph
       this.playState.intervallId = setInterval( ()=>{
+        //set sec
+        this.sec = this.tus.convSecToMinutesAndSec(((this.waveFormService.selectedInterval?.start??0) +(this.playState.playedUnits/this.playState.unitsPerSeconds)).toFixed(1))
 
         // update the played units
         this.playState.playedUnits++;
@@ -254,7 +258,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
           this.playState.playedUnits = 0;
           //reset the graph
           this.waveFormService.resetPlayed(this.twoCanvas);
-          // reset to false, in case next time its a pause
+          // reset to false, in case next time it's a pause
         }else {
           this.setCCCParamsAndEmit(false)
           // the paused state is reset, as it should be a one time reset protection only
@@ -264,7 +268,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
         }
       })
     }
-
   }
 
   pauseSelect(){
@@ -272,7 +275,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.setCCCParamsAndEmit(false)
     this.playState.paused = true;
     this.audiService.stopSource()
-
   }
 
 
@@ -285,14 +287,28 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // #########################################################################################
+  // ############################################ Changes ###########################
+  // #########################################################################################
+
   setCCCParamsAndEmit(start?:boolean, restart?:boolean, selected?:boolean, currentSec?: number){
     this.cccOutputToMorph.start=start??this.cccOutputToMorph.start;
     this.cccOutputToMorph.restart=restart??this.cccOutputToMorph.restart;
     this.cccOutputToMorph.selected=selected??this.cccOutputToMorph.selected;
     this.cccOutputToMorph.currentSec=currentSec??this.cccOutputToMorph.currentSec;
     this.cccOutputToMorph.audioBuffered= (this.audioBuffer!=undefined)
-    //console.log(this.cccOutputToMorph)
+    this.sec =  this.tus.convSecToMinutesAndSec( currentSec?.toFixed(1)??this.sec);
     this.playMorph.emit(this.cccOutputToMorph)
+  }
+
+  setSelectWOZoom(checked: boolean){
+    this.selectWithoutZoom=checked
+  }
+
+  setZoomVal(value: MatSliderChange) {
+    this.zoomdistance=value.value??0.5
+    this.waveFormService.zoomPercentage=this.zoomdistance
+    this.waveFormService.regenerateIntervals()
   }
 }
 

@@ -1,24 +1,26 @@
-
-
-  <input type="file" class="file-upload"
+ <input type="file" class="file-upload"
          accept="audio/mp3"
          (change)="evToFile($event)" #fileUpload>
 
   <button mat-icon-button (click)="play()"><mat-icon>play_arrow</mat-icon></button>
   <button mat-icon-button (click)="stop()"><mat-icon>stop</mat-icon></button>
   <button mat-icon-button (click)="pauseSelect()"><mat-icon>pause</mat-icon></button>
-  <mat-label style="margin-left: 10px; margin-right: 10px;"> {{sec}}</mat-label>
+  <mat-label style="margin-inline: 20px"> {{sec}}/{{audioLengthInSec}}</mat-label>
 
   <mat-form-field style="color: #282831">
     <mat-label>Choose duration</mat-label>
-    <mat-select style="color: #282831" [(value)]="selectedDuration" (selectionChange)="onChange(selectedDuration)">
+    <mat-select [(value)]="selectedDuration" (selectionChange)="onChange(selectedDuration)" style="color: #282831" >
       <mat-option  [value]="duration.value" *ngFor="let duration of durations">{{duration.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-checkbox [checked]="selectWithoutZoom" (change)="setSelectWOZoom($event.checked)" style="margin-inline: 20px">Select without zoom</mat-checkbox>
+  <mat-slider  (change)="setZoomVal($event)" min="0.1"  max="0.9" step="0.05" value="0.5"  style="margin-inline: 40px; width: 300px">
+    <input matSliderThumb>
+  </mat-slider>
   <div
     (mousemove)="mouseover($event)"
        (click)="click($event)"
-       #wavTwoJs id="wave" ></div>
+       #wavTwoJs id="wave"></div>
 
   <div #specTest id="spec"></div>
 

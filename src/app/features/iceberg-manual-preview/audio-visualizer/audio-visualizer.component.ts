@@ -15,7 +15,6 @@ import Two from "two.js";
 export class AudioVisualizerComponent implements OnInit {
 
 
-
   @ViewChild('audioWavTest') myDiv?: ElementRef;
   @ViewChild('specTest') specDiv?: ElementRef;
 
