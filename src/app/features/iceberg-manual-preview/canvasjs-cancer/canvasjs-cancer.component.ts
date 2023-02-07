@@ -145,23 +145,13 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   click(event: any) {
-
     this.stop();
-
-    if(this.selectWithoutZoom){
-      var zoomStartSec =this.waveFormService.convPixToSec(this.waveFormService.visData.intervalzoomer?.group.children[0].vertices[0].x, this.waveFormService.width, this.sampleCount, this.waveFormService.samplesPerSecond)
-      var zoomEndSec = this.waveFormService.convPixToSec(this.waveFormService.visData.intervalzoomer?.group.children[1].vertices[0].x, this.waveFormService.width, this.sampleCount, this.waveFormService.samplesPerSecond)
-      this.audiService.playSelection(this.audioBuffer!, zoomStartSec, zoomEndSec-zoomStartSec)
-      //this.playSelect()
-    }
-    else{
-      this.waveFormService.click(event, this.twoCanvas)
+    this.waveFormService.click(event, this.twoCanvas)
       if(this.waveFormService.selectedInterval != undefined){
         this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
         this.playSelect();
         this.sec=this.tus.convSecToMinutesAndSec(this.waveFormService.selectedInterval.start.toFixed(1))
         this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval.start)
-      }
     }
   }
 
@@ -220,7 +210,8 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     if(this.audioBuffer!=undefined){
       if(this.playState.intervallId??0 != 0){
         console.log("cleard")
-        this.clearAndResetPlayed(this.playState.intervallId)}
+        this.clearAndResetPlayed(this.playState.intervallId)
+      }
       // this is the main loop for the animation of the audioGraph
       this.playState.intervallId = setInterval( ()=>{
         //set sec
@@ -229,6 +220,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
         // update the played units
         this.playState.playedUnits++;
         // redraw the graph
+
         this.waveFormService.timePlayed(this.playState.playedUnits, this.playState.unitsPerSeconds);
 
         // spectrogram
@@ -238,7 +230,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
         let group = this.spectroService.drawSpec(this.audiService.getAnalyzerFrequ(), this.audiService.sampleRate!);
         this.twoSpec.add(group)
         this.twoSpec.update()
-
          */
 
         this.twoCanvas.update()
@@ -302,7 +293,10 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   setSelectWOZoom(checked: boolean){
+    this.stop()
     this.selectWithoutZoom=checked
+    this.waveFormService.zoomed=true
+    this.waveFormService.click(event, this.twoCanvas)
   }
 
   setZoomVal(value: MatSliderChange) {

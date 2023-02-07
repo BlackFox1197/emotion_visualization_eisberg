@@ -137,6 +137,7 @@ export class WaveFormService {
 
 
   timePlayed(units: number, unitsPerSeconds = 2){
+
     if(this.selected){
       let start = (this.selectedInterval?.start??0) - this.currentZoomedOffsetInSec
       let fromIndex = Math.floor(this.samplesPerSecond * start);
@@ -146,9 +147,10 @@ export class WaveFormService {
       }
     }
     else {
-      this.percentagePlayed((units/unitsPerSeconds)/(this.currentData.length / this.samplesPerSecond))
+        this.percentagePlayed((units/unitsPerSeconds)/(this.currentData.length / this.samplesPerSecond))
     }
   }
+
 
   percentagePlayed(percentage: number){
     //TODO: changed this to ceil, instead floor works a little bit better but no 100% fix
