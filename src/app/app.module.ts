@@ -20,6 +20,7 @@ import { IcebergOverviewComponent } from './features/iceberg-overview/iceberg-ov
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSliderModule} from "@angular/material/slider";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import {MatSliderModule} from "@angular/material/slider";
         ScrollingModule,
         MatCheckboxModule,
         MatSliderModule,
+        MatProgressSpinnerModule,
     ],
   providers: [],
   bootstrap: [AppComponent]

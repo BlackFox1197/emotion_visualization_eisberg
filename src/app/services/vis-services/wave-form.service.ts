@@ -5,6 +5,8 @@ import {Group} from "two.js/src/group";
 import Two from "two.js";
 import {Constants} from "two.js/src/constants";
 import {Vector} from "two.js/src/vector";
+import {add} from "@tweenjs/tween.js";
+import {empty, isEmpty} from "rxjs";
 
 
 @Injectable({
@@ -20,6 +22,8 @@ export class WaveFormService {
   width = 0;
   zoomed = false;
   selected = false;
+  selectWOZoom = false
+
   zoomPercentage = 0.3;
   samplesPerSecond = 0;
   intervallSeconds = 3;
@@ -66,16 +70,21 @@ export class WaveFormService {
 
   //redraw the fucking intervall for switching the duration
   redraw(intervallSecs: number, two: Two){
-    if(this.zoomed){
+    if(this.zoomed||this.selectWOZoom){
+      //redraw intervall instantly
       two.remove(this.visData.interval!.group)
       this.intervallSeconds = intervallSecs
 
       this.regenerateIntervals();
       this.visData.interval?.setPositionAndIntervalSize(this.visData.interval?.getVertlinePosition(), this.visData.interval?.intervallSize)
-      two.add(this.visData.interval!.group)
-      two.update()
+
+      this.removeOrAddTwo(true, two, [], [this.visData.interval!.group])
     }else {
+      //redraw intervallZoomer instantly
       this.intervallSeconds=intervallSecs
+      this.regenerateIntervals();
+      this.visData.intervalzoomer?.setPositionAndIntervalSize(this.visData.intervalzoomer?.getVertlinePosition(), this.visData.intervalzoomer?.intervallSize)
+      this.removeOrAddTwo(true, two, [this.visData.intervalzoomer!.group], [this.visData.intervalzoomer!.group])
     }
   }
 
@@ -111,16 +120,19 @@ export class WaveFormService {
     this.regenerateIntervals()
 
     two.add(this.visData.waveGroup);
-    if(zoomed){
-      two.remove(this.visData.intervalzoomer!.group);
-      two.add(this.visData.interval!.group);
-    }
-    else{
-      two.remove(this.visData.interval!.group);
-      two.add(this.visData.intervalzoomer!.group);
-    }
 
-    two.update()
+    if(zoomed||this.selectWOZoom){
+      //two.remove(this.visData.intervalzoomer!.group)
+      //two.add(this.visData.interval!.group)
+      //two.update()
+      this.removeOrAddTwo(true, two, [this.visData.intervalzoomer!.group], [this.visData.interval!.group])
+      }
+    else{
+      //two.remove(this.visData.interval!.group)
+      //two.add(this.visData.intervalzoomer!.group)
+      //two.update()
+      this.removeOrAddTwo(true, two, [this.visData.interval!.group], [this.visData.intervalzoomer!.group])
+    }
   }
 
   regenerateIntervals(){
@@ -177,25 +189,26 @@ export class WaveFormService {
   moveIntervall(positionX: number, canvas: Two){
     if (this.zoomed) {
       if(!this.selected){
-        this.visData.interval?.move(positionX)
-        canvas.update();
+        this.visData.interval?.move(positionX)}}
+    else{
+      if(this.selectWOZoom&&!this.selected){
+        this.visData.interval?.move(positionX)}
+      else{
+        this.visData.intervalzoomer?.move(positionX)
       }
     }
-    else{
-      this.visData.intervalzoomer?.move(positionX)
-      canvas.update();
-    }
+    canvas.update();
   }
 
   click(event: any, canvas: Two){
     let positionX = event.x
-    if (!this.zoomed) {
+    if (!this.zoomed && !this.selectWOZoom) {
       positionX = this.visData.intervalzoomer?.getVertlinePosition()
       this.currentZoomedOffsetInSec = this.convPixToSec(this.visData.intervalzoomer?.getStartLinePosition(), this.width, this.currentData.length, this.samplesPerSecond);
       this.drawZoomedWave(positionX, canvas);
       this.selectedInterval = undefined;
-
-    } else {
+    }
+    else {
       this.selectedInterval = undefined;
       this.selected = !this.selected;
       if(this.selected){
@@ -203,8 +216,26 @@ export class WaveFormService {
         let end = this.convPixToSec(this.visData.interval?.getEndlinePosition(), this.width, this.currentData.length, this.samplesPerSecond)+this.currentZoomedOffsetInSec;
         this.selectedInterval = {start: start, end: end};
       }
+    }
+  }
+
+  //
+  drawWOZoom(two: Two){
+    if(this.selectWOZoom){
+      this.removeOrAddTwo(false, two, [this.visData.interval!.group, this.visData.intervalzoomer!.group], [])
+
+      this.intervallSeconds = this.intervallSeconds
+      //this.regenerateIntervals();
+
+      this.visData.interval?.setPositionAndIntervalSize(this.visData.interval?.getVertlinePosition(), this.visData.interval?.intervallSize)
+      two.add(this.visData.interval!.group)
 
     }
+    else {
+      this.removeOrAddTwo(false, two, [this.visData.interval!.group], [this.visData.intervalzoomer!.group])
+    }
+    two.update()
+
   }
 
 
@@ -241,7 +272,27 @@ export class WaveFormService {
     return dataPoint / dataLength * totalWidth
   }
 
+  // #########################################################################################
+  // ############################################ Remove/Add Interval ###########################
+  // #########################################################################################
 
+  /** remove or add stuff to the two, and update it depending on the updateTwo bool
+   * @param updateTwo
+   * @param two
+   * @param removeArr
+   * @param addArr
+   */
+  removeOrAddTwo(updateTwo:boolean=true ,two: Two , removeArr: Array<Group>, addArr: Array<Group>){
+    for(let i=0; i<removeArr.length;i++){
+        two.remove(removeArr[i])
+    }
+    for(let i=0; i<addArr.length;i++){
+      two.add(addArr[i])
+    }
+    if(updateTwo){
+      two.update()
+    }
+  }
 }
 
 export interface StartEnd{

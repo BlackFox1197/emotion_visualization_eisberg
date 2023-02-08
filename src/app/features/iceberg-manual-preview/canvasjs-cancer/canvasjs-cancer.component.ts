@@ -48,7 +48,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     {value: 10, viewValue:"10sec"},]
 
   selectedDuration = this.durations[2].value
-  selectWithoutZoom:boolean = false
 
   @Output() durationSelected: EventEmitter<number> = new EventEmitter<number>();
   @Output() playMorph: EventEmitter<CCCOutputToMorph> = new EventEmitter<CCCOutputToMorph>();
@@ -88,6 +87,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.audioDrawer('/assets/test.mp3')
   }
 
+  //change for the duration picker
   onChange(value: any) {
     this.waveFormService.redraw(value, this.twoCanvas)
   }
@@ -110,8 +110,9 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       buffer => {
         this.audioBuffer = buffer;
         this.audioLengthInSec = this.tus.convSecToMinutesAndSec( buffer.duration.toFixed(0))
+
         this.setCCCParamsAndEmit(undefined,undefined, undefined, undefined)
-        //console.log(this.cccOutputToMorph)
+
         this.normalizedData =this.audiService.generateDataPoints(buffer, this.sampleCount);
         let audioLengthInSec = this.audiService.calculateAudioLenght(buffer);
         let samplesPerSecond = this.sampleCount / audioLengthInSec;
@@ -123,7 +124,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-
     var params = {
       fitted: true,
       type: Two.Types.canvas
@@ -150,7 +150,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       if(this.waveFormService.selectedInterval != undefined){
         this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
         this.playSelect();
-        this.sec=this.tus.convSecToMinutesAndSec(this.waveFormService.selectedInterval.start.toFixed(1))
+        this.sec = this.tus.convSecToMinutesAndSec(this.waveFormService.selectedInterval.start.toFixed(1))
         this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval.start)
     }
   }
@@ -209,7 +209,6 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   playSelect(){ // TODO: The vis of the audio seems to drift off a litte after time, that has to be fixed
     if(this.audioBuffer!=undefined){
       if(this.playState.intervallId??0 != 0){
-        console.log("cleard")
         this.clearAndResetPlayed(this.playState.intervallId)
       }
       // this is the main loop for the animation of the audioGraph
@@ -282,6 +281,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   // ############################################ Changes ###########################
   // #########################################################################################
 
+  //emit changes to our morphing iceberg component
   setCCCParamsAndEmit(start?:boolean, restart?:boolean, selected?:boolean, currentSec?: number){
     this.cccOutputToMorph.start=start??this.cccOutputToMorph.start;
     this.cccOutputToMorph.restart=restart??this.cccOutputToMorph.restart;
@@ -292,17 +292,24 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.playMorph.emit(this.cccOutputToMorph)
   }
 
+  //change bool for selecting without zoom and, regen intervalls/draw intervall and remove intervallzoomer
   setSelectWOZoom(checked: boolean){
     this.stop()
-    this.selectWithoutZoom=checked
-    this.waveFormService.zoomed=true
-    this.waveFormService.click(event, this.twoCanvas)
+    this.waveFormService.selectWOZoom=checked
+    if(this.waveFormService.zoomed){
+      this.waveFormService.resetZoom(this.twoCanvas);
+    }
+    if(!checked){
+      this.waveFormService.regenerateIntervals()
+    }
+    this.waveFormService.drawWOZoom(this.twoCanvas)
   }
 
+  //set our zoomval from slider, gets redrawn with mouseover function
   setZoomVal(value: MatSliderChange) {
     this.zoomdistance=value.value??0.5
     this.waveFormService.zoomPercentage=this.zoomdistance
-    this.waveFormService.regenerateIntervals()
+    this.waveFormService.redraw(this.selectedDuration, this.twoCanvas)
   }
 }
 

@@ -1,9 +1,13 @@
 <div style="display: table;">
   <div style="display: table-row">
     <div style="display: table-cell">
-      <div #iceberg id="icebergMorph"></div>
+      <div  id="icebergMorph" #iceberg>
+        <div ></div>
+        <!--<div id="overlay" ><mat-spinner *ngIf="isLoadin" style="margin:0 auto;"></mat-spinner></div>-->
+      </div>
+
     </div>
-    <app-iceberg-overview [jsonArray]="jsonArray" [icebergDuration]="durationsInMs.oneIcebergDuration"> style="display: table-cell"</app-iceberg-overview>
+    <app-iceberg-overview [jsonArray]="jsonArray" [icebergDuration]="durationsInMs.oneIcebergDuration"> </app-iceberg-overview>
   </div>
 </div>
 <div id="background"></div>

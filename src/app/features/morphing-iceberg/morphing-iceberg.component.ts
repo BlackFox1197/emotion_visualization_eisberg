@@ -86,7 +86,6 @@ export class MorphingIcebergComponent implements OnInit {
     this.cccOutputToMorph = $event
 
     if(!this.isLoadin&&this.cccOutputToMorph.audioBuffered) {
-
       if (this.cccOutputToMorph.currentSec != 0) {
         //get our current iceberg according to sec, delay for some left time
         const delayAndIndex = this.morph.calcCurrentIcebergIndex(this.cccOutputToMorph.currentSec, this.modelOutputs.durationInSec, this.modelOutputs.outputCount, this.durationsInMs.oneIcebergDuration)
