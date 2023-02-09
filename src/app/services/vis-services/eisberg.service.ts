@@ -7,6 +7,7 @@ import {ColorService} from "./color.service";
 import {Color} from "../../entity/Color";
 import {IcebergParams} from "../../entity/Icebergparams";
 import {IceBergConfig} from "../../entity/IceBergConfig";
+import {ModelOutput} from "../../entity/ModelOutput";
 
 @Injectable({
   providedIn: 'root'
@@ -196,5 +197,28 @@ export class EisbergService {
     poly.translation.add(new Two.Vector(0,(poly.height-value)/4))
     //console.log(value)
     return value
+  }
+
+  public genIceConfs(arr: Array<ModelOutput>) : Array<IceBergConfig>{
+    let icebergConfs = [];
+
+    for(let i=0; i<arr.length; i++){
+      let iceParam: IcebergParams = {
+        skew: arr[i].x1,
+        colorParam: arr[i].x2,
+        height: arr[i].x3,
+        frequency: arr[i].x4,
+        borderParam: 1,
+      };
+
+      let iceConf: IceBergConfig = {
+        color1: new Color('blue'),
+        color2: new Color('green'),
+        params: iceParam
+      }
+
+      icebergConfs.push(iceConf);
+    }
+    return icebergConfs;
   }
 }

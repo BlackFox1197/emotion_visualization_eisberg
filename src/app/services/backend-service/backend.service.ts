@@ -77,10 +77,10 @@ export class BackendService {
         }))
   }
 
-  public loadIcebergsFor7Emos(): Observable<any>{
+  public loadIcebergsFor7Emos(filename: string): Observable<any>{
     return new Observable<any>(subscriber =>
-    this.http.get('./assets/modelOutputs.json').subscribe(
-      (response)=>{
+    this.http.get('./assets/sevenemos/'+filename).subscribe(
+      (response) => {
         subscriber.next(response)
       }))
   }

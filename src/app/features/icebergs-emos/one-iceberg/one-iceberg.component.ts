@@ -14,6 +14,7 @@ import {ColorService} from "../../../services/vis-services/color.service";
 export class OneIcebergComponent implements OnInit {
   @ViewChild('oneIcebergId') myDiv?: ElementRef;
   @Input() iceConf : IceBergConfig | undefined;
+  @Input() emoName: string | undefined;
 
 
   twoCanvas= new Two({
@@ -31,14 +32,15 @@ export class OneIcebergComponent implements OnInit {
     var params = {fitted:true}
     var elem = this.myDiv?.nativeElement;
     this.twoCanvas = new Two(params).appendTo(elem)
-    this.drawIceberg(this.iceConf!)
+    this.drawIceberg()
   }
 
-  drawIceberg(iceConf: IceBergConfig){
-    let eisberg= this.es.generateEisberg(200, 250, 240, iceConf)
-    console.log(eisberg.fill)
-    eisberg.fill = this.es.generateGradient(iceConf.params.frequency ??0, this.cs.sampleColor(iceConf.params.colorParam??0, new Color("#00FFBB"), new Color("#AA00FF")));
-    this.twoCanvas.add(eisberg);
-    this.twoCanvas.update()
+  drawIceberg(){
+      let name = new Two.Text(this.emoName?.split(".")[0], 250, 300)
+      let eisberg= this.es.generateEisberg(200, 250, 240, this.iceConf!)
+      //eisberg.fill = this.es.generateGradient(this.iceConf!.params.frequency ??0, this.cs.sampleColor(this.iceConf!.params.colorParam??0, new Color("#00FFBB"), new Color("#AA00FF")));
+      this.twoCanvas.add(eisberg);
+      this.twoCanvas.add(name);
+      this.twoCanvas.update()
   }
 }

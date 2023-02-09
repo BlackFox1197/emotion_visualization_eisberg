@@ -64,24 +64,13 @@ export class IcebergOverviewComponent implements OnChanges {
 
     let fillSave: any
 
+    var iceConfs = this.es.genIceConfs(jsonArray)
 
-    for(let i=0; i<jsonArray.length; i++){
-      const iceBergParamsOld: IcebergParams = {
-        skew: jsonArray[i].x1,
-        colorParam: jsonArray[i].x2,
-        height: jsonArray[i].x3,
-        frequency: jsonArray[i].x4,
-        borderParam: 1,
-      };
+    for(let i=0; i<iceConfs.length; i++){
 
 
-      const iceConfigOld: IceBergConfig = {
-        color1: new Color('blue'),
-        color2: new Color('green'),
-        params: iceBergParamsOld
-      };
 
-      var ice= this.es.generateEisberg(200, 250+i*150, 240, iceConfigOld)
+      var ice= this.es.generateEisberg(200, 250+i*150, 240, iceConfs[i])
       ice.opacity=0.9
 
       this.icebergGroup.add(ice)

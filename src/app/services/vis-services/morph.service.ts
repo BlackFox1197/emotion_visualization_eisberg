@@ -24,6 +24,7 @@ export class MorphService {
   }
 
   //generate the iceconfs and params from the jsons we got and pass them
+  /*
   genIceConfs(jsonArray: Array<ModelOutput>, counterJson: number){
     const iceBergParamsOld: IcebergParams = {
       skew: jsonArray[counterJson].x1,
@@ -57,4 +58,6 @@ export class MorphService {
 
     return [iceConfigOld, iceConfigNew]
   }
+
+   */
 }

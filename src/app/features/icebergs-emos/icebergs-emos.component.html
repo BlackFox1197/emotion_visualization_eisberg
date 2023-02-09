@@ -1,7 +1,7 @@
 <div #icebergsEmos>
   <div  *ngIf="!isLoadin">
     <div *ngFor="let elem of emosArray" style="display: flex inline; width: 33%">
-      <app-one-iceberg [iceConf]="elem"></app-one-iceberg>
+      <app-one-iceberg [iceConf]="elem" [emoName]="jsonNames[emosArray.indexOf(elem)]"></app-one-iceberg>
     </div>
   </div>
 </div>

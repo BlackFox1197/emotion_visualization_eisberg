@@ -110,7 +110,8 @@ export class MorphingIcebergComponent implements OnInit {
 
   morphNext(){
     //generate the iceconfs
-    const [iceConfigOld, iceConfigNew] = this.morph.genIceConfs(this.jsonArray, this.counterJson)
+    const [iceConfigOld, iceConfigNew] = this.es.genIceConfs([this.jsonArray[this.counterJson], this.jsonArray[this.counterJson+1]])
+      //this.morph.genIceConfs(this.jsonArray, this.counterJson)
 
     this.counterJson++
 

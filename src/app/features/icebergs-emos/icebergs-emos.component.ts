@@ -16,6 +16,8 @@ import {isEmpty} from "rxjs";
 export class IcebergsEmosComponent implements OnInit {
   @ViewChild('icebergsEmos') myDiv?: ElementRef;
 
+  jsonNames = ["angry.json","disgust.json", "fear.json", "happy.json", "neutral.json", "sad.json", "surprise.json"]
+
   public emosArray: Array<any> =[];
   isLoadin = true;
 
@@ -26,36 +28,17 @@ export class IcebergsEmosComponent implements OnInit {
   }
 
   ngAfterViewInit(): void{
-    this.backend.loadIcebergsFor7Emos().subscribe(
-      (next) => {
-        this.emosArray = next
-        this.emosArray = this.emosArray.slice(0,7)
-        this.emosArray= this.genIceConfs(this.emosArray);
-        this.isLoadin = false
-      }
-    )
-  }
-
-  genIceConfs(arr: Array<ModelOutput>) : Array<IceBergConfig>{
-    let icebergConfs = [];
-
-    for(let i=0; i<arr.length; i++){
-      let iceParam: IcebergParams = {
-        skew: arr[i].x1,
-        colorParam: arr[i].x2,
-        height: arr[i].x3,
-        frequency: arr[i].x4,
-        borderParam: 1,
-      };
-
-      let iceConf: IceBergConfig = {
-        color1: new Color('blue'),
-        color2: new Color('green'),
-        params: iceParam
-      }
-
-      icebergConfs.push(iceConf);
+    for(let i=0; i< this.jsonNames.length; i++){
+      this.backend.loadIcebergsFor7Emos(this.jsonNames[i]).subscribe(
+        (next) => {
+          this.emosArray.push(next)
+          if(i==this.jsonNames.length-1){
+            this.emosArray= this.es.genIceConfs(this.emosArray);
+            this.isLoadin = false
+          }
+        }
+      )
     }
-    return icebergConfs;
   }
+
 }
