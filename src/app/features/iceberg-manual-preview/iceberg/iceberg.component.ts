@@ -65,18 +65,15 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
     this.updateIceberg({skew: event.target.value as number});
   }
 
-  drawIceberg(a = -0.6, b = 0.999999): void{
+  drawIceberg(): void{
     var radius = 200;
     var x = 300;
     var y = 240;
-
-
 
     let color1 = new Color("#00FFBB")
     let color2 = new Color("#AA00FF")
     this.eisberg = this.es.generateEisberg(radius, x, y, this.iceConfig);
     this.twoCanvas.add(this.eisberg);
-
 
 // Don’t forget to tell two to draw everything to the screen
     this.twoCanvas.update();

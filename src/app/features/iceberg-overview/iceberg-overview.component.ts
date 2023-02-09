@@ -103,6 +103,5 @@ export class IcebergOverviewComponent implements OnChanges {
       this.timelineGroup.add(text)
     }
    this.twoCanvas.add(this.timelineGroup)
-
   }
 }

@@ -1,5 +1,4 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
 import {IcebergParams} from "../../entity/Icebergparams";
 import {IceBergConfig} from "../../entity/IceBergConfig";
 import {Color} from "../../entity/Color";
@@ -64,7 +63,7 @@ export class MorphingIcebergComponent implements OnInit {
   //the tween animation as variable so we can stop it
   public t1 = new TWEEN.Tween(this.eisberg)
 
-  constructor(private es: EisbergService, private httpClient: HttpClient, private backend: BackendService, private  morph: MorphService) {}
+  constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService) {}
 
   ngOnInit(): void {}
 

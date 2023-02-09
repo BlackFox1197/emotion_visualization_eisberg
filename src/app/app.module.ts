@@ -21,6 +21,9 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSliderModule} from "@angular/material/slider";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import { IcebergsEmosComponent } from './features/icebergs-emos/icebergs-emos.component';
+import { OneIcebergComponent } from './features/icebergs-emos/one-iceberg/one-iceberg.component';
 
 @NgModule({
   declarations: [
@@ -31,23 +34,26 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     AudioVisualizerComponent,
     CanvasjsCancerComponent,
     MorphingIcebergComponent,
-    IcebergOverviewComponent
+    IcebergOverviewComponent,
+    IcebergsEmosComponent,
+    OneIcebergComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatInputModule,
-        MatIconModule,
-        MatButtonModule,
-        FormsModule,
-        HttpClientModule,
-        MatSelectModule,
-        ScrollingModule,
-        MatCheckboxModule,
-        MatSliderModule,
-        MatProgressSpinnerModule,
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    FormsModule,
+    HttpClientModule,
+    MatSelectModule,
+    ScrollingModule,
+    MatCheckboxModule,
+    MatSliderModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

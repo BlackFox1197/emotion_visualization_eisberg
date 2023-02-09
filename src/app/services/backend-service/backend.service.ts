@@ -76,4 +76,12 @@ export class BackendService {
               subscriber.next(response)
         }))
   }
+
+  public loadIcebergsFor7Emos(): Observable<any>{
+    return new Observable<any>(subscriber =>
+    this.http.get('./assets/modelOutputs.json').subscribe(
+      (response)=>{
+        subscriber.next(response)
+      }))
+  }
 }
