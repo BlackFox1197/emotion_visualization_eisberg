@@ -219,6 +219,11 @@ export class WaveFormService {
     }
   }
 
+  resetSelectedIntervall(){
+    this.selectedInterval = undefined;
+    this.selected = false;
+  }
+
   //
   drawWOZoom(two: Two){
     if(this.selectWOZoom){
@@ -244,9 +249,9 @@ export class WaveFormService {
    */
   resetZoom(two: Two){
     this.zoomed = false;
-    this.selected = false;
     this.currentZoomedOffsetInSec = 0;
 
+    this.resetSelectedIntervall()
     this.currentData = this.originalData;
     this.drawTwoJs(this.currentData, false, two)
     two.update()

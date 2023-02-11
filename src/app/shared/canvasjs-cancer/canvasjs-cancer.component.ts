@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -66,7 +66,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   //the percentage zoomed by the zoomer intervall
   zoomdistance = 0.5;
 
-  @ViewChild('wavTwoJs') myDiv?: ElementRef;
+  @ViewChild('wavTwoJs', { static: false }) myDiv?: ElementRef;
   @ViewChild('specTest') specDiv?: ElementRef;
 
   sampleCount = 3000;
@@ -78,9 +78,18 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   normalizedDataZoomed: Array<number> = [];
   audioSrc = '';
 
-  playState = new PLayState();
 
-  constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService, public tus: TimeUtilsService) {
+  _isLoading = false;
+
+  set isLoading(il: boolean) {
+    this._isLoading = il;
+    this.changeDetector.detectChanges();
+  }
+
+  playState = new PLayState();
+  playButotnsState = new PlayButtonsState()
+
+  constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService, public tus: TimeUtilsService, private changeDetector : ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -112,6 +121,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * @param file
    */
   audioDrawer(file: string): void {
+    this.isLoading = true
     this.audioSrc = file;
     this.audiService.getAudioBufferFromFile(file).then(
       buffer => {
@@ -121,6 +131,11 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
         this.setCCCParamsAndEmit(undefined,undefined, undefined, undefined)
 
         this.normalizedData =this.audiService.generateDataPoints(buffer, this.sampleCount);
+
+
+        this.isLoading = false
+        this.initTwoJs()
+
         let audioLengthInSec = this.audiService.calculateAudioLenght(buffer);
         let samplesPerSecond = this.sampleCount / audioLengthInSec;
         this.waveFormService.init(samplesPerSecond, this.normalizedData, this.zoomdistance);
@@ -131,14 +146,20 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+
+  }
+
+
+  initTwoJs(){
+    console.log(this.myDiv)
     var params = {
       fitted: true,
       type: Two.Types.canvas
     };
     var elem = this.myDiv?.nativeElement;
-    var spec = this.specDiv?.nativeElement
+    //var spec = this.specDiv?.nativeElement
     this.twoCanvas = new Two(params).appendTo(elem);
-    this.twoSpec = new Two(params).appendTo(spec)
+    //this.twoSpec = new Two(params).appendTo(spec)
   }
 
   mouseover(event: any) {
@@ -170,6 +191,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    */
   play(){
     if(this.audioBuffer!=undefined){
+      this.playButotnsState.play();
       let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
       if(this.waveFormService.selected){
         this.setCCCParamsAndEmit(true, true, true, this.playState.playedUnits/this.playState.unitsPerSeconds)
@@ -197,6 +219,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * this stops the sound if there is some running
    */
   stop(){
+    this.playButotnsState.stop();
     this.setCCCParamsAndEmit(false,true)
     /** the stopped property is needed, because of the eventlistener that does listen on the ended event
     * but the ended event is also thrown when pausing!
@@ -214,6 +237,8 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    * to follow the dry principle
    */
   playSelect(){ // TODO: The vis of the audio seems to drift off a litte after time, that has to be fixed
+
+    this.playButotnsState.play();
     if(this.audioBuffer!=undefined){
       if(this.playState.intervallId??0 != 0){
         this.clearAndResetPlayed(this.playState.intervallId)
@@ -250,6 +275,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       this.audiService.source!.addEventListener("ended", event => {
         clearInterval(localId);
         if(!this.playState.paused){
+          this.playButotnsState.stop()
           this.setCCCParamsAndEmit(false)
           // reset the played units
           this.playState.playedUnits = 0;
@@ -268,6 +294,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   pauseSelect(){
+    this.playButotnsState.pause();
     //just to be sure we do not reset the graph
     this.setCCCParamsAndEmit(false)
     this.playState.paused = true;
@@ -322,6 +349,8 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
 
 class PLayState{
+
+
   playedUnits = 0;
   unitsPerSeconds = 4;
   /** the paused property is needed, because of the eventlistener that does listen on the ended event
@@ -330,4 +359,26 @@ class PLayState{
   **/
   paused = false;
   intervallId?: NodeJS.Timer;
+}
+
+
+class PlayButtonsState{
+  playing = false;
+  paused = false;
+
+
+  play(){
+    this.playing = true;
+    this.paused = false;
+  }
+
+  pause(){
+    this.paused = true;
+    this.playing = false;
+  }
+
+  stop(){
+    this.paused = false;
+    this.playing = false;
+  }
 }

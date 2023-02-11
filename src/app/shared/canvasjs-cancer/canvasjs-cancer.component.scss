@@ -3,7 +3,7 @@ body {
 }
 
 canvas {
-  width: 1900px;
+  width: 100vw;
   height: 200px;
   margin: 2rem auto;
 }
@@ -15,7 +15,7 @@ canvas {
 #wave {
   //float: right;
   height: 200px;
-  width: 1900px;
+  width: 100vw;
 }
 #spec{
   height: 200px;

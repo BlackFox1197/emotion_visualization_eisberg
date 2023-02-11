@@ -3,28 +3,66 @@
 <!--         (change)="evToFile($event)" #fileUpload>-->
 
   <app-file-drag [mimeTypes]="['audio/*']" [justOneFile]="true" titleString="File to analyze" (addFile)="fileToFile($event)" [hideFiles]="false"></app-file-drag>
-  <button mat-icon-button (click)="play()"><mat-icon>play_arrow</mat-icon></button>
-  <button mat-icon-button (click)="stop()"><mat-icon>stop</mat-icon></button>
-  <button mat-icon-button (click)="pauseSelect()"><mat-icon>pause</mat-icon></button>
-  <mat-label id="time">{{sec}}</mat-label>
- <mat-label> /{{audioLengthInSec}} </mat-label>
 
-  <mat-form-field style="color: #282831">
-    <mat-label>Choose duration</mat-label>
-    <mat-select [(value)]="selectedDuration" (selectionChange)="onChange(selectedDuration)" style="color: #282831" >
-      <mat-option  [value]="duration.value" *ngFor="let duration of durations">{{duration.viewValue}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-checkbox  (change)="setSelectWOZoom($event.checked)" style="margin-inline: 20px">Select without zoom</mat-checkbox>
-  <mat-slider  (change)="setZoomVal($event)" min="0.1"  max="0.9" step="0.05" value="0.5"  style="margin-inline: 40px; width: 300px">
-    <input matSliderThumb>
-  </mat-slider>
 
-  <div
-    (mousemove)="mouseover($event)"
-       (click)="click($event)"
-       #wavTwoJs id="wave"></div>
+<div  *ngIf="!_isLoading">
+  <div class="flex justify-center mt-4 mb-4 items-center">
+    <div class="flex-1"></div>
+    <div class="flex-1"></div>
+    <div class="flex flex-col justify-center flex-1">
+      <mat-label class="mr-5">Interval selection size:</mat-label>
+      <mat-form-field style="color: #282831" appearance="outline">
+        <mat-select [(value)]="selectedDuration" (selectionChange)="onChange(selectedDuration)" style="color: #282831">
+          <mat-option [value]="duration.value" *ngFor="let duration of durations">{{duration.viewValue}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="flex-1"></div>
+    <div class="flex flex-col flex-1">
+      <mat-checkbox (change)="setSelectWOZoom($event.checked)">Select without zoom</mat-checkbox>
+      <div class="flex flex-col border-2 rounded border-gray-700 p-2">
+        <mat-label>Zoom percentage: {{this.zoomdistance}}</mat-label>
+        <mat-slider (input)="setZoomVal($event)" min="0.1" max="0.9" step="0.05" value="0.5"
+                    style="width: 300px" [disabled]="this.waveFormService.selectWOZoom">
+          <input matSliderThumb>
+        </mat-slider>
+      </div>
+    </div>
+    <div class="flex-1"></div>
+    <div class="flex-1"></div>
+  </div>
 
+
+  <!-- ################### This is the waveform, buttons playtime etc. #############-->
+  <div class="flex flex-col">
+    <div class="flex justify-center">
+      <div>
+        <div>
+          <button mat-icon-button (click)="play()">
+            <mat-icon [color]="playButotnsState.playing? 'warn' : null">play_arrow</mat-icon>
+          </button>
+          <button mat-icon-button (click)="stop()">
+            <mat-icon>stop</mat-icon>
+          </button>
+          <button mat-icon-button (click)="pauseSelect()" [color]="playButotnsState.paused? 'warn' : null">
+            <mat-icon>pause</mat-icon>
+          </button>
+        </div>
+        <div class="text-center">
+          <mat-label id="time">{{sec}}  /{{audioLengthInSec}} </mat-label>
+        </div>
+
+      </div>
+    </div>
+
+    <div
+      (mousemove)="mouseover($event)"
+      (click)="click($event)"
+      #wavTwoJs id="wave"></div>
+  </div>
+</div>
+
+<app-loading-anim  *ngIf="_isLoading"></app-loading-anim>
 <!--  <div #specTest id="spec"></div>-->
 
 

@@ -9,13 +9,15 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSliderModule} from "@angular/material/slider";
 import {MatButtonModule} from "@angular/material/button";
 import {CoreModule} from "../core/core.module";
+import { LoadingAnimComponent } from './animations/loading-anim/loading-anim.component';
 
 
 
 @NgModule({
   declarations: [
     FileDragComponent,
-    CanvasjsCancerComponent
+    CanvasjsCancerComponent,
+    LoadingAnimComponent
   ],
   exports: [
     CanvasjsCancerComponent
