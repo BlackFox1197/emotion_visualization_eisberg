@@ -12,7 +12,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {FormsModule} from "@angular/forms";
 import { AudioVisualizerComponent } from './features/iceberg-manual-preview/audio-visualizer/audio-visualizer.component';
-import { CanvasjsCancerComponent } from './features/iceberg-manual-preview/canvasjs-cancer/canvasjs-cancer.component';
+import { CanvasjsCancerComponent } from './shared/canvasjs-cancer/canvasjs-cancer.component';
 import { HttpClientModule} from "@angular/common/http";
 import { MorphingIcebergComponent } from './features/morphing-iceberg/morphing-iceberg.component';
 import {MatSelectModule} from "@angular/material/select";
@@ -27,6 +27,7 @@ import { OneIcebergComponent } from './features/icebergs-emos/one-iceberg/one-ic
 import {AdminNavigationComponent} from "./features/navigation/admin-navigation.component";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatListModule} from "@angular/material/list";
+import {SharedModule} from "./shared/shared.module";
 
 @NgModule({
   declarations: [
@@ -35,7 +36,6 @@ import {MatListModule} from "@angular/material/list";
     IcebergComponent,
     InputsComponent,
     AudioVisualizerComponent,
-    CanvasjsCancerComponent,
     MorphingIcebergComponent,
     IcebergOverviewComponent,
     IcebergsEmosComponent,
@@ -43,6 +43,7 @@ import {MatListModule} from "@angular/material/list";
     AdminNavigationComponent
   ],
   imports: [
+    SharedModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

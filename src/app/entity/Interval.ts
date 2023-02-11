@@ -1,6 +1,5 @@
 import {Line} from "two.js/src/shapes/line";
 import Two from "two.js";
-import {CanvasjsCancerComponent} from "../features/iceberg-manual-preview/canvasjs-cancer/canvasjs-cancer.component";
 
 export class Interval{
   leftLine: Line =   new Two.Line(0,0,0,200);

@@ -5,6 +5,7 @@ import {IcebergsEmosComponent} from "./features/icebergs-emos/icebergs-emos.comp
 import {RoutesIntern} from "./services/routesIntern";
 
 const routes: Routes = [
+  {path: '', redirectTo: RoutesIntern.morphingIceberg, pathMatch: 'full'},
   {path: RoutesIntern.morphingIceberg, component: MorphingIcebergComponent},
   {path: RoutesIntern.icebergEmos, component: IcebergsEmosComponent},
 ];

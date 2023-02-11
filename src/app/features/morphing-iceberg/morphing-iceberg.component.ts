@@ -7,7 +7,7 @@ import TWEEN from "@tweenjs/tween.js";
 import {EisbergService} from "../../services/vis-services/eisberg.service";
 import {ModelOutputs} from "../../entity/ModelOutput";
 import Two from "two.js";
-import {CCCOutputToMorph} from "../iceberg-manual-preview/canvasjs-cancer/canvasjs-cancer.component";
+import {CCCOutputToMorph} from "../../shared/canvasjs-cancer/canvasjs-cancer.component";
 import {BackendService} from "../../services/backend-service/backend.service";
 import {MorphService} from "../../services/vis-services/morph.service";
 

@@ -1,7 +1,8 @@
- <input type="file" class="file-upload"
-         accept="audio/mp3"
-         (change)="evToFile($event)" #fileUpload>
+<!-- <input type="file" class="file-upload"-->
+<!--         accept="audio/mp3"-->
+<!--         (change)="evToFile($event)" #fileUpload>-->
 
+  <app-file-drag [mimeTypes]="['audio/*']" [justOneFile]="true" titleString="File to analyze" (addFile)="fileToFile($event)" [hideFiles]="false"></app-file-drag>
   <button mat-icon-button (click)="play()"><mat-icon>play_arrow</mat-icon></button>
   <button mat-icon-button (click)="stop()"><mat-icon>stop</mat-icon></button>
   <button mat-icon-button (click)="pauseSelect()"><mat-icon>pause</mat-icon></button>
@@ -18,11 +19,12 @@
   <mat-slider  (change)="setZoomVal($event)" min="0.1"  max="0.9" step="0.05" value="0.5"  style="margin-inline: 40px; width: 300px">
     <input matSliderThumb>
   </mat-slider>
+
   <div
     (mousemove)="mouseover($event)"
        (click)="click($event)"
        #wavTwoJs id="wave"></div>
 
-  <div #specTest id="spec"></div>
+<!--  <div #specTest id="spec"></div>-->
 
 

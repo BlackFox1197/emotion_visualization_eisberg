@@ -1,15 +1,25 @@
-<div style="display: table;">
-  <div style="display: table-row">
-    <div style="display: table-cell">
-      <div  id="icebergMorph" #iceberg>
-        <div ></div>
-      </div>
+<!--<div style="display: table;">-->
+<!--  <div style="display: table-row">-->
+<!--    <div style="display: table-cell">-->
+<!--      <div  id="icebergMorph" #iceberg>-->
+<!--        <div></div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <app-iceberg-overview [jsonArray]="jsonArray" [icebergDuration]="durationsInMs.oneIcebergDuration"></app-iceberg-overview>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<div id="background">&nbsp; </div>-->
+
+<!--<br>-->
+<!--<app-canvasjs-cancer (playMorph)="onPlayMorph($event)" ></app-canvasjs-cancer>-->
+
+<div class="flex flex-col justify-between">
+  <div class="flex flex-row mb-5">
+    <div class="flex flex-col">
+      <div  id="icebergMorph" #iceberg></div>
+      <div id="background">&nbsp; </div>
     </div>
     <app-iceberg-overview [jsonArray]="jsonArray" [icebergDuration]="durationsInMs.oneIcebergDuration"></app-iceberg-overview>
   </div>
+  <app-canvasjs-cancer (playMorph)="onPlayMorph($event)" ></app-canvasjs-cancer>
 </div>
-<div id="background"></div>
-
-<br>
-<app-canvasjs-cancer (playMorph)="onPlayMorph($event)" ></app-canvasjs-cancer>
-

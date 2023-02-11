@@ -1,0 +1,44 @@
+$normalColor: #ffffff;
+
+.uploadfilecontainer {
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 1px solid $normalColor;
+  box-sizing: border-box;
+  border-radius: 10px;
+  height: 40px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  color: $normalColor;
+}
+
+.uploadfilecontainer:hover {
+  cursor: pointer;
+  box-sizing: border-box;
+  border: 2px solid black;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.files-list {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 10px auto;
+  border: 1px solid;
+  border-radius: 12px;
+  color: #b9b8b8;
+  text-align: center;
+  padding: 8px;
+}
+
+.fileOver{
+  border: 2px dashed #acacac;
+  background-color: rgba(206, 206, 206, 0);
+}
+
+.centerText {
+  margin-top: auto;
+  margin-bottom: auto;
+}

@@ -10,15 +10,15 @@ import {
 } from '@angular/core';
 import Two from "two.js";
 import {Line} from "two.js/src/shapes/line";
-import {AudioService} from "../../../services/data-service/audio.service";
-import {Interval} from "../../../entity/Interval";
-import {WaveFormService} from "../../../services/vis-services/wave-form.service";
-import {SpectroService} from "../../../services/vis-services/spectro.service";
-import {ModelOutput, ModelOutputs, ModelOutputsInterface} from "../../../entity/ModelOutput";
-import {EisbergService} from "../../../services/vis-services/eisberg.service";
-import {IcebergComponent} from "../iceberg/iceberg.component";
-import {IcebergParams} from "../../../entity/Icebergparams";
-import {TimeUtilsService} from "../../../services/data-service/time-utils.service";
+import {AudioService} from "../../services/data-service/audio.service";
+import {Interval} from "../../entity/Interval";
+import {WaveFormService} from "../../services/vis-services/wave-form.service";
+import {SpectroService} from "../../services/vis-services/spectro.service";
+import {ModelOutput, ModelOutputs, ModelOutputsInterface} from "../../entity/ModelOutput";
+import {EisbergService} from "../../services/vis-services/eisberg.service";
+import {IcebergComponent} from "../../features/iceberg-manual-preview/iceberg/iceberg.component";
+import {IcebergParams} from "../../entity/Icebergparams";
+import {TimeUtilsService} from "../../services/data-service/time-utils.service";
 import {MatSliderChange} from "@angular/material/slider";
 
 export interface CCCOutputToMorph {
@@ -92,12 +92,19 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.waveFormService.redraw(value, this.twoCanvas)
   }
 
-  async evToFile(event: any) {
-    const file: File = event.target.files[0];
+
+  fileToFile(file: any){
+    console.log(file)
     const fileURL = URL.createObjectURL(file);
     this.audioDrawer(fileURL)
 
-    return event;
+    return file;
+  }
+
+  async evToFile(event: any) {
+    console.log(event)
+    const file: File = event.target.files[0];
+    return this.fileToFile(file);
   }
 
   /**

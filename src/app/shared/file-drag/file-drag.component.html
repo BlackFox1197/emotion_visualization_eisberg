@@ -1,0 +1,13 @@
+<div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop (fileDropped)="uploadFile($event)">
+  <input hidden type="file" #fileInput (change)="uploadFile($event.target)" accept="{{mimeTypes}}" [multiple]="!justOneFile">
+  <p class="centerText">Upload {{titleString}} here. You can click or drop it here!</p>
+
+</div>
+<p class="mat-error" *ngIf="isOneFileError">You are only allowed to upload one file</p>
+<p class="mat-error" *ngIf="isWrongFormatError">One or more files have the wrong format.</p>
+<div *ngIf="!hideFiles">
+    <div class="files-list" *ngFor="let file of files;let i= index">
+      <p class="centerText"> {{ file.name }} </p>
+<!--      <button mat-icon-button class="delete-file" (click)="deleteAttachment(i)"><mat-icon>delete</mat-icon></button>-->
+    </div>
+</div>
