@@ -1,6 +1,11 @@
 $primary: var(--primary-color);
 $secondary: var(--secondary-color);
 
+.dashboardBody {
+  max-width: 90%;
+  margin-top: 80px;
+  height: 100%;
+}
 
 #icebergMorph{
   position: relative;

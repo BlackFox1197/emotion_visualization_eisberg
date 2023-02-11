@@ -24,6 +24,9 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import { IcebergsEmosComponent } from './features/icebergs-emos/icebergs-emos.component';
 import { OneIcebergComponent } from './features/icebergs-emos/one-iceberg/one-iceberg.component';
+import {AdminNavigationComponent} from "./features/navigation/admin-navigation.component";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatListModule} from "@angular/material/list";
 
 @NgModule({
   declarations: [
@@ -36,7 +39,8 @@ import { OneIcebergComponent } from './features/icebergs-emos/one-iceberg/one-ic
     MorphingIcebergComponent,
     IcebergOverviewComponent,
     IcebergsEmosComponent,
-    OneIcebergComponent
+    OneIcebergComponent,
+    AdminNavigationComponent
   ],
   imports: [
     BrowserModule,
@@ -53,6 +57,8 @@ import { OneIcebergComponent } from './features/icebergs-emos/one-iceberg/one-ic
     MatSliderModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
+    MatToolbarModule,
+    MatListModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
