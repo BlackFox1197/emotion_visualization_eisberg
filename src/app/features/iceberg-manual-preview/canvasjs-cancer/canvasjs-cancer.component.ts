@@ -109,7 +109,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.audiService.getAudioBufferFromFile(file).then(
       buffer => {
         this.audioBuffer = buffer;
-        this.audioLengthInSec = this.tus.convSecToMinutesAndSec( buffer.duration.toFixed(0))
+        this.audioLengthInSec = this.tus.convSecToMinutesAndSec( buffer.duration.toFixed(1))
 
         this.setCCCParamsAndEmit(undefined,undefined, undefined, undefined)
 

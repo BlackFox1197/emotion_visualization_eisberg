@@ -12,19 +12,11 @@ import {Router} from "@angular/router";
 })
 export class AdminNavigationComponent implements OnInit{
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches),
-      shareReplay()
-    );
-
   icebergMorphRoute = '/' + RoutesIntern.morphingIceberg;
   icebergEmosRoute = '/' + RoutesIntern.icebergEmos;
 
 
-  constructor(private breakpointObserver: BreakpointObserver,  private router: Router) {}
-
-
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
       this.router.navigate(['']);

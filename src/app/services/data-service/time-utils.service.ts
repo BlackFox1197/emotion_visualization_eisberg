@@ -12,7 +12,7 @@ export class TimeUtilsService {
     if(typeof seconds == "string"){
       var castedSecs = Number(seconds)
       if(Number.isNaN(castedSecs)){
-        return "0:00"
+        return "0:00.0"
       }
 
     }else{
@@ -27,7 +27,13 @@ export class TimeUtilsService {
       return minutes.toString().concat(":0" + leftSecs.toFixed(1))
     }else{
       if(leftSecs>=10){
+        if(Number.isInteger(leftSecs)){
+          return "0:".concat(leftSecs.toString()+".0")
+        }
         return "0:".concat(leftSecs.toString())
+      }
+      if(Number.isInteger(leftSecs)){
+        return "0:0".concat(leftSecs.toString()+".0")
       }
       return "0:0".concat(leftSecs.toString())
     }

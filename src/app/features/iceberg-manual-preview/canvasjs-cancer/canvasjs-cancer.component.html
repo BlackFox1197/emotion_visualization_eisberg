@@ -5,7 +5,8 @@
   <button mat-icon-button (click)="play()"><mat-icon>play_arrow</mat-icon></button>
   <button mat-icon-button (click)="stop()"><mat-icon>stop</mat-icon></button>
   <button mat-icon-button (click)="pauseSelect()"><mat-icon>pause</mat-icon></button>
-  <mat-label style="margin-inline: 20px"> {{sec}}/{{audioLengthInSec}}</mat-label>
+  <mat-label id="time">{{sec}}</mat-label>
+ <mat-label> /{{audioLengthInSec}} </mat-label>
 
   <mat-form-field style="color: #282831">
     <mat-label>Choose duration</mat-label>

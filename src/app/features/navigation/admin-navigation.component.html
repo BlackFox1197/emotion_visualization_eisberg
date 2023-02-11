@@ -1,39 +1,12 @@
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport
-  [mode]="(isHandset$|async) ? 'over' : 'side'"
-  [opened]="(isHandset$ | async) ===false">
-    <mat-toolbar>Menu</mat-toolbar>
-    <mat-nav-list>
-      <div id="navigationButtons">
+ <mat-toolbar id="navBar">
+      <span style="margin-left: 20px;">EmoViz</span>
+      <mat-divider></mat-divider>
+      <a [routerLink]="icebergMorphRoute"><button mat-button class="navButtons"><mat-icon></mat-icon>Iceberg-morph</button></a> <br>
 
-        <mat-divider></mat-divider>
-        <a [routerLink]="icebergMorphRoute"><button mat-button class="navButtons"><mat-icon></mat-icon>Iceberg-morph</button></a> <br>
-
-        <mat-divider></mat-divider>
-        <a [routerLink]="icebergEmosRoute"><button mat-button class="navButtons"><mat-icon></mat-icon>7 icebergs for emotions</button></a> <br> <p></p>
-
-
-        <br><br><br>
-
-      </div>
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content class="content">
-
-    <mat-toolbar>
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span>EmoViz</span>
+      <mat-divider></mat-divider>
+      <a [routerLink]="icebergEmosRoute"><button mat-button class="navButtons"><mat-icon></mat-icon>7 icebergs for emotions</button></a> <br> <p></p>
     </mat-toolbar>
       <div class="htmlInput">
         <ng-content></ng-content>
       </div>
     <!-- Add Content Here -->
-  </mat-sidenav-content>
-</mat-sidenav-container>
