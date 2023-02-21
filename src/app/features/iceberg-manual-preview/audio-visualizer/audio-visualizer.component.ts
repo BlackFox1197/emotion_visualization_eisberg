@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {IcebergComponent} from "../iceberg/iceberg.component";
 import Two from "two.js";
+import {BackendService} from "../../../services/backend-service/backend.service";
 
 @Component({
   selector: 'app-audio-visualizer',
@@ -28,7 +29,7 @@ export class AudioVisualizerComponent implements OnInit {
 
   @Output() updateFile: EventEmitter<Event> = new EventEmitter<Event>();
 
-  constructor(private sanitize: DomSanitizer) {}
+  constructor(private sanitize: DomSanitizer, private http: BackendService) {}
 
 
   ngOnInit(): void {
@@ -41,11 +42,14 @@ export class AudioVisualizerComponent implements OnInit {
   }
 
   evToFile(event: any): Event{
+
     //var array = this.onFileSelected(event);
     //this.fileName = event.target.value
     const file:File = event.target.files[0];
+    this.http.uploadAudioFile("http://localhost:8001/icebergs/upload", "yee", false, file)
     //const fileURL = this.getUrlFromUpload(file)
     this.loadFileSound(file);
+    //this.http.uploadAudioFile("http://127.0.0.1:8000/icebergs/upload", "yee", false, file)
 
 
     return event;

@@ -1,3 +1,4 @@
 export class Routes{
-  modelOutputsRoute: string = 'http:foobar'
+  baseRoute: string = "http://localhost:8001";
+  modelOutputsRoute: string = this.baseRoute+"/icebergs/modelOutputs";
 }

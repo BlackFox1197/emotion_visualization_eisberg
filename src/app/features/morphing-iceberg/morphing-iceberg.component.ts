@@ -1,7 +1,6 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {IcebergParams} from "../../entity/Icebergparams";
 import {IceBergConfig} from "../../entity/IceBergConfig";
-import {Color} from "../../entity/Color";
 import {Polygon} from "two.js/src/shapes/polygon";
 import TWEEN from "@tweenjs/tween.js";
 import {EisbergService} from "../../services/vis-services/eisberg.service";
@@ -27,10 +26,9 @@ export class MorphingIcebergComponent implements OnInit {
   @ViewChild('iceberg') myDiv?: ElementRef;
   @Output() data: EventEmitter<any> = new EventEmitter<any>();
 
-  @Input() modelOutputs: ModelOutputs = {
+  modelOutputs: ModelOutputs = {
     sampleRate: 44100,
     durationInSec: 201.3,
-    startInSec: 0,
     outputCount: 200,
     modelOutputs: [],
   }
@@ -41,7 +39,9 @@ export class MorphingIcebergComponent implements OnInit {
     restart:false,
     selected: false,
     currentSec: 0,
-    audioBuffered: false
+    audioBuffered: false,
+    selectedIceParams: undefined,
+    outputs: undefined
   }
 
   //anim durations calculate from modeloutputs and outputcount
@@ -83,6 +83,21 @@ export class MorphingIcebergComponent implements OnInit {
   //main method that handles the output from ccc and depending on their attributes starts/stops/delays the animation
   onPlayMorph($event: CCCOutputToMorph) {
     this.cccOutputToMorph = $event
+    console.log(this.cccOutputToMorph)
+    if(this.cccOutputToMorph.outputs!=undefined){
+      this.jsonArray = this.cccOutputToMorph.outputs.modelOutputs
+      this.modelOutputs= this.cccOutputToMorph.outputs
+      this.data.emit(this.jsonArray)
+      this.isLoadin=false
+    }
+    if(this.cccOutputToMorph.selectedIceParams!=undefined){
+      this.twoCanvas.clear()
+      this.t1.stop()
+      let iceConf = this.es.genIceConfs([this.cccOutputToMorph.selectedIceParams])[0]
+      this.eisberg = this.es.generateEisberg(200, 300, 240, iceConf)
+      this.twoCanvas.add(this.eisberg)
+      this.twoCanvas.update()
+    }
 
     if(!this.isLoadin&&this.cccOutputToMorph.audioBuffered) {
       if (this.cccOutputToMorph.currentSec != 0) {
@@ -110,14 +125,16 @@ export class MorphingIcebergComponent implements OnInit {
 
   morphNext(){
     //generate the iceconfs
-    const [iceConfigOld, iceConfigNew] = this.es.genIceConfs([this.jsonArray[this.counterJson], this.jsonArray[this.counterJson+1]])
+    if(this.counterJson+1<=this.jsonArray.length){
+      const [iceConfigOld, iceConfigNew] = this.es.genIceConfs([this.jsonArray[this.counterJson], this.jsonArray[this.counterJson+1]])
       //this.morph.genIceConfs(this.jsonArray, this.counterJson)
 
-    this.counterJson++
+      this.counterJson++
 
-    let iceNew  = this.genCurrentAndNextIceberg(iceConfigOld, iceConfigNew)
+      let iceNew  = this.genCurrentAndNextIceberg(iceConfigOld, iceConfigNew)
 
-    this.morphIcebergToAnother(this.eisberg, iceNew, iceConfigOld.params, iceConfigNew.params)
+      this.morphIcebergToAnother(this.eisberg, iceNew, iceConfigOld.params, iceConfigNew.params)
+    }
   }
 
   //tween animation for morphing
@@ -156,5 +173,13 @@ export class MorphingIcebergComponent implements OnInit {
     this.twoCanvas.bind('update', function (){
       TWEEN.update();
     }).play()
+  }
+
+  private updateDurations(){
+    this.durationsInMs = {
+      oneIcebergDuration: this.modelOutputs.durationInSec / this.modelOutputs.outputCount * 1000,
+      animDuration: this.modelOutputs.durationInSec / this.modelOutputs.outputCount * 1000 * 0.2,
+      delayDuration: this.modelOutputs.durationInSec / this.modelOutputs.outputCount * 1000 * 0.8,
+    }
   }
 }

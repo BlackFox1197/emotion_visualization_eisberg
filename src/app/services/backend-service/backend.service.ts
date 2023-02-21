@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
 import {ModelOutput, ModelOutputs} from "../../entity/ModelOutput";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Routes} from "../routes";
 
 export interface UploadFile {
@@ -16,6 +16,7 @@ export interface UploadFile {
 export class BackendService {
 
   modelOutputs: ModelOutputs | undefined
+  modelOutput: ModelOutput | undefined
   routes: Routes;
   jsonArray: any;
 
@@ -29,30 +30,54 @@ export class BackendService {
    * File upload method, as its different from the post method, because we want events (e.g. for tracking the progress)
    * furthermore the headers are different, as its not json
    */
-  public uploadAudioFile(path: string,formdataName: string, reportProgress: boolean = false, file: File){
+  public uploadAudioFile(path: string, formdataName: string, reportProgress: boolean = false, file: File){
     const formdata = new FormData();
+    const headersCors = new HttpHeaders().set('content-type', 'multipart/form-data')
+      .set('Access-Control-Allow-Origin', '*')
     formdata.append(formdataName, file)
 
-    return this.http.post<UploadFile>(path, formdata,{
+    return new Observable<any>( subscriber =>
+      this.http.post(path, formdata).subscribe(
+        (response)=>{
+          subscriber.next(response)
+        }))
+
+    /*return this.http.post<UploadFile>(path, formdata,{
       reportProgress,
       observe: 'response',
+      //headers: headersCors
       //headers???
-    })
+    }).subscribe((res)=>console.log(res))
+
+     */
   }
+
+  public test(path:string){
+    this.http.post(path, "").subscribe({
+      next(num){console.log(num)}
+      }
+    )
+  }
+
 
   //http request
   public getModelOutputsHttp(){
     return this.http.get<ModelOutputs>(this.routes.modelOutputsRoute)
   }
 
-  public getModelOutputsForSelected (startInSec: number, stopInSec: number, durationInSec: number){
-    this.http.get<ModelOutputs>(this.routes.modelOutputsRoute+"/"+startInSec+"/"+stopInSec+"/"+durationInSec)
+  public getModelOutputForSelected (startInSec: number, stopInSec: number, durationInSec: number, fileName:string){
+    return new Observable<any>(subscriber =>
+      this.http.get(this.routes.modelOutputsRoute+"/"+startInSec+"/"+stopInSec+"/"+durationInSec+"/"+fileName).subscribe((response)=>
+      subscriber.next(response)))
+    /*return this.http.get<ModelOutput>(this.routes.modelOutputsRoute+"/"+startInSec+"/"+stopInSec+"/"+durationInSec)
       .subscribe((next) => {
-        this.modelOutputs = next;
+        this.modelOutput = next;
         this.isLoadin = false;
       }
     )
-    return this.modelOutputs
+
+     */
+    //return this.modelOutputs
   }
 
   //get the modeloutputs
@@ -60,7 +85,6 @@ export class BackendService {
     this.getModelOutputsHttp().subscribe((data: ModelOutputs)=> this.modelOutputs={
       sampleRate: data.sampleRate,
       durationInSec: data.durationInSec,
-      startInSec: data.startInSec,
       outputCount: data.outputCount,
       modelOutputs: data.modelOutputs,
     })

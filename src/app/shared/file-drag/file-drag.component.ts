@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {BackendService} from "../../services/backend-service/backend.service";
+import {ModelOutput} from "../../entity/ModelOutput";
 
 @Component({
   selector: 'app-file-drag',
@@ -18,12 +20,10 @@ export class FileDragComponent implements OnInit {
   @Output() changeFile = new EventEmitter<any>();
   @Output() addFile = new EventEmitter<any>();
 
-  constructor() { }
+  constructor(private backend: BackendService) { }
 
   ngOnInit(): void {
   }
-
-
 
   uploadFile(event: any): void {
     // check if it is allowed to have more than one file if more are uploaded
@@ -32,7 +32,6 @@ export class FileDragComponent implements OnInit {
       return;
     }
 
-    console.log(event.files[0])
     for (const element of event.files) {
       // check mime type of file
       if (!this.checkMimeType(element)){

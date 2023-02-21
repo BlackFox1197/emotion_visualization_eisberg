@@ -37,13 +37,10 @@ export class IcebergOverviewComponent implements OnChanges {
   width=1300
 
   constructor(private es: EisbergService, private cs: ColorService, private tus: TimeUtilsService) { }
-
   ngOnInit(): void {
   }
-
   ngAfterViewInit():void {
   }
-
   ngOnChanges(changes:SimpleChanges): void{
     if(!changes['jsonArray'].firstChange){
       this.onLoadedData(changes['jsonArray'].currentValue, this.icebergDuration);
@@ -51,46 +48,53 @@ export class IcebergOverviewComponent implements OnChanges {
   }
 
   onLoadedData(jsonArray: any, icebergDuration: number){
+    this.removePreviousStuff()
 
-    const singleWidth= this.width/jsonArray.length
+    var calcWidth = jsonArray.length *150 +380
     const elem = document.getElementById("iceberg-overview")
+    elem!.style.width = calcWidth+"px";
 
-    var calcWidht = jsonArray.length *150 +380
-    elem!.style.width = calcWidht+"px";
+    while (elem!.firstChild) {
+      elem!.removeChild(elem!.lastChild!);
+    }
 
     var params = {fitted:true}
     var elemIn = this.myDiv?.nativeElement;
     this.twoCanvas = new Two(params).appendTo(elemIn)
 
-    let fillSave: any
-
     var iceConfs = this.es.genIceConfs(jsonArray)
 
     for(let i=0; i<iceConfs.length; i++){
-
-
-
       var ice= this.es.generateEisberg(200, 250+i*150, 240, iceConfs[i])
       ice.opacity=0.9
 
       this.icebergGroup.add(ice)
-
     }
     //refill the iceberg, because of width of div gets changed
-    this.icebergGroup.children[8].fill = this.es.generateGradient(jsonArray[8].x4 ?? 0, this.cs.sampleColor(jsonArray[8].x2 ?? 0, new Color("#00FFBB"), new Color("#AA00FF")));
+    if(jsonArray.length>8){
+      this.icebergGroup.children[8].fill = this.es.generateGradient(jsonArray[8].x4 ?? 0, this.cs.sampleColor(jsonArray[8].x2 ?? 0, new Color("#00FFBB"), new Color("#AA00FF")));
+    }
     this.genTimeLine(jsonArray.length, icebergDuration )
     this.twoCanvas.add(this.icebergGroup)
     this.twoCanvas.update()
-
   }
 
   genTimeLine(arrLength: number, oneIceBergDuration: number){
-    var lastIcebergDuration = oneIceBergDuration*arrLength
-    for(let i=0; i<arrLength; i++){
-      var text= new Two.Text(this.tus.convSecToMinutesAndSec(i), 250+i*150, 360)
+    var lastIcebergDurationInSec = Math.ceil(oneIceBergDuration*arrLength/1000)
+    for(let i=0; i<lastIcebergDurationInSec; i++){
+      var shift = oneIceBergDuration/1000
+      var text= new Two.Text(this.tus.convSecToMinutesAndSec(i), 80+i*(150/shift), 360)
       text.fill="white"
       this.timelineGroup.add(text)
     }
    this.twoCanvas.add(this.timelineGroup)
+  }
+
+  removePreviousStuff(){
+    this.twoCanvas.remove(this.icebergGroup)
+    this.twoCanvas.remove(this.timelineGroup)
+    this.icebergGroup = new Two.Group()
+    this.timelineGroup = new Two.Group()
+
   }
 }

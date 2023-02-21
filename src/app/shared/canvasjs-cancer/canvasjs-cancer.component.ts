@@ -20,6 +20,7 @@ import {IcebergComponent} from "../../features/iceberg-manual-preview/iceberg/ic
 import {IcebergParams} from "../../entity/Icebergparams";
 import {TimeUtilsService} from "../../services/data-service/time-utils.service";
 import {MatSliderChange} from "@angular/material/slider";
+import {BackendService} from "../../services/backend-service/backend.service";
 
 export interface CCCOutputToMorph {
   start: boolean;
@@ -27,6 +28,8 @@ export interface CCCOutputToMorph {
   selected: boolean;
   currentSec: number
   audioBuffered: boolean;
+  selectedIceParams: ModelOutput|undefined;
+  outputs: ModelOutputs|undefined;
 }
 
 export interface DurationInSec{
@@ -58,6 +61,8 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     selected: false,
     currentSec: 0,
     audioBuffered: false,
+    selectedIceParams: undefined,
+    outputs: undefined,
   }
 
   twoCanvas = new Two();
@@ -77,6 +82,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   normalizedData: Array<number> = [];
   normalizedDataZoomed: Array<number> = [];
   audioSrc = '';
+  fileName = 'test.mp3';
 
 
   _isLoading = false;
@@ -89,7 +95,8 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   playState = new PLayState();
   playButotnsState = new PlayButtonsState()
 
-  constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService, public tus: TimeUtilsService, private changeDetector : ChangeDetectorRef) {
+  constructor(private audiService: AudioService, public  waveFormService: WaveFormService, public spectroService: SpectroService,
+              public tus: TimeUtilsService, private changeDetector : ChangeDetectorRef, public backend: BackendService) {
   }
 
   ngOnInit() {
@@ -103,15 +110,32 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
 
   fileToFile(file: any){
-    console.log(file)
     const fileURL = URL.createObjectURL(file);
     this.audioDrawer(fileURL)
+    this.fileName=file.name
+    this.backend.uploadAudioFile("http://localhost:8001/icebergs/upload", "yee", false, file).subscribe(
+      (next) => {
+        var arr = next;
+        var outputs : any=[];
+        for(let i=0; i<arr.length;i++){
+          let modelOutput=new ModelOutput(arr[i]["fields"])
+          outputs.push(modelOutput)
+          let modelOutputs : ModelOutputs = {
+            sampleRate: 16000,
+            durationInSec: file.duration,
+            outputCount: outputs.length,
+            modelOutputs: outputs,
+
+          }
+          this.setCCCParamsAndEmit(undefined, undefined, undefined, undefined, undefined, modelOutputs)
+        }
+      }
+    )
 
     return file;
   }
 
   async evToFile(event: any) {
-    console.log(event)
     const file: File = event.target.files[0];
     return this.fileToFile(file);
   }
@@ -146,12 +170,9 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-
   }
 
-
   initTwoJs(){
-    console.log(this.myDiv)
     var params = {
       fitted: true,
       type: Two.Types.canvas
@@ -172,10 +193,19 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.waveFormService.resetZoom(this.twoCanvas);
   }
 
+
+
   click(event: any) {
     this.stop();
     this.waveFormService.click(event, this.twoCanvas)
       if(this.waveFormService.selectedInterval != undefined){
+        console.log(this.audioSrc)
+       this.backend.getModelOutputForSelected(this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end, this.selectedDuration, this.fileName).subscribe(
+          (next) => {
+            this.cccOutputToMorph.selectedIceParams = new ModelOutput(next['fields'])
+          }
+        )
+
         this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
         this.playSelect();
         this.sec = this.tus.convSecToMinutesAndSec(this.waveFormService.selectedInterval.start.toFixed(1))
@@ -316,12 +346,14 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   // #########################################################################################
 
   //emit changes to our morphing iceberg component
-  setCCCParamsAndEmit(start?:boolean, restart?:boolean, selected?:boolean, currentSec?: number){
+  setCCCParamsAndEmit(start?:boolean, restart?:boolean, selected?:boolean, currentSec?: number, selectedIceParams?: ModelOutput, outputs?: ModelOutputs){
     this.cccOutputToMorph.start=start??this.cccOutputToMorph.start;
     this.cccOutputToMorph.restart=restart??this.cccOutputToMorph.restart;
     this.cccOutputToMorph.selected=selected??this.cccOutputToMorph.selected;
     this.cccOutputToMorph.currentSec=currentSec??this.cccOutputToMorph.currentSec;
     this.cccOutputToMorph.audioBuffered= (this.audioBuffer!=undefined)
+    this.cccOutputToMorph.selectedIceParams = selectedIceParams?? this.cccOutputToMorph.selectedIceParams
+    this.cccOutputToMorph.outputs = outputs ?? this.cccOutputToMorph.outputs
     this.sec =  this.tus.convSecToMinutesAndSec( currentSec?.toFixed(1)??this.sec);
     this.playMorph.emit(this.cccOutputToMorph)
   }

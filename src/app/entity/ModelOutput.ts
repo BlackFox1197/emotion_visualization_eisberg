@@ -24,7 +24,6 @@ export class ModelOutput implements ModelOutputInterface{
 export interface ModelOutputsInterface{
   sampleRate: number;
   durationInSec: number;
-  startInSec: number;
   outputCount: number;
   modelOutputs: ModelOutput[];
 }
@@ -33,14 +32,12 @@ export interface ModelOutputsInterface{
 export class ModelOutputs implements ModelOutputsInterface{
   sampleRate: number;
   durationInSec: number;
-  startInSec: number;
   outputCount: number;
   modelOutputs: ModelOutput[];
 
   constructor(parameter: ModelOutputsInterface) {
     this.sampleRate = parameter.sampleRate;
     this.durationInSec = parameter.durationInSec;
-    this.startInSec = parameter.startInSec;
     this.outputCount = parameter.outputCount;
     this.modelOutputs = parameter.modelOutputs ?? [];
   }
