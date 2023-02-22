@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ChangeDetectorRef} from '@angular/core';
 import {IcebergParams} from "../../entity/Icebergparams";
 import {IceBergConfig} from "../../entity/IceBergConfig";
 import {Polygon} from "two.js/src/shapes/polygon";
@@ -63,7 +63,9 @@ export class MorphingIcebergComponent implements OnInit {
   //the tween animation as variable so we can stop it
   public t1 = new TWEEN.Tween(this.eisberg)
 
-  constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService) {}
+  constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService, private changeDetector : ChangeDetectorRef) {}
+
+
 
   ngOnInit(): void {}
 
@@ -81,16 +83,17 @@ export class MorphingIcebergComponent implements OnInit {
   }
 
   //main method that handles the output from ccc and depending on their attributes starts/stops/delays the animation
-  onPlayMorph($event: CCCOutputToMorph) {
+  onPlayMorphOld($event: CCCOutputToMorph) {
     this.cccOutputToMorph = $event
     console.log(this.cccOutputToMorph)
-    if(this.cccOutputToMorph.outputs!=undefined){
+    if(this.cccOutputToMorph.outputs!=undefined && this.modelOutputs!=this.cccOutputToMorph.outputs){
       this.jsonArray = this.cccOutputToMorph.outputs.modelOutputs
       this.modelOutputs= this.cccOutputToMorph.outputs
+      this.updateDurations()
       this.data.emit(this.jsonArray)
       this.isLoadin=false
     }
-    if(this.cccOutputToMorph.selectedIceParams!=undefined){
+    if(this.cccOutputToMorph.selectedIceParams!=undefined &&this.cccOutputToMorph.start){
       this.twoCanvas.clear()
       this.t1.stop()
       let iceConf = this.es.genIceConfs([this.cccOutputToMorph.selectedIceParams])[0]
@@ -109,23 +112,66 @@ export class MorphingIcebergComponent implements OnInit {
       if (this.cccOutputToMorph.start) {
         //clear previous polys and restart anim
         this.twoCanvas.clear()
-        this.t1.stop()
         this.morphNext()
       } else {
         if (this.cccOutputToMorph.restart) {
           //restart so reset counter to 0 and stop
           this.t1.stop()
           this.counterJson = 0;
+        }else{
+          this.t1.stop()
         }
         //else stop it
-        this.t1.stop()
+      }
+    }
+  }
+
+  onPlayMorph($event: CCCOutputToMorph) {
+    this.cccOutputToMorph = $event
+    console.log(this.cccOutputToMorph)
+
+    if(this.cccOutputToMorph.outputs!=undefined && this.modelOutputs!=this.cccOutputToMorph.outputs){
+      this.setOutputsAndUpdate(this.cccOutputToMorph)
+    }
+
+    if(this.cccOutputToMorph.selectedIceParams!=undefined&&this.cccOutputToMorph.selected && this.cccOutputToMorph.currentSec!=0){
+      this.twoCanvas.clear()
+      this.t1.stop()
+      let iceConf = this.es.genIceConfs([this.cccOutputToMorph.selectedIceParams])[0]
+      this.eisberg = this.es.generateEisberg(200, 300, 240, iceConf)
+      this.twoCanvas.add(this.eisberg)
+      this.twoCanvas.update()
+      return
+    }
+
+    if(!this.isLoadin&&this.cccOutputToMorph.audioBuffered) {
+      if (this.cccOutputToMorph.currentSec != 0) {
+        //get our current iceberg according to sec, delay for some left time
+        const delayAndIndex = this.morph.calcCurrentIcebergIndex(this.cccOutputToMorph.currentSec, this.modelOutputs.durationInSec, this.modelOutputs.outputCount, this.durationsInMs.oneIcebergDuration)
+        this.t1.delay(delayAndIndex[0])
+        this.counterJson = delayAndIndex[1]
+      }
+      if (this.cccOutputToMorph.start) {
+        //clear previous polys and restart anim
+        this.twoCanvas.clear()
+        this.morphNext()
+        return
+      } else {
+        if (this.cccOutputToMorph.restart ) {
+          //restart so reset counter to 0 and stop
+          this.t1.stop()
+          this.counterJson = 0;
+        }else{
+          this.t1.stop()
+        }
+        //else stop it
       }
     }
   }
 
   morphNext(){
     //generate the iceconfs
-    if(this.counterJson+1<=this.jsonArray.length){
+    if(this.counterJson<this.jsonArray.length-1){
       const [iceConfigOld, iceConfigNew] = this.es.genIceConfs([this.jsonArray[this.counterJson], this.jsonArray[this.counterJson+1]])
       //this.morph.genIceConfs(this.jsonArray, this.counterJson)
 
@@ -134,6 +180,12 @@ export class MorphingIcebergComponent implements OnInit {
       let iceNew  = this.genCurrentAndNextIceberg(iceConfigOld, iceConfigNew)
 
       this.morphIcebergToAnother(this.eisberg, iceNew, iceConfigOld.params, iceConfigNew.params)
+    } else{
+      this.t1.stop()
+      let iceConfLast = this.es.genIceConfs([this.jsonArray[this.jsonArray.length-1]])[0]
+      this.eisberg = this.es.generateEisberg(200, 300, 240, iceConfLast)
+      this.twoCanvas.add(this.eisberg)
+      this.twoCanvas.update()
     }
   }
 
@@ -181,5 +233,17 @@ export class MorphingIcebergComponent implements OnInit {
       animDuration: this.modelOutputs.durationInSec / this.modelOutputs.outputCount * 1000 * 0.2,
       delayDuration: this.modelOutputs.durationInSec / this.modelOutputs.outputCount * 1000 * 0.8,
     }
+  }
+
+  private setOutputsAndUpdate(cccOutputToMorph: CCCOutputToMorph){
+    this.jsonArray = cccOutputToMorph.outputs!.modelOutputs
+    this.modelOutputs= cccOutputToMorph.outputs!
+    this.updateDurations()
+    this.data.emit(this.jsonArray)
+    this.isLoadin=false
+  }
+
+  public isLoadingBackend($event: boolean){
+    this.isLoadin=$event
   }
 }
