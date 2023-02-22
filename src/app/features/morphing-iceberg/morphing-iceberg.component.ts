@@ -63,7 +63,7 @@ export class MorphingIcebergComponent implements OnInit {
   //the tween animation as variable so we can stop it
   public t1 = new TWEEN.Tween(this.eisberg)
 
-  constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService, private changeDetector : ChangeDetectorRef) {}
+  constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService) {}
 
 
 

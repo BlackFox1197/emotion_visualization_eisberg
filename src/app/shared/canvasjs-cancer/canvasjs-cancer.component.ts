@@ -122,7 +122,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
           outputs.push(modelOutput)
           let modelOutputs : ModelOutputs = {
             sampleRate: 16000,
-            durationInSec: file.duration,
+            durationInSec: this.audioBuffer?.duration!,
             outputCount: outputs.length,
             modelOutputs: outputs,
 
@@ -188,7 +188,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   }
 
   @HostListener('document:keydown.escape', ['$event']) unzoom(event: KeyboardEvent) {
-    this.setCCCParamsAndEmit(false, false, false)
+    this.setCCCParamsAndEmit(false, false, false, 0, undefined)
     this.stop();
     this.waveFormService.resetZoom(this.twoCanvas);
   }
@@ -203,13 +203,14 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
        this.backend.getModelOutputForSelected(this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end, this.selectedDuration, this.fileName).subscribe(
           (next) => {
             this.cccOutputToMorph.selectedIceParams = new ModelOutput(next['fields'])
+            this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval!.start)
+            this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval!.start, this.waveFormService.selectedInterval!.end-this.waveFormService.selectedInterval!.start);
+            this.playSelect();
+            this.sec = this.tus.convSecToMinutesAndSec(this.waveFormService.selectedInterval!.start.toFixed(1))
           }
         )
 
-        this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end-this.waveFormService.selectedInterval.start);
-        this.playSelect();
-        this.sec = this.tus.convSecToMinutesAndSec(this.waveFormService.selectedInterval.start.toFixed(1))
-        this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval.start)
+
     }
   }
 
@@ -224,22 +225,22 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
       this.playButotnsState.play();
       let playedSecs = this.playState.playedUnits/this.playState.unitsPerSeconds
       if(this.waveFormService.selected){
-        this.setCCCParamsAndEmit(true, true, true, this.playState.playedUnits/this.playState.unitsPerSeconds)
         let startEnd = this.waveFormService.selectedInterval;
+        this.setCCCParamsAndEmit(true, true, true, startEnd!.start+playedSecs)
         this.audiService.playSelection(this.audioBuffer!, startEnd!.start + playedSecs, startEnd!.end - (startEnd!.start + playedSecs))
       }
       else{
         if(this.waveFormService.zoomed){
-          this.setCCCParamsAndEmit(true, true, undefined, this.playState.playedUnits/this.playState.unitsPerSeconds)
+          this.setCCCParamsAndEmit(true, true, undefined, this.waveFormService.currentZoomedOffsetInSec+playedSecs)
           let start = this.waveFormService.currentZoomedOffsetInSec;
           let end = this.waveFormService.currentZoomedOffsetInSec + (this.zoomdistance * this.waveFormService.originalData.length /this.waveFormService.samplesPerSecond)
           this.audiService.playSelection(this.audioBuffer!, start + playedSecs, end - (start + playedSecs))
         }
         else{
           this.audiService.playSelection(this.audioBuffer!, playedSecs, undefined)
+          this.setCCCParamsAndEmit(true, undefined, undefined, playedSecs)
         }
       }
-      this.setCCCParamsAndEmit(true, true, undefined, this.playState.playedUnits/this.playState.unitsPerSeconds)
       this.playSelect();
     }
 
@@ -250,7 +251,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
    */
   stop(){
     this.playButotnsState.stop();
-    this.setCCCParamsAndEmit(false,true)
+    this.setCCCParamsAndEmit(false,true, undefined, 0, undefined)
     /** the stopped property is needed, because of the eventlistener that does listen on the ended event
     * but the ended event is also thrown when pausing!
     * but we do not need a reset every time
@@ -306,7 +307,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
         clearInterval(localId);
         if(!this.playState.paused){
           this.playButotnsState.stop()
-          this.setCCCParamsAndEmit(false)
+          this.setCCCParamsAndEmit(false, true, undefined, 0, undefined)
           // reset the played units
           this.playState.playedUnits = 0;
           //reset the graph
