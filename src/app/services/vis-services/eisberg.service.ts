@@ -123,11 +123,10 @@ export class EisbergService {
    */
   private generateStops(value: number, color: Color): Array<Stop>{
 
-    let color1 = this.cs.generateSecondColor(color);
-    let color2 = color.getHexString();
+    let color1 = color//this.cs.generateSecondColor(color);
+    let color2 = new Color("black").getHexString();
     var stopsPredefined = [
       new Two.Stop(0.0, color2, 1),
-      //new Two.Stop(0.2, "green", 1),
       new Two.Stop(0.0, color1.getHexString(), 1),
     ]
     var grads=20
@@ -212,8 +211,8 @@ export class EisbergService {
       };
 
       let iceConf: IceBergConfig = {
-        color1: new Color('blue'),
-        color2: new Color('green'),
+        color1: this.color1,
+        color2: this.color2,
         params: iceParam
       }
 

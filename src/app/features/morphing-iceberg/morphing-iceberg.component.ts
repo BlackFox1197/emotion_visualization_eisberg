@@ -65,8 +65,6 @@ export class MorphingIcebergComponent implements OnInit {
 
   constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService) {}
 
-
-
   ngOnInit(): void {}
 
   ngAfterViewInit(): void{

@@ -17,15 +17,25 @@
   <div class="flex flex-row justify-between max-w-full">
     <div class="flex flex-col icebergMorphSizes pl-10 pr-5">
       <div class="flex flex-col border rounded border-gray-700 box-border box-content mt-2 mb-1">
-        <div id="icebergMorph" #iceberg></div>
+        <div id="icebergMorph" #iceberg>
+          <div>
+            <p class="text-base p-2">
+              Current morphing
+            </p>
+          </div>
+        </div>
         <div id="background">&nbsp;</div>
       </div>
     </div>
     <div class="flex-1"></div>
     <div class="min-w-0 pl-5 pr-10 pt-2 pb-2">
       <app-iceberg-overview class="max-w-full" [jsonArray]="jsonArray"
-                            [icebergDuration]="durationsInMs.oneIcebergDuration"></app-iceberg-overview>
+                            [icebergDuration]="durationsInMs.oneIcebergDuration">
+      </app-iceberg-overview>
     </div>
   </div>
   <app-canvasjs-cancer  (playMorph)="onPlayMorph($event)" ></app-canvasjs-cancer>
 </div>
+
+
+
