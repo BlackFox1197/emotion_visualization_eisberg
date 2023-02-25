@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ElementRef,
   EventEmitter,
   Input,
@@ -17,6 +17,7 @@ import {Vector} from "two.js/src/vector";
 import {ColorService} from "../../services/vis-services/color.service";
 import {LinearGradient} from "two.js/src/effects/linear-gradient";
 import {TimeUtilsService} from "../../services/data-service/time-utils.service";
+import { ChartConfiguration } from 'chart.js';
 
 @Component({
   selector: 'app-iceberg-overview',
@@ -36,7 +37,7 @@ export class IcebergOverviewComponent implements OnChanges {
   timelineGroup = new Two.Group()
   width=1300
 
-  constructor(private es: EisbergService, private cs: ColorService, private tus: TimeUtilsService) { }
+  constructor(private es: EisbergService, private cs: ColorService, private tus: TimeUtilsService, private changeDetector : ChangeDetectorRef) { }
   ngOnInit(): void {
   }
   ngAfterViewInit():void {
@@ -46,11 +47,18 @@ export class IcebergOverviewComponent implements OnChanges {
       this.onLoadedData(changes['jsonArray'].currentValue, this.icebergDuration);
     }
   }
+  _showBarCharts = false;
+
+  set showBarCharts(il: boolean) {
+    this._showBarCharts = il;
+    this.changeDetector.detectChanges();
+  }
+
 
   onLoadedData(jsonArray: any, icebergDuration: number){
     this.removePreviousStuff()
 
-    var calcWidth = jsonArray.length *150 +380
+    var calcWidth = jsonArray.length *250 +380
     const elem = document.getElementById("iceberg-overview")
     elem!.style.width = calcWidth+"px";
 
@@ -65,14 +73,14 @@ export class IcebergOverviewComponent implements OnChanges {
     var iceConfs = this.es.genIceConfs(jsonArray)
 
     for(let i=0; i<iceConfs.length; i++){
-      var ice= this.es.generateEisberg(200, 250+i*150, 240, iceConfs[i])
+      var ice= this.es.generateEisberg(200, 250+i*250, 240, iceConfs[i])
       ice.opacity=0.9
 
       this.icebergGroup.add(ice)
     }
     //refill the iceberg, because of width of div gets changed
     if(jsonArray.length>8){
-      this.icebergGroup.children[8].fill = this.es.generateGradient(jsonArray[8].x4 ?? 0, this.cs.sampleColor(jsonArray[8].x2 ?? 0, new Color("#00FFBB"), new Color("#AA00FF")));
+      this.icebergGroup.children[8].fill = this.es.generateGradient(jsonArray[8].x4 ?? 0, this.cs.sampleColor(jsonArray[8].x2 ?? 0, this.es.color1, this.es.color2));
     }
     this.genTimeLine(jsonArray.length, icebergDuration )
     this.twoCanvas.add(this.icebergGroup)
@@ -81,9 +89,9 @@ export class IcebergOverviewComponent implements OnChanges {
 
   genTimeLine(arrLength: number, oneIceBergDuration: number){
     var lastIcebergDurationInSec = Math.ceil(oneIceBergDuration*arrLength/1000)
-    for(let i=0; i<lastIcebergDurationInSec; i++){
+    for(let i=0; i<lastIcebergDurationInSec; i++) {
       var shift = oneIceBergDuration/1000
-      var text= new Two.Text(this.tus.convSecToMinutesAndSec(i), 80+i*(150/shift), 360)
+      var text= new Two.Text(this.tus.convSecToMinutesAndSec(i), 80+i*(250/shift), 360)
       text.fill="white"
       this.timelineGroup.add(text)
     }
@@ -95,6 +103,21 @@ export class IcebergOverviewComponent implements OnChanges {
     this.twoCanvas.remove(this.timelineGroup)
     this.icebergGroup = new Two.Group()
     this.timelineGroup = new Two.Group()
-
   }
+//----------------------------------------------------------Bar Chart------------------------------------------------------------------------------------------------------
+  public barChartLegend = false;
+  public barChartPlugins = [];
+
+
+  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: false,
+    borderColor: "white",
+    scales:{
+      y:{
+        min: -1,
+        max: 1,
+      }
+    }
+  };
+
 }

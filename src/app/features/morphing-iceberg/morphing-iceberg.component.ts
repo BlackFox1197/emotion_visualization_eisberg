@@ -126,7 +126,7 @@ export class MorphingIcebergComponent implements OnInit {
 
   onPlayMorph($event: CCCOutputToMorph) {
     this.cccOutputToMorph = $event
-    console.log(this.cccOutputToMorph)
+    //console.log(this.cccOutputToMorph)
 
     if(this.cccOutputToMorph.outputs!=undefined && this.modelOutputs!=this.cccOutputToMorph.outputs){
       this.setOutputsAndUpdate(this.cccOutputToMorph)

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import {combineTransforms} from "@angular/cdk/drag-drop/drag-styling";
 import {coerceArray} from "@angular/cdk/coercion";
 
 @Injectable({

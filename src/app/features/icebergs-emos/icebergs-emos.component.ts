@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {BackendService} from "../../services/backend-service/backend.service";
 import Two from "two.js";
 import {ModelOutput} from "../../entity/ModelOutput";
@@ -16,12 +16,19 @@ import {isEmpty} from "rxjs";
 export class IcebergsEmosComponent implements OnInit {
   @ViewChild('icebergsEmos') myDiv?: ElementRef;
 
-  jsonNames = ["angry.json","disgust.json", "fear.json", "happy.json", "neutral.json", "sad.json", "surprise.json"]
+  jsonNames = ["angrypca.json","disgustpca.json", "fearpca.json", "happypca.json", "neutralpca.json", "sadpca.json", "surprisepca.json"]
 
   public emosArray: Array<any> =[];
   isLoadin = true;
 
-  constructor(private es: EisbergService, private backend: BackendService) { }
+  constructor(private es: EisbergService, private backend: BackendService, private changeDetector : ChangeDetectorRef) { }
+
+  _showBarCharts = false;
+
+  set showBarCharts(il: boolean) {
+    this._showBarCharts = il;
+    this.changeDetector.detectChanges();
+  }
 
   ngOnInit(): void {
 

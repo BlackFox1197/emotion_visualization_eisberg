@@ -14,8 +14,8 @@ import {ModelOutput} from "../../entity/ModelOutput";
 })
 export class EisbergService {
 
-  color1 = new Color("#00FFBB")
-  color2 = new Color("#AA00FF")
+  color1 = new Color("#08ff00")
+  color2 = new Color("#ff0000")
 
   borderCol1 = new Color("#FF00BB")
   borderCol2 = new Color("#00FFAA")
@@ -203,10 +203,10 @@ export class EisbergService {
 
     for(let i=0; i<arr.length; i++){
       let iceParam: IcebergParams = {
-        skew: arr[i].x1,
-        colorParam: arr[i].x2,
+        skew: arr[i].x4,
+        colorParam: arr[i].x1,
         height: arr[i].x3,
-        frequency: arr[i].x4,
+        frequency: arr[i].x2,
         borderParam: 1,
       };
 

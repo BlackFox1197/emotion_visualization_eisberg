@@ -28,6 +28,7 @@ import {AdminNavigationComponent} from "./features/navigation/admin-navigation.c
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatListModule} from "@angular/material/list";
 import {SharedModule} from "./shared/shared.module";
+import {NgChartsModule} from "ng2-charts";
 
 @NgModule({
   declarations: [
@@ -42,25 +43,26 @@ import {SharedModule} from "./shared/shared.module";
     OneIcebergComponent,
     AdminNavigationComponent
   ],
-  imports: [
-    SharedModule,
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    FormsModule,
-    HttpClientModule,
-    MatSelectModule,
-    ScrollingModule,
-    MatCheckboxModule,
-    MatSliderModule,
-    MatProgressSpinnerModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-  ],
+    imports: [
+        SharedModule,
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatInputModule,
+        MatIconModule,
+        MatButtonModule,
+        FormsModule,
+        HttpClientModule,
+        MatSelectModule,
+        ScrollingModule,
+        MatCheckboxModule,
+        MatSliderModule,
+        MatProgressSpinnerModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatListModule,
+        NgChartsModule,
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

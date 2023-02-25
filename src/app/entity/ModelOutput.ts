@@ -4,6 +4,7 @@ export interface ModelOutputInterface{
   x2: number,
   x3: number,
   x4: number,
+  emotion: string,
 }
 
 //class of one modeloutput
@@ -12,12 +13,14 @@ export class ModelOutput implements ModelOutputInterface{
   x2: number;
   x3: number;
   x4: number;
+  emotion: string;
 
   constructor(parameter: ModelOutputInterface) {
     this.x1 = parameter.x1;
     this.x2 = parameter.x2;
     this.x3 = parameter.x3;
     this.x4 = parameter.x4;
+    this.emotion = parameter.emotion
   }
 }
 
