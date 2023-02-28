@@ -11,6 +11,7 @@ import {HttpClient} from "@angular/common/http";
 import {ModelOutput} from "../../../entity/ModelOutput";
 import {Curve} from "two.js/src/utils/curves";
 import {delay} from "rxjs";
+import {Group} from "two.js/src/group";
 
 const TWEEN = require('@tweenjs/tween.js')
 
@@ -36,7 +37,7 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
   };
 
   twoCanvas = new Two();
-  eisberg = new Polygon();
+  eisberg = new Group();
 
   params: IcebergParams = {skew: 0}
 
@@ -80,7 +81,7 @@ export class IcebergComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   updateIceberg(params: IcebergParams): void{
-    this.es.updateIceberg(this.eisberg, params)
+    this.es.updateIceberg(this.eisberg.children[0], params)
     this.twoCanvas.update();
   }
 

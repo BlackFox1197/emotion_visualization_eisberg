@@ -9,6 +9,7 @@ import Two from "two.js";
 import {CCCOutputToMorph} from "../../shared/canvasjs-cancer/canvasjs-cancer.component";
 import {BackendService} from "../../services/backend-service/backend.service";
 import {MorphService} from "../../services/vis-services/morph.service";
+import {Group} from "two.js/src/group";
 
 export interface DurationsInMs{
   oneIcebergDuration:number;
@@ -54,14 +55,14 @@ export class MorphingIcebergComponent implements OnInit {
   //two objects
   twoCanvas = new Two();
   isLoadin = true;
-  eisberg = new Polygon();
+  eisberg = new Group();
 
   //json array stuff and counter for where we are
   public jsonArray: any;
   public counterJson = 0;
 
   //the tween animation as variable so we can stop it
-  public t1 = new TWEEN.Tween(this.eisberg)
+  public t1 = new TWEEN.Tween(this.eisberg.children[0])
 
   constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService) {}
 
@@ -171,13 +172,14 @@ export class MorphingIcebergComponent implements OnInit {
     //generate the iceconfs
     if(this.counterJson<this.jsonArray.length-1){
       const [iceConfigOld, iceConfigNew] = this.es.genIceConfs([this.jsonArray[this.counterJson], this.jsonArray[this.counterJson+1]])
+      const [emoOld, emoNew] = [this.jsonArray[this.counterJson].emotion, this.jsonArray[this.counterJson+1].emotion]
       //this.morph.genIceConfs(this.jsonArray, this.counterJson)
 
       this.counterJson++
 
       let iceNew  = this.genCurrentAndNextIceberg(iceConfigOld, iceConfigNew)
 
-      this.morphIcebergToAnother(this.eisberg, iceNew, iceConfigOld.params, iceConfigNew.params)
+      this.morphIcebergToAnother(this.eisberg.children[0] , iceNew.children[0], iceConfigOld.params, iceConfigNew.params)
     } else{
       this.t1.stop()
       let iceConfLast = this.es.genIceConfs([this.jsonArray[this.jsonArray.length-1]])[0]
@@ -212,8 +214,9 @@ export class MorphingIcebergComponent implements OnInit {
     this.bindTweenUpdateToCanvas()
   }
 
-  private genCurrentAndNextIceberg(iceConfigOld: IceBergConfig, iceConfigNew: IceBergConfig): Polygon {
+  private genCurrentAndNextIceberg(iceConfigOld: IceBergConfig, iceConfigNew: IceBergConfig): Group {
     this.eisberg = this.es.generateEisberg(200, 300, 240, iceConfigOld)
+
     this.twoCanvas.add(this.eisberg)
 
     return this.es.generateEisberg(200, 300, 240, iceConfigNew)

@@ -8,6 +8,7 @@ import {Color} from "../../entity/Color";
 import {IcebergParams} from "../../entity/Icebergparams";
 import {IceBergConfig} from "../../entity/IceBergConfig";
 import {ModelOutput} from "../../entity/ModelOutput";
+import {Group} from "two.js/src/group";
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,7 @@ export class EisbergService {
    * @param y
    * @param config
    */
-  generateEisberg(radius: number, x: number, y: number, config: IceBergConfig): Polygon{
+  generateEisberg(radius: number, x: number, y: number, config: IceBergConfig): Group{
     var poly = new Polygon(x, y ,radius, 3);
 
     // color1 = this.cs.getColorData(color1);
@@ -47,7 +48,12 @@ export class EisbergService {
     poly.linewidth = 6;
     poly.height= this.generatePolyHeight(poly,config.params.height?? 0, -1, 1)
 
-    return poly;
+    let polyLabel = new Two.Text(config.params.label??"", x, y+50)
+    polyLabel.fill="white"
+    let polyGroup = new Two.Group()
+    polyGroup.add(poly, polyLabel)
+
+    return polyGroup;
 
   }
 
@@ -208,6 +214,7 @@ export class EisbergService {
         height: arr[i].x3,
         frequency: arr[i].x2,
         borderParam: 1,
+        label: arr[i].emotion
       };
 
       let iceConf: IceBergConfig = {

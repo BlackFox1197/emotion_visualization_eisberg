@@ -29,6 +29,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatListModule} from "@angular/material/list";
 import {SharedModule} from "./shared/shared.module";
 import {NgChartsModule} from "ng2-charts";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import {NgChartsModule} from "ng2-charts";
         MatToolbarModule,
         MatListModule,
         NgChartsModule,
+        MatTooltipModule,
     ],
   providers: [],
   bootstrap: [AppComponent]
