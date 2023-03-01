@@ -30,6 +30,7 @@ export class IcebergOverviewComponent implements OnChanges {
 
   @Input('jsonArray') jsonArray: any
   @Input('icebergDuration') icebergDuration: number=0
+  @Input('onlyShowBarCharts') onlyShowBarCharts: boolean=false;
 
   //two objects
   twoCanvas = new Two();
@@ -58,6 +59,8 @@ export class IcebergOverviewComponent implements OnChanges {
   onLoadedData(jsonArray: any, icebergDuration: number){
     this.removePreviousStuff()
 
+
+
     var calcWidth = jsonArray.length *250 +380
     const elem = document.getElementById("iceberg-overview")
     elem!.style.width = calcWidth+"px";
@@ -69,6 +72,12 @@ export class IcebergOverviewComponent implements OnChanges {
     var params = {fitted:true}
     var elemIn = this.myDiv?.nativeElement;
     this.twoCanvas = new Two(params).appendTo(elemIn)
+    if(this.onlyShowBarCharts){
+      this.genTimeLine(jsonArray.length, icebergDuration)
+      this.twoCanvas.update()
+      this.showBarCharts=true;
+      return
+    }
 
     var iceConfs = this.es.genIceConfs(jsonArray)
 
@@ -118,6 +127,11 @@ export class IcebergOverviewComponent implements OnChanges {
         max: 1,
       }
     }
+  };
+
+  public radarChartOptions: ChartConfiguration<'radar'>['options'] = {
+    responsive: false,
+    borderColor: "white",
   };
 
 }

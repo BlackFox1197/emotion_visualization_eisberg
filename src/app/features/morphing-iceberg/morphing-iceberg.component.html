@@ -17,37 +17,50 @@
   <div class="flex flex-row justify-between max-w-full">
     <div class="flex flex-col icebergMorphSizes pl-10 pr-5">
       <div class="flex flex-col border rounded border-gray-700 box-border box-content mt-2 mb-1">
-        <div id="icebergMorph" #iceberg>
-          <div>
-            <p class="text-base p-2">
-              Current morphing
-            </p>
-          </div>
+        <span *ngIf="showIceberg">
+          <app-morphing-single-iceberg (data)="jsonArray=$event" (cccOutPut)="setOutputsAndUpdate($event)"
+                                       [morphingInput]="morphInput"></app-morphing-single-iceberg>
+        </span>
+        <span *ngIf="showBarCharts">
 
-        </div>
-          <button mat-icon-button #tooltip="matTooltip"
-                  (click)="tooltip.toggle()"
-                  matTooltipClass="text-base"
-                  matTooltipPosition="below"
-                  matTooltip="There are 4 parameters from the neural network, ranked from 1 to 4
+        </span>
+
+        <span *ngIf="showSpiderCharts">
+
+        </span>
+
+        <button mat-icon-button #tooltip="matTooltip"
+                (click)="tooltip.toggle()"
+                matTooltipClass="text-base"
+                matTooltipPosition="below"
+                matTooltip="There are 4 parameters from the neural network, ranked from 1 to 4
 by importance: color of the glyphs is varying between colors of the color gradient bar,
 frequency (number of gradient stops in the glyph),
 height and
 skew.
 You can see the classified emotions in the glyph."
-          ><mat-icon>info</mat-icon></button>
+        ><mat-icon>info</mat-icon></button>
 
         <div id="background">&nbsp;</div>
       </div>
     </div>
     <div class="flex-1"></div>
     <div class="min-w-0 pl-5 pr-10 pt-2 pb-2">
-      <app-iceberg-overview class="max-w-full" [jsonArray]="jsonArray"
-                            [icebergDuration]="durationsInMs.oneIcebergDuration">
-      </app-iceberg-overview>
+      <span *ngIf="showIceberg">
+         <app-iceberg-overview class="max-w-full" [jsonArray]="jsonArray" [onlyShowBarCharts]="showBarCharts"
+                               [icebergDuration]="durationsInMs.oneIcebergDuration">
+         </app-iceberg-overview>
+      </span>
+      <span *ngIf="showBarCharts">
+
+      </span>
+      <span *ngIf="showSpiderCharts">
+
+      </span>
+
     </div>
   </div>
-  <app-canvasjs-cancer  (playMorph)="onPlayMorph($event)" ></app-canvasjs-cancer>
+  <app-canvasjs-cancer  (playMorph)="addToObs($event)" ></app-canvasjs-cancer>
 </div>
 
 

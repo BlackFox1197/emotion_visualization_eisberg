@@ -30,20 +30,23 @@ import {MatListModule} from "@angular/material/list";
 import {SharedModule} from "./shared/shared.module";
 import {NgChartsModule} from "ng2-charts";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import { MorphingSingleIcebergComponent } from './features/morphing-single-iceberg/morphing-single-iceberg.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    IcebergManualPreviewComponent,
-    IcebergComponent,
-    InputsComponent,
-    AudioVisualizerComponent,
-    MorphingIcebergComponent,
-    IcebergOverviewComponent,
-    IcebergsEmosComponent,
-    OneIcebergComponent,
-    AdminNavigationComponent
-  ],
+    declarations: [
+        AppComponent,
+        IcebergManualPreviewComponent,
+        IcebergComponent,
+        InputsComponent,
+        AudioVisualizerComponent,
+        MorphingIcebergComponent,
+        IcebergOverviewComponent,
+        IcebergsEmosComponent,
+        OneIcebergComponent,
+        AdminNavigationComponent,
+        MorphingSingleIcebergComponent,
+        MorphingSingleIcebergComponent
+    ],
     imports: [
         SharedModule,
         BrowserModule,
