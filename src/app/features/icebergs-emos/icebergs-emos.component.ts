@@ -16,7 +16,8 @@ import {isEmpty} from "rxjs";
 export class IcebergsEmosComponent implements OnInit {
   @ViewChild('icebergsEmos') myDiv?: ElementRef;
 
-  jsonNames = ["angrypca.json","disgustpca.json", "fearpca.json", "happypca.json", "neutralpca.json", "sadpca.json", "surprisepca.json"]
+  //jsonNames = ["angrypca.json","disgustpca.json", "fearpca.json", "happypca.json", "neutralpca.json", "sadpca.json", "surprisepca.json"]
+  jsonNames = ["angry_tess.json","disgust_tess.json", "fear_tess.json", "happy_tess.json", "neutral_tess.json", "sad_tess.json", "surprise_tess.json"]
 
   public emosArray: Array<any> =[];
   isLoadin = true;

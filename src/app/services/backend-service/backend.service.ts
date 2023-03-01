@@ -103,7 +103,7 @@ export class BackendService {
 
   public loadIcebergsFor7Emos(filename: string): Observable<any>{
     return new Observable<any>(subscriber =>
-    this.http.get('./assets/sevenemos/'+filename).subscribe(
+    this.http.get('./assets/sevenemos/emo_pca_tess/'+filename).subscribe(
       (response) => {
         subscriber.next(response)
       }))

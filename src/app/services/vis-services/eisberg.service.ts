@@ -213,7 +213,7 @@ export class EisbergService {
         colorParam: arr[i].x1,
         height: arr[i].x3,
         frequency: arr[i].x2,
-        borderParam: 1,
+        borderParam: arr[i].x4,
         label: arr[i].emotion
       };
 
