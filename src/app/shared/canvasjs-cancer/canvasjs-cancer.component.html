@@ -11,7 +11,7 @@
     <div class="flex-1"></div>
     <div class="flex flex-col justify-center flex-1">
       <mat-label class="mr-5">Interval selection size:</mat-label>
-      <mat-form-field style="color: #282831" appearance="outline">
+      <mat-form-field class="color: #282831" appearance="outline">
         <mat-select [(value)]="selectedDuration" (selectionChange)="onChange(selectedDuration)" style="color: #282831">
           <mat-option [value]="duration.value" *ngFor="let duration of durations">{{duration.viewValue}}</mat-option>
         </mat-select>
@@ -19,7 +19,7 @@
     </div>
     <div class="flex-1"></div>
     <div class="flex flex-col flex-1">
-      <mat-checkbox (change)="setSelectWOZoom($event.checked)">Select without zoom</mat-checkbox>
+      <mat-checkbox  (change)="setSelectWOZoom($event.checked)">Select without zoom</mat-checkbox>
       <div class="flex flex-col border-2 rounded border-gray-700 p-2">
         <mat-label>Zoom percentage: {{this.zoomdistance}}</mat-label>
         <mat-slider (input)="setZoomVal($event)" min="0.1" max="0.9" step="0.05" value="0.5"

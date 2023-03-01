@@ -22,3 +22,24 @@ canvas {
   width: 1200px;
 }
 
+::ng-deep .mat-selected{
+  color: #2ec4b2!important;
+  outline-color: #2ec4b2!important;
+  border-color: #2ec4b2!important;
+}
+
+
+//mat-input focused color
+::ng-deep  .mat-form-field-appearance-outline.mat-focused.mat-selected{
+  color: #2ec4b2!important;
+  border-color: rgb(55 65 81)!important;
+  outline-color: rgb(55 65 81)!important;
+}
+
+::ng-deep .mat-form-field-outline {
+  color:gray!important;
+}
+
+
+
+

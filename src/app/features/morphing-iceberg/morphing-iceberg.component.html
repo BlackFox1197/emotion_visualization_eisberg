@@ -25,14 +25,16 @@
           </div>
 
         </div>
-          <button mat-icon-button
+          <button mat-icon-button #tooltip="matTooltip"
+                  (click)="tooltip.toggle()"
                   matTooltipClass="text-base"
                   matTooltipPosition="below"
-                  matTooltip="There are 4 parameters from the neural network, ranked
-by most important. The color of the glyphs is varying between colors of the color gradient bar.
-The freqeuncy (number of gradient stops in the glyph) depends on the second most important parameter.
-Followed by height for the third parameter. Lastly the skew stands for the fourth parameter. You can see
-the classified emotions in the graphic."
+                  matTooltip="There are 4 parameters from the neural network, ranked from 1 to 4
+by importance: color of the glyphs is varying between colors of the color gradient bar,
+frequency (number of gradient stops in the glyph),
+height and
+skew.
+You can see the classified emotions in the glyph."
           ><mat-icon>info</mat-icon></button>
 
         <div id="background">&nbsp;</div>

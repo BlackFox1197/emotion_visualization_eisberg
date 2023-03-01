@@ -40,7 +40,7 @@ export interface DurationInSec{
 @Component({
   selector: 'app-canvasjs-cancer',
   templateUrl: './canvasjs-cancer.component.html',
-  styleUrls: ['./canvasjs-cancer.component.scss']
+  styleUrls: ['./canvasjs-cancer.component.scss'],
 })
 
 export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
