@@ -20,6 +20,7 @@ export class IcebergsEmosComponent implements OnInit {
   jsonNames = ["angry_tess.json","disgust_tess.json", "fear_tess.json", "happy_tess.json", "neutral_tess.json", "sad_tess.json", "surprise_tess.json"]
 
   public emosArray: Array<any> =[];
+  public emosIceArray: Array<IceBergConfig> =[];
   isLoadin = true;
 
   constructor(private es: EisbergService, private backend: BackendService, private changeDetector : ChangeDetectorRef) { }
@@ -36,17 +37,27 @@ export class IcebergsEmosComponent implements OnInit {
   }
 
   ngAfterViewInit(): void{
-    for(let i=0; i< this.jsonNames.length; i++){
-      this.backend.loadIcebergsFor7Emos(this.jsonNames[i]).subscribe(
-        (next) => {
-          this.emosArray.push(next)
-          if(i==this.jsonNames.length-1){
-            this.emosArray= this.es.genIceConfs(this.emosArray);
-            this.isLoadin = false
-          }
+    this.backend.load7Emos(this.jsonNames).subscribe(
+      results => {
+        for(let i=0; i< results.length; i++){
+          this.emosArray.push(results[i])
         }
-      )
-    }
+        this.emosIceArray= this.es.genIceConfs(this.emosArray);
+        this.isLoadin = false
+      }
+    )
+    // for(let i=0; i< this.jsonNames.length; i++){
+    //   this.backend.loadIcebergsFor7Emos(this.jsonNames[i]).subscribe(
+    //     (next) => {
+    //       this.emosArray.push(next)
+    //       if(i==this.jsonNames.length-1){
+    //         this.emosArray= this.es.genIceConfs(this.emosArray);
+    //         this.isLoadin = false
+    //
+    //       }
+    //     }
+    //   )
+    // }
   }
 
 }

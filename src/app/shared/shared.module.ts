@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {FileDragComponent} from "./file-drag/file-drag.component";
-import {CanvasjsCancerComponent} from "./canvasjs-cancer/canvasjs-cancer.component";
+import {FileDragComponent} from "./components/file-drag/file-drag.component";
+import {CanvasjsCancerComponent} from "./components/canvasjs-cancer/canvasjs-cancer.component";
 import {MatIconModule} from "@angular/material/icon";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
@@ -10,6 +10,8 @@ import {MatSliderModule} from "@angular/material/slider";
 import {MatButtonModule} from "@angular/material/button";
 import {CoreModule} from "../core/core.module";
 import { LoadingAnimComponent } from './animations/loading-anim/loading-anim.component';
+import { EmoChartComponent } from './components/emo-chart/emo-chart.component';
+import {NgChartsModule} from "ng2-charts";
 
 
 
@@ -17,10 +19,13 @@ import { LoadingAnimComponent } from './animations/loading-anim/loading-anim.com
   declarations: [
     FileDragComponent,
     CanvasjsCancerComponent,
-    LoadingAnimComponent
+    LoadingAnimComponent,
+    EmoChartComponent
   ],
   exports: [
-    CanvasjsCancerComponent
+    CanvasjsCancerComponent,
+    EmoChartComponent,
+    LoadingAnimComponent
   ],
   imports: [
     CoreModule,
@@ -30,7 +35,8 @@ import { LoadingAnimComponent } from './animations/loading-anim/loading-anim.com
     MatSelectModule,
     MatCheckboxModule,
     MatSliderModule,
-    MatButtonModule
+    MatButtonModule,
+    NgChartsModule
   ]
 })
 export class SharedModule { }

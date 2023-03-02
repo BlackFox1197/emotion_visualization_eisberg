@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {BackendService} from "../../services/backend-service/backend.service";
-import {ModelOutput} from "../../entity/ModelOutput";
+import {BackendService} from "../../../services/backend-service/backend.service";
+import {ModelOutput} from "../../../entity/ModelOutput";
 
 @Component({
   selector: 'app-file-drag',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Observable} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 import {ModelOutput, ModelOutputs} from "../../entity/ModelOutput";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Routes} from "../routes";
@@ -107,5 +107,13 @@ export class BackendService {
       (response) => {
         subscriber.next(response)
       }))
+  }
+
+  public load7Emos(filenames: string[]){
+    let observables = []
+    for(let i=0; i< filenames.length; i++) {
+      observables.push(this.http.get('./assets/sevenemos/emo_pca_tess/'+filenames[i]))
+    }
+    return forkJoin(observables)
   }
 }

@@ -6,7 +6,7 @@ import TWEEN from "@tweenjs/tween.js";
 import {EisbergService} from "../../services/vis-services/eisberg.service";
 import {ModelOutputs} from "../../entity/ModelOutput";
 import Two from "two.js";
-import {CCCOutputToMorph} from "../../shared/canvasjs-cancer/canvasjs-cancer.component";
+import {CCCOutputToMorph} from "../../shared/components/canvasjs-cancer/canvasjs-cancer.component";
 import {BackendService} from "../../services/backend-service/backend.service";
 import {MorphService} from "../../services/vis-services/morph.service";
 import {Group} from "two.js/src/group";
@@ -19,12 +19,12 @@ export interface DurationsInMs{
 }
 
 @Component({
-  selector: 'app-morphing-iceberg',
-  templateUrl: './morphing-iceberg.component.html',
-  styleUrls: ['./morphing-iceberg.component.scss']
+  selector: 'app-controll-page',
+  templateUrl: './controll-page.component.html',
+  styleUrls: ['./controll-page.component.scss']
 })
 
-export class MorphingIcebergComponent implements OnInit {
+export class ControllPage implements OnInit {
   @ViewChild('iceberg') myDiv?: ElementRef;
   @Output() data: EventEmitter<any> = new EventEmitter<any>();
 

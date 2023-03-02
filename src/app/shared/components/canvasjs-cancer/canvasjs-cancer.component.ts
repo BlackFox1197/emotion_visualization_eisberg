@@ -10,17 +10,17 @@ import {
 } from '@angular/core';
 import Two from "two.js";
 import {Line} from "two.js/src/shapes/line";
-import {AudioService} from "../../services/data-service/audio.service";
-import {Interval} from "../../entity/Interval";
-import {WaveFormService} from "../../services/vis-services/wave-form.service";
-import {SpectroService} from "../../services/vis-services/spectro.service";
-import {ModelOutput, ModelOutputs, ModelOutputsInterface} from "../../entity/ModelOutput";
-import {EisbergService} from "../../services/vis-services/eisberg.service";
-import {IcebergComponent} from "../../features/iceberg-manual-preview/iceberg/iceberg.component";
-import {IcebergParams} from "../../entity/Icebergparams";
-import {TimeUtilsService} from "../../services/data-service/time-utils.service";
+import {AudioService} from "../../../services/data-service/audio.service";
+import {Interval} from "../../../entity/Interval";
+import {WaveFormService} from "../../../services/vis-services/wave-form.service";
+import {SpectroService} from "../../../services/vis-services/spectro.service";
+import {ModelOutput, ModelOutputs, ModelOutputsInterface} from "../../../entity/ModelOutput";
+import {EisbergService} from "../../../services/vis-services/eisberg.service";
+import {IcebergComponent} from "../../../features/iceberg-manual-preview/iceberg/iceberg.component";
+import {IcebergParams} from "../../../entity/Icebergparams";
+import {TimeUtilsService} from "../../../services/data-service/time-utils.service";
 import {MatSliderChange} from "@angular/material/slider";
-import {BackendService} from "../../services/backend-service/backend.service";
+import {BackendService} from "../../../services/backend-service/backend.service";
 
 export interface CCCOutputToMorph {
   start: boolean;

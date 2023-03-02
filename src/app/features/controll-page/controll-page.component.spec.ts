@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MorphingIcebergComponent } from './morphing-iceberg.component';
+import { ControllPage } from './controll-page.component';
 
 describe('MorphingIcebergComponent', () => {
-  let component: MorphingIcebergComponent;
-  let fixture: ComponentFixture<MorphingIcebergComponent>;
+  let component: ControllPage;
+  let fixture: ComponentFixture<ControllPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MorphingIcebergComponent ]
+      declarations: [ ControllPage ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MorphingIcebergComponent);
+    fixture = TestBed.createComponent(ControllPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

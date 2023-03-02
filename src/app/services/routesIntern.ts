@@ -1,4 +1,4 @@
 export class RoutesIntern {
-  static morphingIceberg = "morphing-iceberg"
+  static morphingIceberg = "controll-page"
   static icebergEmos = "icebergs-emos"
 }

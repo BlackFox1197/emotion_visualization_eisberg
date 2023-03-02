@@ -12,11 +12,11 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {FormsModule} from "@angular/forms";
 import { AudioVisualizerComponent } from './features/iceberg-manual-preview/audio-visualizer/audio-visualizer.component';
-import { CanvasjsCancerComponent } from './shared/canvasjs-cancer/canvasjs-cancer.component';
+import { CanvasjsCancerComponent } from './shared/components/canvasjs-cancer/canvasjs-cancer.component';
 import { HttpClientModule} from "@angular/common/http";
-import { MorphingIcebergComponent } from './features/morphing-iceberg/morphing-iceberg.component';
+import { ControllPage } from './features/controll-page/controll-page.component';
 import {MatSelectModule} from "@angular/material/select";
-import { IcebergOverviewComponent } from './features/iceberg-overview/iceberg-overview.component';
+import { IcebergOverviewComponent } from './features/controll-page/iceberg-overview/iceberg-overview.component';
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSliderModule} from "@angular/material/slider";
@@ -30,7 +30,8 @@ import {MatListModule} from "@angular/material/list";
 import {SharedModule} from "./shared/shared.module";
 import {NgChartsModule} from "ng2-charts";
 import {MatTooltipModule} from "@angular/material/tooltip";
-import { MorphingSingleIcebergComponent } from './features/morphing-single-iceberg/morphing-single-iceberg.component';
+import { MorphingSingleIcebergComponent } from './features/controll-page/morphing-single-iceberg/morphing-single-iceberg.component';
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
     declarations: [
@@ -39,7 +40,7 @@ import { MorphingSingleIcebergComponent } from './features/morphing-single-icebe
         IcebergComponent,
         InputsComponent,
         AudioVisualizerComponent,
-        MorphingIcebergComponent,
+        ControllPage,
         IcebergOverviewComponent,
         IcebergsEmosComponent,
         OneIcebergComponent,
@@ -47,27 +48,28 @@ import { MorphingSingleIcebergComponent } from './features/morphing-single-icebe
         MorphingSingleIcebergComponent,
         MorphingSingleIcebergComponent
     ],
-    imports: [
-        SharedModule,
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatInputModule,
-        MatIconModule,
-        MatButtonModule,
-        FormsModule,
-        HttpClientModule,
-        MatSelectModule,
-        ScrollingModule,
-        MatCheckboxModule,
-        MatSliderModule,
-        MatProgressSpinnerModule,
-        MatSidenavModule,
-        MatToolbarModule,
-        MatListModule,
-        NgChartsModule,
-        MatTooltipModule,
-    ],
+  imports: [
+    SharedModule,
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    FormsModule,
+    HttpClientModule,
+    MatSelectModule,
+    ScrollingModule,
+    MatCheckboxModule,
+    MatSliderModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatListModule,
+    NgChartsModule,
+    MatTooltipModule,
+    MatTabsModule,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

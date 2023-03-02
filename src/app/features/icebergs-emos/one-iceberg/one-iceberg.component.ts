@@ -29,6 +29,7 @@ export class OneIcebergComponent implements OnInit {
   }
 
   ngAfterViewInit(){
+
     var params = {fitted:true}
     var elem = this.myDiv?.nativeElement;
     this.twoCanvas = new Two(params).appendTo(elem)
@@ -39,9 +40,11 @@ export class OneIcebergComponent implements OnInit {
       let name = new Two.Text(this.emoName?.split(".")[0], 250, 300)
     name.fill = "white"
       let eisberg= this.es.generateEisberg(200, 250, 240, this.iceConf!)
-      //eisberg.fill = this.es.generateGradient(this.iceConf!.params.frequency ??0, this.cs.sampleColor(this.iceConf!.params.colorParam??0, new Color("#00FFBB"), new Color("#AA00FF")));
-      this.twoCanvas.add(eisberg);
-      this.twoCanvas.add(name);
-      this.twoCanvas.update()
+    //eisberg.fill = this.es.generateGradient(this.iceConf!.params.frequency ??0, this.cs.sampleColor(this.iceConf!.params.colorParam??0, new Color("#00FFBB"), new Color("#AA00FF")));
+
+    this.twoCanvas.add(eisberg);
+    this.twoCanvas.add(name);
+    this.twoCanvas.update()
+    console.log(eisberg)
   }
 }

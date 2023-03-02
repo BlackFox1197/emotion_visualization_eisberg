@@ -1,7 +1,50 @@
 <div #icebergsEmos>
-  <div  *ngIf="!isLoadin">
-    <div *ngFor="let elem of emosArray" style="display: flex inline; width: 33%">
-      <app-one-iceberg [iceConf]="elem" [emoName]="jsonNames[emosArray.indexOf(elem)]"></app-one-iceberg>
-    </div>
-  </div>
+    <mat-tab-group>
+      <mat-tab label="Iceberg" >
+        <div *ngIf="!isLoadin">
+          <div *ngFor="let elem of emosIceArray" style="display: flex inline; width: 33%">
+            <app-one-iceberg [iceConf]="elem" [emoName]="jsonNames[emosIceArray.indexOf(elem)]"></app-one-iceberg>
+          </div>
+        </div>
+        <div *ngIf="isLoadin">
+          <app-loading-anim></app-loading-anim>
+        </div>
+      </mat-tab>
+      <mat-tab label="Bars">
+        <div *ngIf="!isLoadin">
+          <div *ngFor="let elem of emosArray" style="display: flex inline; width: 33%">
+            <app-emo-chart [parameterArray]="elem" [name]="jsonNames[emosArray.indexOf(elem)]"></app-emo-chart>
+          </div>
+        </div>
+        <div *ngIf="isLoadin">
+          <app-loading-anim></app-loading-anim>
+        </div>
+      </mat-tab>
+      <mat-tab label="Radar">
+        <div *ngIf="!isLoadin">
+          <div *ngFor="let elem of emosArray" style="display: flex inline; width: 33%">
+            <app-emo-chart [barChart]="false" [parameterArray]="elem"
+                           [name]="jsonNames[emosArray.indexOf(elem)]"></app-emo-chart>
+          </div>
+        </div>
+        <div *ngIf="isLoadin">
+          <app-loading-anim></app-loading-anim>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+
+<!--    <div *ngIf="isLoadin">-->
+<!--      <app-loading-anim></app-loading-anim>-->
+<!--    </div>-->
+
+
+<!--  <div  *ngIf="!isLoadin">-->
+<!--    <div *ngFor="let elem of emosIceArray" style="display: flex inline; width: 33%">-->
+<!--      <app-one-iceberg [iceConf]="elem" [emoName]="jsonNames[emosIceArray.indexOf(elem)]"></app-one-iceberg>-->
+<!--    </div>-->
+<!--    <div *ngFor="let elem of emosArray" style="display: flex inline; width: 33%">-->
+<!--      <app-emo-chart [parameterArray]="elem" [name]="jsonNames[emosArray.indexOf(elem)]"></app-emo-chart>-->
+<!--    </div>-->
+<!--  </div>-->
 </div>

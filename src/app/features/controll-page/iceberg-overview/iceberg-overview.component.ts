@@ -8,15 +8,15 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {EisbergService} from "../../services/vis-services/eisberg.service";
+import {EisbergService} from "../../../services/vis-services/eisberg.service";
 import Two from "two.js";
-import {IcebergParams} from "../../entity/Icebergparams";
-import {IceBergConfig} from "../../entity/IceBergConfig";
-import {Color} from "../../entity/Color";
+import {IcebergParams} from "../../../entity/Icebergparams";
+import {IceBergConfig} from "../../../entity/IceBergConfig";
+import {Color} from "../../../entity/Color";
 import {Vector} from "two.js/src/vector";
-import {ColorService} from "../../services/vis-services/color.service";
+import {ColorService} from "../../../services/vis-services/color.service";
 import {LinearGradient} from "two.js/src/effects/linear-gradient";
-import {TimeUtilsService} from "../../services/data-service/time-utils.service";
+import {TimeUtilsService} from "../../../services/data-service/time-utils.service";
 import { ChartConfiguration } from 'chart.js';
 
 @Component({

@@ -9,16 +9,16 @@ import {
   Input,
   OnChanges, SimpleChanges
 } from '@angular/core';
-import {IcebergParams} from "../../entity/Icebergparams";
-import {IceBergConfig} from "../../entity/IceBergConfig";
+import {IcebergParams} from "../../../entity/Icebergparams";
+import {IceBergConfig} from "../../../entity/IceBergConfig";
 import {Polygon} from "two.js/src/shapes/polygon";
 import TWEEN from "@tweenjs/tween.js";
-import {EisbergService} from "../../services/vis-services/eisberg.service";
-import {ModelOutputs} from "../../entity/ModelOutput";
+import {EisbergService} from "../../../services/vis-services/eisberg.service";
+import {ModelOutputs} from "../../../entity/ModelOutput";
 import Two from "two.js";
-import {CCCOutputToMorph} from "../../shared/canvasjs-cancer/canvasjs-cancer.component";
-import {BackendService} from "../../services/backend-service/backend.service";
-import {MorphService} from "../../services/vis-services/morph.service";
+import {CCCOutputToMorph} from "../../../shared/components/canvasjs-cancer/canvasjs-cancer.component";
+import {BackendService} from "../../../services/backend-service/backend.service";
+import {MorphService} from "../../../services/vis-services/morph.service";
 import {Group} from "two.js/src/group";
 import {Observable} from "rxjs";
 

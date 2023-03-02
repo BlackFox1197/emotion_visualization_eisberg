@@ -1,0 +1,27 @@
+<div *ngIf="parameterArray != null">
+  {{name}}
+  <span *ngIf="barChart">
+    <canvas baseChart
+            [datasets]="[{ data: [ parameterArray.x1, parameterArray.x2, parameterArray.x3, parameterArray.x4], label: 'Params' }]"
+            [options]="barChartOptions"
+            [plugins]="barChartPlugins"
+            height="300px"
+            width="405px"
+            [legend]="barChartLegend"
+            [labels]="[ 'x1', 'x2', 'x3', 'x4', ]"
+            [type]="'bar'">
+    </canvas>
+  </span>
+  <span *ngIf="!barChart">
+    <canvas baseChart
+            [datasets]="[{ data: [ parameterArray.x1, parameterArray.x2, parameterArray.x3, parameterArray.x4], label: 'Params' }]"
+            [options]="radarChartOptions"
+            [plugins]="barChartPlugins"
+            height="300px"
+            width="405px"
+            [legend]="barChartLegend"
+            [labels]="[ 'x1', 'x2', 'x3', 'x4', ]"
+            [type]="'radar'">
+    </canvas>
+  </span>
+</div>
