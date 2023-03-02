@@ -56,8 +56,6 @@ export class ControllPage implements OnInit {
   isLoadin = true;
 
   showIceberg = true;
-  public showBarCharts = false;
-  showSpiderCharts = false;
 
   //json array stuff and counter for where we are
   public jsonArray: any;
@@ -83,8 +81,10 @@ export class ControllPage implements OnInit {
   public setOutputsAndUpdate(cccOutputToMorph: CCCOutputToMorph){
     this.jsonArray = cccOutputToMorph.outputs!.modelOutputs
     let modelOutputs= cccOutputToMorph.outputs!
+
+
     this.durationsInMs = {
-      oneIcebergDuration: this.modelOutputs.durationInSec / modelOutputs.outputCount * 1000,
+      oneIcebergDuration: modelOutputs.durationInSec / modelOutputs.outputCount * 1000,
       animDuration: modelOutputs.durationInSec / modelOutputs.outputCount * 1000 * 0.2,
       delayDuration: modelOutputs.durationInSec / modelOutputs.outputCount * 1000 * 0.8,
     }

@@ -30,7 +30,6 @@ export class IcebergOverviewComponent implements OnChanges {
 
   @Input('jsonArray') jsonArray: any
   @Input('icebergDuration') icebergDuration: number=0
-  @Input('onlyShowBarCharts') onlyShowBarCharts: boolean=false;
 
   //two objects
   twoCanvas = new Two();
@@ -46,6 +45,7 @@ export class IcebergOverviewComponent implements OnChanges {
   ngOnChanges(changes:SimpleChanges): void{
     if(!changes['jsonArray'].firstChange){
       this.onLoadedData(changes['jsonArray'].currentValue, this.icebergDuration);
+      console.log("oninit"+this.icebergDuration)
     }
   }
   _showBarCharts = false;
@@ -57,9 +57,6 @@ export class IcebergOverviewComponent implements OnChanges {
 
 
   onLoadedData(jsonArray: any, icebergDuration: number){
-    this.removePreviousStuff()
-
-
 
     var calcWidth = jsonArray.length *250 +380
     const elem = document.getElementById("iceberg-overview")
@@ -72,12 +69,8 @@ export class IcebergOverviewComponent implements OnChanges {
     var params = {fitted:true}
     var elemIn = this.myDiv?.nativeElement;
     this.twoCanvas = new Two(params).appendTo(elemIn)
-    if(this.onlyShowBarCharts){
-      this.genTimeLine(jsonArray.length, icebergDuration)
-      this.twoCanvas.update()
-      this.showBarCharts=true;
-      return
-    }
+
+    this.removePreviousStuff()
 
     var iceConfs = this.es.genIceConfs(jsonArray)
 
@@ -97,6 +90,7 @@ export class IcebergOverviewComponent implements OnChanges {
   }
 
   genTimeLine(arrLength: number, oneIceBergDuration: number){
+    this.timelineGroup = new Two.Group()
     var lastIcebergDurationInSec = Math.ceil(oneIceBergDuration*arrLength/1000)
     for(let i=0; i<lastIcebergDurationInSec; i++) {
       var shift = oneIceBergDuration/1000
@@ -110,6 +104,7 @@ export class IcebergOverviewComponent implements OnChanges {
   removePreviousStuff(){
     this.twoCanvas.remove(this.icebergGroup)
     this.twoCanvas.remove(this.timelineGroup)
+    this.twoCanvas.clear()
     this.icebergGroup = new Two.Group()
     this.timelineGroup = new Two.Group()
   }

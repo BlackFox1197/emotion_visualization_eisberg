@@ -10,23 +10,42 @@ export class ColorService {
 
   sampleColor(value: number, color1: Color, color2: Color) : Color {
     // Convert x to the range 0-160
-    let colorIndex = Math.round((value + 1) * 80);
+    let colorIndex = (value + 1)/2;
     //console.log(value, color1, color2, colorIndex)
 
 
     // Define the two colors to interpolate between
     let color1Vec = color1.getColorVector();
     let color2Vec = color2.getColorVector();
+    //{
+    //   "_r": 10,
+    //   "_g": 36,
+    //   "_b": 78
+    // }
+    //{
+    //   "_r": 251,
+    //   "_g": 228,
+    //   "_b": 73
+    // }
+
+    let r = Math.round((color2Vec[0] * (1-colorIndex) + color1Vec[0]*colorIndex));
+    let g = Math.round((color2Vec[1] * (1-colorIndex) + color1Vec[1]*colorIndex));
+    let b = Math.round((color2Vec[2] * (1-colorIndex) + color1Vec[2]*colorIndex));
 
     // Interpolate the R, G, and B values
+    /*
     let r = Math.round((color2Vec[0] - color1Vec[0]) * (colorIndex/160) + color1Vec[0]);
     let g = Math.round((color2Vec[1] - color1Vec[1]) * (colorIndex/160) + color1Vec[1]);
     let b = Math.round((color2Vec[2] - color1Vec[2]) * (colorIndex/160) + color1Vec[2]);
 
+
+     */
     //console.log(color1Vec)
+
     return Color.fromRGB(r, g, b);
   }
 
+  /*
   generateSecondColor(color: Color, distance = 80): Color{
     let r = color.r;
     let g = color.g;
@@ -57,4 +76,6 @@ export class ColorService {
 
     return Color.fromRGB(r, g, b);
   }
+
+   */
 }

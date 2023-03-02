@@ -102,7 +102,6 @@ export class MorphingSingleIcebergComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     let mi = changes["morphingInput"].currentValue
-    console.log(mi)
     if(mi != null){
       console.log(mi)
     }

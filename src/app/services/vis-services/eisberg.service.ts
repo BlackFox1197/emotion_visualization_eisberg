@@ -15,11 +15,17 @@ import {Group} from "two.js/src/group";
 })
 export class EisbergService {
 
-  color1 = new Color("#08ff00")
-  color2 = new Color("#ff0000")
+  //color1 = new Color("#08ff00")
+  color1 = new Color("#0a244e")
+  //("#440154")
+  //
+  //color2 = new Color("#ff0000")
+  color2 = new Color("#fbe449")
+  //("#fde725")
+  //
 
-  borderCol1 = new Color("#FF00BB")
-  borderCol2 = new Color("#00FFAA")
+  borderCol1 = new Color("#f0f921")
+  borderCol2 = new Color("#0d0887")
 
   constructor(private cs: ColorService) { }
 
@@ -114,8 +120,8 @@ export class EisbergService {
    * @param color
    */
   public generateGradient(value: number, color: Color): LinearGradient{
-    var tanhVal = Math.tanh(value);
-    var stops = this.generateStops(tanhVal, color);
+    //var tanhVal = Math.tanh(value);
+    var stops = this.generateStops(value, color);
     return new LinearGradient(0, 0,
       0,
       1, stops)
@@ -128,7 +134,6 @@ export class EisbergService {
    * @param color
    */
   private generateStops(value: number, color: Color): Array<Stop>{
-
     let color1 = color//this.cs.generateSecondColor(color);
     let color2 = new Color("black").getHexString();
     var stopsPredefined = [
@@ -137,7 +142,7 @@ export class EisbergService {
     ]
     var grads=20
 
-    if(value>0){
+    if(value>=0){
       grads = Math.ceil((value+1)*grads)
     }
     if(value<0){
@@ -209,11 +214,11 @@ export class EisbergService {
 
     for(let i=0; i<arr.length; i++){
       let iceParam: IcebergParams = {
-        skew: arr[i].x4,
-        colorParam: arr[i].x1,
-        height: arr[i].x3,
-        frequency: arr[i].x2,
-        borderParam: arr[i].x4,
+        skew: Number(arr[i].x4),
+        colorParam: Number(arr[i].x1),
+        height: Number(arr[i].x3),
+        frequency: Number(arr[i].x2),
+        borderParam: Number(arr[i].x4),
         label: arr[i].emotion
       };
 

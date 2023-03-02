@@ -113,7 +113,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     const fileURL = URL.createObjectURL(file);
     this.audioDrawer(fileURL)
     this.fileName=file.name
-    this.backend.uploadAudioFile("http://localhost:8001/icebergs/upload", "yee", false, file).subscribe(
+    this.backend.uploadAudioFile("http://192.168.3.18:8001/icebergs/upload", "yee", false, file).subscribe(
       (next) => {
         var arr = next;
         var outputs : any=[];

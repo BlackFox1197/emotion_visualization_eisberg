@@ -17,18 +17,8 @@
   <div class="flex flex-row justify-between max-w-full">
     <div class="flex flex-col icebergMorphSizes pl-10 pr-5">
       <div class="flex flex-col border rounded border-gray-700 box-border box-content mt-2 mb-1">
-        <span *ngIf="showIceberg">
           <app-morphing-single-iceberg (data)="jsonArray=$event" (cccOutPut)="setOutputsAndUpdate($event)"
                                        [morphingInput]="morphInput"></app-morphing-single-iceberg>
-        </span>
-        <span *ngIf="showBarCharts">
-
-        </span>
-
-        <span *ngIf="showSpiderCharts">
-
-        </span>
-
         <button mat-icon-button #tooltip="matTooltip"
                 (click)="tooltip.toggle()"
                 matTooltipClass="text-base"
@@ -46,21 +36,11 @@ You can see the classified emotions in the glyph."
     </div>
     <div class="flex-1"></div>
     <div class="min-w-0 pl-5 pr-10 pt-2 pb-2">
-      <span *ngIf="showIceberg">
-         <app-iceberg-overview class="max-w-full" [jsonArray]="jsonArray" [onlyShowBarCharts]="showBarCharts"
-                               [icebergDuration]="durationsInMs.oneIcebergDuration">
-         </app-iceberg-overview>
-      </span>
-      <span *ngIf="showBarCharts">
-
-      </span>
-      <span *ngIf="showSpiderCharts">
-
-      </span>
-
+         <app-iceberg-overview class="max-w-full" [jsonArray]="jsonArray"
+                               [icebergDuration]="durationsInMs.oneIcebergDuration"></app-iceberg-overview>
     </div>
   </div>
-  <app-canvasjs-cancer  (playMorph)="addToObs($event)" ></app-canvasjs-cancer>
+  <app-canvasjs-cancer  (playMorph)="addToObs($event)"></app-canvasjs-cancer>
 </div>
 
 
