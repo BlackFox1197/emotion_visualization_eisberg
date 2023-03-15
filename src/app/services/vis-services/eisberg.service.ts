@@ -9,6 +9,8 @@ import {IcebergParams} from "../../entity/Icebergparams";
 import {IceBergConfig} from "../../entity/IceBergConfig";
 import {ModelOutput} from "../../entity/ModelOutput";
 import {Group} from "two.js/src/group";
+import * as d3 from "d3";
+
 
 @Injectable({
   providedIn: 'root'
@@ -42,13 +44,14 @@ export class EisbergService {
     // color1 = this.cs.getColorData(color1);
     // color2 = this.cs.getColorData(color2);
     // console.log(color1)
-    var gradLinB =  this.generateGradient(config.params.frequency ?? 0, this.cs.sampleColor(config.params.colorParam ?? 0, this.color1, this.color2));
+
     this.changeTheme(this.color1.getHexString(), this.color2.getHexString())
     //var gradLinB = color1.getHexString();
     // -0.7 to 0.7
     poly.skewX = this.generateSkewX(config.params.skew ?? 0, -1, 1)
     //circle.height = 300;
-    poly.fill = gradLinB;
+    let scaled = (config.params.colorParam!+1)/2
+    poly.fill = d3.interpolateViridis(scaled)
     poly.stroke = this.generateBorderColor(config.params.borderParam ?? 0, -1, 1 );
     //poly.linewidth = this.generateLineWidght(config.params.borderParam ?? 0, -1, 1);
     poly.linewidth = 6;
@@ -93,7 +96,9 @@ export class EisbergService {
       iceberg.linewidth = this.generateLineWidght(newParams.borderParam ?? 0, -1, 1)
     }
     if(newParams.colorParam != undefined || newParams.colorParam != null){
-      iceberg.fill = this.generateGradient(newParams.frequency ?? 0, this.cs.sampleColor(newParams.colorParam, this.color1, this.color2));
+      let scaled = (newParams.colorParam+1)/2
+      iceberg.fill = d3.interpolateViridis(scaled)
+      //iceberg.fill = this.generateGradient(newParams.frequency ?? 0, this.cs.sampleColor(newParams.colorParam, this.color1, this.color2));
     }
     if(newParams.height !=undefined || newParams.height !=null){
       iceberg.height = this.generatePolyHeight(iceberg, newParams.height?? 0, -1, 1)
@@ -180,7 +185,9 @@ export class EisbergService {
     }
     return stops
   }
-  private changeTheme(primary: string, secondary: string) {
+  private changeTheme(primar: string, secondar: string) {
+    let primary = d3.interpolateViridis(0)
+    let secondary = d3.interpolateViridis(1)
     document.documentElement.style.setProperty('--primary-color', primary);
     document.documentElement.style.setProperty('--secondary-color', secondary);
   }
@@ -214,11 +221,11 @@ export class EisbergService {
 
     for(let i=0; i<arr.length; i++){
       let iceParam: IcebergParams = {
-        skew: Number(arr[i].x4),
+        skew: Number(arr[i].x3),
         colorParam: Number(arr[i].x1),
-        height: Number(arr[i].x3),
-        frequency: Number(arr[i].x2),
-        borderParam: Number(arr[i].x4),
+        height: Number(arr[i].x2),
+        frequency:-1,
+        borderParam: 0,
         label: arr[i].emotion
       };
 

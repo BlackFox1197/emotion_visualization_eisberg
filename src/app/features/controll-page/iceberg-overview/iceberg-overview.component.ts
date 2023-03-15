@@ -81,9 +81,11 @@ export class IcebergOverviewComponent implements OnChanges {
       this.icebergGroup.add(ice)
     }
     //refill the iceberg, because of width of div gets changed
-    if(jsonArray.length>8){
+    /*if(jsonArray.length>8){
       this.icebergGroup.children[8].fill = this.es.generateGradient(jsonArray[8].x4 ?? 0, this.cs.sampleColor(jsonArray[8].x2 ?? 0, this.es.color1, this.es.color2));
     }
+
+     */
     this.genTimeLine(jsonArray.length, icebergDuration )
     this.twoCanvas.add(this.icebergGroup)
     this.twoCanvas.update()

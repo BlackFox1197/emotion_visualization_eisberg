@@ -1,3 +1,4 @@
+<div>
 <app-iceberg [iceConfig]="icebergConfig"></app-iceberg>
 <app-inputs (updateSkew)="icebergConfig.params.skew = $event; copyConfig()"
             (updateColorPara)="icebergConfig.params.colorParam = $event; copyConfig()"
@@ -8,5 +9,6 @@
 <br>
 <!--<app-audio-visualizer></app-audio-visualizer>-->
 <app-canvasjs-cancer></app-canvasjs-cancer>
+</div>
 
 

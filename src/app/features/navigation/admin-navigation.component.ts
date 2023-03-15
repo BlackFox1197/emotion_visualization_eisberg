@@ -14,6 +14,7 @@ export class AdminNavigationComponent implements OnInit{
 
   icebergMorphRoute = '/' + RoutesIntern.morphingIceberg;
   icebergEmosRoute = '/' + RoutesIntern.icebergEmos;
+  manualIce = '/' +RoutesIntern.manualIceberg;
 
 
   constructor(private router: Router) {}

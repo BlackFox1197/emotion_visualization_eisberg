@@ -62,12 +62,12 @@ export class BackendService {
 
   //http request
   public getModelOutputsHttp(){
-    return this.http.get<ModelOutputs>(this.routes.modelOutputsRoute)
+    return this.http.get<ModelOutputs>(Routes.modelOutputsRoute)
   }
 
   public getModelOutputForSelected (startInSec: number, stopInSec: number, durationInSec: number, fileName:string){
     return new Observable<any>(subscriber =>
-      this.http.get(this.routes.modelOutputsRoute+"/"+startInSec+"/"+stopInSec+"/"+durationInSec+"/"+fileName).subscribe((response)=>
+      this.http.get(Routes.modelOutputsRoute+"/"+startInSec+"/"+stopInSec+"/"+durationInSec+"/"+fileName).subscribe((response)=>
       subscriber.next(response)))
     /*return this.http.get<ModelOutput>(this.routes.modelOutputsRoute+"/"+startInSec+"/"+stopInSec+"/"+durationInSec)
       .subscribe((next) => {
@@ -112,7 +112,7 @@ export class BackendService {
   public load7Emos(filenames: string[]){
     let observables = []
     for(let i=0; i< filenames.length; i++) {
-      observables.push(this.http.get('./assets/sevenemos/emo_pca_tess/'+filenames[i]))
+      observables.push(this.http.get('./assets/sevenemos/emos_3/'+filenames[i]))
     }
     return forkJoin(observables)
   }

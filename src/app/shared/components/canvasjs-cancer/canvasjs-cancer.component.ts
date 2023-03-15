@@ -21,6 +21,7 @@ import {IcebergParams} from "../../../entity/Icebergparams";
 import {TimeUtilsService} from "../../../services/data-service/time-utils.service";
 import {MatSliderChange} from "@angular/material/slider";
 import {BackendService} from "../../../services/backend-service/backend.service";
+import {Routes} from "../../../services/routes";
 
 export interface CCCOutputToMorph {
   start: boolean;
@@ -45,10 +46,10 @@ export interface DurationInSec{
 
 export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
-  durations: DurationInSec[]=[{value: 0.03, viewValue:"30ms"},
+  durations: DurationInSec[]=[{value: 0.2, viewValue:"200ms"},
     {value: 1, viewValue:"1sec"},
-    {value: 3, viewValue:"3sec"},
-    {value: 10, viewValue:"10sec"},]
+    {value: 3.5, viewValue:"3.5sec"},
+    {value: 5, viewValue:"5sec"},]
 
   selectedDuration = this.durations[2].value
 
@@ -113,7 +114,8 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     const fileURL = URL.createObjectURL(file);
     this.audioDrawer(fileURL)
     this.fileName=file.name
-    this.backend.uploadAudioFile("http://192.168.3.18:8001/icebergs/upload", "yee", false, file).subscribe(
+    // this.backend.uploadAudioFile("http://192.168.3.18:8001/icebergs/upload", "yee", false, file).subscribe(
+    this.backend.uploadAudioFile(Routes.baseRoute + "/icebergs/upload", "yee", false, file).subscribe(
       (next) => {
         var arr = next;
         var outputs : any=[];
