@@ -70,7 +70,7 @@ export class EisbergService {
   public genStepComplexParams(params1:IcebergParams, params2:IcebergParams, elapsed:number): IcebergParams{
     let mapper = (valNew: number, valOld: number) => (valNew*elapsed)-(valOld*(1-elapsed))
     let params: IcebergParams ={
-      frequency: mapper(params2.frequency!, params1.frequency!),
+      //frequency: mapper(params2.frequency!, params1.frequency!),
       colorParam: mapper(params2.colorParam!, params1.colorParam!),
       borderParam: mapper(params2.borderParam!, params1.borderParam!)
     }
@@ -78,7 +78,8 @@ export class EisbergService {
   }
 
   public getGradFromParams(params: IcebergParams){
-    return  this.generateGradient(params.frequency ?? 0, this.cs.sampleColor(params.colorParam ?? 0, this.color1, this.color2));
+    return d3.interpolateViridis((params.colorParam!+1)/2??0);
+      //this.cs.sampleColor(params.colorParam ?? 0, this.color1, this.color2
   }
 
 

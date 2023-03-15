@@ -227,7 +227,7 @@ export class MorphingSingleIcebergComponent implements OnInit, OnChanges {
       .onUpdate(function(poly: Polygon,elapsed:number){
         let currParams = thisObject.es.genStepComplexParams(params1, params2, elapsed)
         poly.fill = thisObject.es.getGradFromParams(currParams);
-        poly.stroke = thisObject.es.getBorderFromParams(currParams);
+        //poly.stroke = thisObject.es.getBorderFromParams(currParams);
 
         return poly;
       }).onComplete(()=>{
