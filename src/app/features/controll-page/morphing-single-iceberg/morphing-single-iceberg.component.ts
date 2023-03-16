@@ -39,6 +39,9 @@ export class MorphingSingleIcebergComponent implements OnInit, OnChanges {
   @Output() data: EventEmitter<any> = new EventEmitter<any>();
   @Output() cccOutPut: EventEmitter<CCCOutputToMorph> = new EventEmitter<CCCOutputToMorph>();
   @Input() morphingInput?: Observable<CCCOutputToMorph>;
+  @Input() showCharts?: Observable<boolean>;
+
+  show_charts = false;
 
   modelOutputs: ModelOutputs = {
     sampleRate: 44100,
@@ -77,14 +80,20 @@ export class MorphingSingleIcebergComponent implements OnInit, OnChanges {
   //the tween animation as variable so we can stop it
   public t1 = new TWEEN.Tween(this.eisberg.children[0])
 
-  constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService) {}
+  constructor(private es: EisbergService, private backend: BackendService, private  morph: MorphService) {
+
+  }
 
   ngOnInit(): void {
     this.morphingInput?.subscribe(
       (next) => {
         this.onPlayMorph(next)
       }
-    )
+    );
+
+    this.showCharts?.subscribe((next) => {
+      this.show_charts = next;
+    })
   }
 
   ngAfterViewInit(): void{

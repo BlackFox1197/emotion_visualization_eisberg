@@ -39,5 +39,14 @@ export class EmoChartComponent implements OnInit {
   public radarChartOptions: ChartConfiguration<'radar'>['options'] = {
     responsive: false,
     borderColor: "white",
+    scales:{
+      r:{
+        min: -1,
+        max: 1,
+        ticks:{
+          display: false
+        }
+      }
+    }
   };
 }

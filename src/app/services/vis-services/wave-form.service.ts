@@ -26,7 +26,7 @@ export class WaveFormService {
 
   zoomPercentage = 0.3;
   samplesPerSecond = 0;
-  intervallSeconds = 3;
+  intervallSeconds = 3.5;
   currentZoomedOffsetInSec = 0;
   currentData: Array<number> = [];
   originalData: Array<number> = [];

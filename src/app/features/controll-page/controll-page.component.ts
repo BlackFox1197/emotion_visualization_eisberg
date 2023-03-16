@@ -62,6 +62,7 @@ export class ControllPage implements OnInit {
 
 
   morphInput: Subject<CCCOutputToMorph> = new Subject<CCCOutputToMorph>();
+  toggleOtherCharts: Subject<boolean> = new Subject<boolean>();
 
 
 
@@ -75,6 +76,10 @@ export class ControllPage implements OnInit {
 
   addToObs($event: any){
     this.morphInput.next($event)
+  }
+
+  toggleCharts($event: boolean){
+    this.toggleOtherCharts.next($event);
   }
 
 

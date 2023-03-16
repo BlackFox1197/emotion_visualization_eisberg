@@ -31,6 +31,8 @@ export class IcebergOverviewComponent implements OnChanges {
   @Input('jsonArray') jsonArray: any
   @Input('icebergDuration') icebergDuration: number=0
 
+  @Output() toggleOtherCharts: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   //two objects
   twoCanvas = new Two();
   icebergGroup = new Two.Group()
@@ -129,6 +131,15 @@ export class IcebergOverviewComponent implements OnChanges {
   public radarChartOptions: ChartConfiguration<'radar'>['options'] = {
     responsive: false,
     borderColor: "white",
+    scales:{
+      r:{
+        min: -1,
+        max: 1,
+        ticks:{
+          display: false
+        }
+      }
+    }
   };
 
 }

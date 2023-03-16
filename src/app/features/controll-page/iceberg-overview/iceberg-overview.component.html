@@ -1,29 +1,29 @@
 <div id="scroll-div" class="border rounded border-gray-700 box-border box-content">
   <div><p class="text-base p-2">Timeline overview</p></div>
-  <button mat-button (click)="showBarCharts=!_showBarCharts">
+  <button mat-button (click)="showBarCharts=!_showBarCharts; toggleOtherCharts.emit(_showBarCharts)">
     Show bar charts
   </button>
   <div #icebergOverview id="iceberg-overview"></div>
   <div *ngIf="jsonArray!=undefined && _showBarCharts" class="flex flex-row p-16">
     <div *ngFor="let elem of jsonArray" class="p-6">
       <canvas baseChart
-              [datasets]="[{ data: [ elem.x1, elem.x2, elem.x3, elem.x4], label: 'Params' }]"
+              [datasets]="[{ data: [ elem.x1, elem.x2, elem.x3], label: 'Params' }]"
               [options]="barChartOptions"
               [plugins]="barChartPlugins"
               height="150px"
               width="202.5px"
               [legend]="barChartLegend"
-              [labels]="[ 'x1', 'x2', 'x3', 'x4', ]"
+              [labels]="[ 'x1', 'x2', 'x3' ]"
               [type]="'bar'">
       </canvas>
       <canvas baseChart
-              [datasets]="[{ data: [ elem.x1, elem.x2, elem.x3, elem.x4], label: 'Params' }]"
+              [datasets]="[{ data: [ elem.x1, elem.x2, elem.x3], label: 'Params' }]"
               [options]="radarChartOptions"
               [plugins]="barChartPlugins"
               height="150px"
               width="202.5px"
               [legend]="barChartLegend"
-              [labels]="[ 'x1', 'x2', 'x3', 'x4', ]"
+              [labels]="[ 'x1', 'x2', 'x3' ]"
               [type]="'radar'">
       </canvas>
     </div>

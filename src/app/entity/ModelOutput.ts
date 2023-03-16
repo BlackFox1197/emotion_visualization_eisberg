@@ -22,6 +22,7 @@ export class ModelOutput implements ModelOutputInterface{
     this.x4 = parameter.x4;
     this.emotion = parameter.emotion
   }
+
 }
 
 export interface ModelOutputsInterface{

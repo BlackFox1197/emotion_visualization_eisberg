@@ -6,3 +6,9 @@
   </div>
 
 </div>
+
+
+<app-emo-chart *ngIf="!isLoadin && show_charts" [barChart]="true" [parameterArray]="this.jsonArray[counterJson]"
+               [name]="this.jsonArray[counterJson].emotion"></app-emo-chart>
+<app-emo-chart *ngIf="!isLoadin && show_charts" [barChart]="false" [parameterArray]="this.jsonArray[counterJson]"
+               [name]="this.jsonArray[counterJson].emotion"></app-emo-chart>

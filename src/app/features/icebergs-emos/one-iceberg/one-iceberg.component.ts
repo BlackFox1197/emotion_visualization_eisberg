@@ -37,7 +37,7 @@ export class OneIcebergComponent implements OnInit {
   }
 
   drawIceberg(){
-      let name = new Two.Text(this.emoName?.split(".")[0], 250, 300)
+      let name = new Two.Text(this.emoName?.split(".")[0].split("_")[0], 250, 300)
     name.fill = "white"
       let eisberg= this.es.generateEisberg(200, 250, 240, this.iceConf!)
     //eisberg.fill = this.es.generateGradient(this.iceConf!.params.frequency ??0, this.cs.sampleColor(this.iceConf!.params.colorParam??0, new Color("#00FFBB"), new Color("#AA00FF")));
