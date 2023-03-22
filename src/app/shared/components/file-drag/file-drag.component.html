@@ -1,4 +1,4 @@
-<div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop (fileDropped)="uploadFile($event)">
+<div class="uploadfilecontainer m-5" (click)="fileInput.click()" appDragDrop (fileDropped)="uploadFile($event)">
   <input hidden type="file" #fileInput (change)="uploadFile($event.target)" accept="{{mimeTypes}}" [multiple]="!justOneFile">
   <p class="centerText">Upload {{titleString}} here. You can click or drop it here!</p>
 

@@ -94,19 +94,14 @@ export class MorphingSingleIcebergComponent implements OnInit, OnChanges {
     this.showCharts?.subscribe((next) => {
       this.show_charts = next;
     })
+
   }
 
   ngAfterViewInit(): void{
     var params = {fitted:true}
     var elem = this.myDiv?.nativeElement;
     this.twoCanvas = new Two(params).appendTo(elem)
-    this.backend.loadAssetsJson().subscribe(
-      (next) => {
-        this.jsonArray = next
-        this.isLoadin = false;
-        this.data.emit(this.jsonArray)
-      }
-    )
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -116,49 +111,7 @@ export class MorphingSingleIcebergComponent implements OnInit, OnChanges {
     }
   }
 
-  //main method that handles the output from ccc and depending on their attributes starts/stops/delays the animation
-  onPlayMorphOld($event: CCCOutputToMorph) {
-    this.cccOutputToMorph = $event
-    console.log(this.cccOutputToMorph)
-    if(this.cccOutputToMorph.outputs!=undefined && this.modelOutputs!=this.cccOutputToMorph.outputs){
-      this.jsonArray = this.cccOutputToMorph.outputs.modelOutputs
-      this.modelOutputs= this.cccOutputToMorph.outputs
-      this.updateDurations()
-      this.data.emit(this.jsonArray)
-      this.isLoadin=false
-    }
-    if(this.cccOutputToMorph.selectedIceParams!=undefined &&this.cccOutputToMorph.start){
-      this.twoCanvas.clear()
-      this.t1.stop()
-      let iceConf = this.es.genIceConfs([this.cccOutputToMorph.selectedIceParams])[0]
-      this.eisberg = this.es.generateEisberg(200, 300, 240, iceConf)
-      this.twoCanvas.add(this.eisberg)
-      this.twoCanvas.update()
-    }
 
-    if(!this.isLoadin&&this.cccOutputToMorph.audioBuffered) {
-      if (this.cccOutputToMorph.currentSec != 0) {
-        //get our current iceberg according to sec, delay for some left time
-        const delayAndIndex = this.morph.calcCurrentIcebergIndex(this.cccOutputToMorph.currentSec, this.modelOutputs.durationInSec, this.modelOutputs.outputCount, this.durationsInMs.oneIcebergDuration)
-        this.t1.delay(delayAndIndex[0])
-        this.counterJson = delayAndIndex[1]
-      }
-      if (this.cccOutputToMorph.start) {
-        //clear previous polys and restart anim
-        this.twoCanvas.clear()
-        this.morphNext()
-      } else {
-        if (this.cccOutputToMorph.restart) {
-          //restart so reset counter to 0 and stop
-          this.t1.stop()
-          this.counterJson = 0;
-        }else{
-          this.t1.stop()
-        }
-        //else stop it
-      }
-    }
-  }
 
   onPlayMorph($event: CCCOutputToMorph) {
     this.cccOutputToMorph = $event

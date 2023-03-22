@@ -22,7 +22,8 @@ export class OneIcebergComponent implements OnInit {
   }
   );
 
-  constructor(private es: EisbergService, private cs: ColorService) { }
+  constructor(private es: EisbergService, private cs: ColorService) {
+  }
 
   ngOnInit(): void {
 
@@ -45,6 +46,5 @@ export class OneIcebergComponent implements OnInit {
     this.twoCanvas.add(eisberg);
     this.twoCanvas.add(name);
     this.twoCanvas.update()
-    console.log(eisberg)
   }
 }

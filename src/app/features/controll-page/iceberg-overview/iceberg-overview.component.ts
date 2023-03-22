@@ -18,6 +18,7 @@ import {ColorService} from "../../../services/vis-services/color.service";
 import {LinearGradient} from "two.js/src/effects/linear-gradient";
 import {TimeUtilsService} from "../../../services/data-service/time-utils.service";
 import { ChartConfiguration } from 'chart.js';
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-iceberg-overview',
@@ -30,6 +31,7 @@ export class IcebergOverviewComponent implements OnChanges {
 
   @Input('jsonArray') jsonArray: any
   @Input('icebergDuration') icebergDuration: number=0
+  @Input() isLoading: Observable<boolean> = new Observable<boolean>();
 
   @Output() toggleOtherCharts: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -41,8 +43,11 @@ export class IcebergOverviewComponent implements OnChanges {
 
   constructor(private es: EisbergService, private cs: ColorService, private tus: TimeUtilsService, private changeDetector : ChangeDetectorRef) { }
   ngOnInit(): void {
+
   }
   ngAfterViewInit():void {
+    if(this.jsonArray??0 != 0)
+      this.onLoadedData(this.jsonArray, this.icebergDuration);
   }
   ngOnChanges(changes:SimpleChanges): void{
     if(!changes['jsonArray'].firstChange){
@@ -120,6 +125,7 @@ export class IcebergOverviewComponent implements OnChanges {
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: false,
     borderColor: "white",
+    backgroundColor: "#6ccd5a",
     scales:{
       y:{
         min: -1,
@@ -131,6 +137,7 @@ export class IcebergOverviewComponent implements OnChanges {
   public radarChartOptions: ChartConfiguration<'radar'>['options'] = {
     responsive: false,
     borderColor: "white",
+    backgroundColor: "#6ccd5a",
     scales:{
       r:{
         min: -1,

@@ -2,7 +2,7 @@
 <!--         accept="audio/mp3"-->
 <!--         (change)="evToFile($event)" #fileUpload>-->
 
-  <app-file-drag [mimeTypes]="['audio/*']" [justOneFile]="true" titleString="File to analyze" (addFile)="fileToFile($event)" [hideFiles]="false"></app-file-drag>
+  <app-file-drag  [mimeTypes]="['audio/*']" [justOneFile]="true" titleString="File to analyze" (addFile)="fileToFile($event)" [hideFiles]="false"></app-file-drag>
 
 
 <div  *ngIf="!_isLoading">
@@ -56,10 +56,16 @@
     </div>
 
     <div
-
       (mousemove)="mouseover($event)"
       (click)="click($event)"
-      #wavTwoJs id="wave"><div><p class="text-base p-2">Waveform</p></div></div>
+      #wavTwoJs id="wave">
+      <div><p class="text-base p-2">Waveform</p></div></div>
+    <button mat-icon-button #tooltip="matTooltip"
+            (click)="tooltip.toggle()"
+            matTooltipClass="text-base"
+            matTooltipPosition="below"
+            matTooltip="On this wave plot you can zoom and select specific areas. Unzooming works with 'ESC' key. "
+    ><mat-icon>info</mat-icon></button>
   </div>
 </div>
 

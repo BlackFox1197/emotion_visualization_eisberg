@@ -53,8 +53,9 @@ export class ControllPage implements OnInit {
     delayDuration: this.modelOutputs.durationInSec/this.modelOutputs.outputCount*1000*0.8,
   }
 
-  isLoadin = true;
+  isLoadin = false;
 
+  loadinBackend = false;
   showIceberg = true;
 
   //json array stuff and counter for where we are
@@ -66,15 +67,30 @@ export class ControllPage implements OnInit {
 
 
 
-  constructor() {}
+  constructor(private backend: BackendService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.backend.loadAssetsJson().subscribe(
+      (next) => {
+        this.addToObs(next)
+        this.jsonArray = next
+        this.isLoadin = false;
+      }
+    )
+
+  }
 
   ngAfterViewInit(): void{
     //this.twoCanvas = new Two(params).appendTo(elem)
   }
 
-  addToObs($event: any){
+  addToObs($event: CCCOutputToMorph){
+    if($event.outputs?.modelOutputs??0 != 0){
+      this.setOutputsAndUpdate($event);
+    }
+
+    setTimeout(()=>{}, 100)
+    //  this.jsonArray = $event.outputs?.modelOutputs;
     this.morphInput.next($event)
   }
 
@@ -86,7 +102,6 @@ export class ControllPage implements OnInit {
   public setOutputsAndUpdate(cccOutputToMorph: CCCOutputToMorph){
     this.jsonArray = cccOutputToMorph.outputs!.modelOutputs
     let modelOutputs= cccOutputToMorph.outputs!
-
 
     this.durationsInMs = {
       oneIcebergDuration: modelOutputs.durationInSec / modelOutputs.outputCount * 1000,

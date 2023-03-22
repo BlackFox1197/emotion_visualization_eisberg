@@ -55,6 +55,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   @Output() durationSelected: EventEmitter<number> = new EventEmitter<number>();
   @Output() playMorph: EventEmitter<CCCOutputToMorph> = new EventEmitter<CCCOutputToMorph>();
+  @Output() backendLoading: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   cccOutputToMorph: CCCOutputToMorph={
     start: false,
@@ -87,10 +88,16 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
 
   _isLoading = false;
+  _isLoadingBackend = false;
 
   set isLoading(il: boolean) {
     this._isLoading = il;
     this.changeDetector.detectChanges();
+  }
+
+  set ilBackend(il: boolean) {
+    this._isLoadingBackend = il;
+    this.backendLoading.emit(il);
   }
 
   playState = new PLayState();
@@ -113,12 +120,14 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   fileToFile(file: any){
     const fileURL = URL.createObjectURL(file);
     this.audioDrawer(fileURL)
-    this.fileName=file.name
+    this.fileName=file.name;
+    this.ilBackend = true;
     // this.backend.uploadAudioFile("http://192.168.3.18:8001/icebergs/upload", "yee", false, file).subscribe(
     this.backend.uploadAudioFile(Routes.baseRoute + "/icebergs/upload", "yee", false, file).subscribe(
       (next) => {
         var arr = next;
         var outputs : any=[];
+        this.ilBackend = false;
         for(let i=0; i<arr.length;i++){
           let modelOutput=new ModelOutput(arr[i]["fields"])
           outputs.push(modelOutput)
@@ -127,9 +136,10 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
             durationInSec: this.audioBuffer?.duration!,
             outputCount: outputs.length,
             modelOutputs: outputs,
-
           }
+
           this.setCCCParamsAndEmit(undefined, undefined, undefined, undefined, undefined, modelOutputs)
+
         }
       }
     )

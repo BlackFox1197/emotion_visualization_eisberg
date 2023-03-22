@@ -12,6 +12,7 @@ import {CoreModule} from "../core/core.module";
 import { LoadingAnimComponent } from './animations/loading-anim/loading-anim.component';
 import { EmoChartComponent } from './components/emo-chart/emo-chart.component';
 import {NgChartsModule} from "ng2-charts";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 
@@ -27,16 +28,17 @@ import {NgChartsModule} from "ng2-charts";
     EmoChartComponent,
     LoadingAnimComponent
   ],
-  imports: [
-    CoreModule,
-    CommonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatSliderModule,
-    MatButtonModule,
-    NgChartsModule
-  ]
+    imports: [
+        CoreModule,
+        CommonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatSliderModule,
+        MatButtonModule,
+        NgChartsModule,
+        MatTooltipModule
+    ]
 })
 export class SharedModule { }

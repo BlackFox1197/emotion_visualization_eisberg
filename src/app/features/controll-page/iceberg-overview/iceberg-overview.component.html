@@ -1,7 +1,7 @@
 <div id="scroll-div" class="border rounded border-gray-700 box-border box-content">
   <div><p class="text-base p-2">Timeline overview</p></div>
   <button mat-button (click)="showBarCharts=!_showBarCharts; toggleOtherCharts.emit(_showBarCharts)">
-    Show bar charts
+    Show charts
   </button>
   <div #icebergOverview id="iceberg-overview"></div>
   <div *ngIf="jsonArray!=undefined && _showBarCharts" class="flex flex-row p-16">

@@ -28,6 +28,7 @@ export class EmoChartComponent implements OnInit {
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: false,
     borderColor: "white",
+    backgroundColor: "#6ccd5a",
     scales:{
       y:{
         min: -1,
@@ -39,6 +40,7 @@ export class EmoChartComponent implements OnInit {
   public radarChartOptions: ChartConfiguration<'radar'>['options'] = {
     responsive: false,
     borderColor: "white",
+    backgroundColor: "#6ccd5a",
     scales:{
       r:{
         min: -1,

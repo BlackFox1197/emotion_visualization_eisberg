@@ -1,15 +1,19 @@
 <div #icebergsEmos>
     <mat-tab-group>
+
       <mat-tab label="Iceberg" >
         <div *ngIf="!isLoadin">
-          <div *ngFor="let elem of emosIceArray" style="display: flex inline; justify-content: center">
-            <app-one-iceberg [iceConf]="elem" [emoName]="jsonNames[emosIceArray.indexOf(elem)]"></app-one-iceberg>
-          </div>
+            <div *ngFor="let elem of emosIceArray" style="display: flex inline; justify-content: center">
+              <app-one-iceberg [iceConf]="elem" [emoName]="jsonNames[emosIceArray.indexOf(elem)]"></app-one-iceberg>
+            </div>
         </div>
         <div *ngIf="isLoadin">
           <app-loading-anim></app-loading-anim>
         </div>
       </mat-tab>
+
+
+
       <mat-tab label="Bars">
         <div *ngIf="!isLoadin" style="padding: 5px">
           <div *ngFor="let elem of emosArray" style="display: flex inline;">
@@ -21,7 +25,7 @@
         </div>
       </mat-tab>
       <mat-tab label="Radar">
-        <div *ngIf="!isLoadin">
+        <div *ngIf="!isLoadin" style="padding: 5px">
           <div *ngFor="let elem of emosArray" style="display: flex inline;">
             <app-emo-chart [barChart]="false" [parameterArray]="elem"
                            [name]="jsonNames[emosArray.indexOf(elem)]"></app-emo-chart>
@@ -32,6 +36,34 @@
         </div>
       </mat-tab>
 
+
+      <mat-tab label="ALL">
+        <ng-template matTabContent>
+        <div class="flex flex-row justify-between ml-5 mr-5">
+          <div *ngIf="!isLoadin" style="padding: 5px">
+            <div *ngFor="let elem of emosArray" style="display: flex;  height: 400px;">
+              <app-emo-chart [barChart]="false" [parameterArray]="elem"
+                             [name]="jsonNames[emosArray.indexOf(elem)]"></app-emo-chart>
+            </div>
+          </div>
+          <div *ngIf="!isLoadin">
+            <div *ngFor="let elem of emosIceArray" style="display: flex; justify-content: center">
+              <app-one-iceberg [iceConf]="elem" [emoName]="jsonNames[emosIceArray.indexOf(elem)]"></app-one-iceberg>
+            </div>
+          </div>
+          <div *ngIf="!isLoadin" style="padding: 5px; height: 400px;">
+            <div *ngFor="let elem of emosArray" style="display: flex;">
+              <app-emo-chart [parameterArray]="elem" [name]="jsonNames[emosArray.indexOf(elem)]"></app-emo-chart>
+            </div>
+          </div>
+        </div>
+
+
+        <div *ngIf="isLoadin">
+          <app-loading-anim></app-loading-anim>
+        </div>
+        </ng-template>
+      </mat-tab>
     </mat-tab-group>
 
 <!--    <div *ngIf="isLoadin">-->

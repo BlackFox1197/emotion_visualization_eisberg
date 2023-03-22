@@ -14,7 +14,7 @@
 <!--<app-canvasjs-cancer (playMorph)="onPlayMorph($event)" ></app-canvasjs-cancer>-->
 
 <div class="flex flex-col justify-between w-screen mb-10">
-  <div class="flex flex-row justify-between max-w-full">
+  <div class="flex flex-row justify-between max-w-full" *ngIf="!loadinBackend">
     <div class="flex flex-col icebergMorphSizes pl-10 pr-5">
       <div class="flex flex-col border rounded border-gray-700 box-border box-content mt-2 mb-1">
           <app-morphing-single-iceberg (data)="jsonArray=$event" (cccOutPut)="setOutputsAndUpdate($event)"
@@ -41,7 +41,10 @@ You can see the classified emotions in the glyph."
                                [icebergDuration]="durationsInMs.oneIcebergDuration"></app-iceberg-overview>
     </div>
   </div>
-  <app-canvasjs-cancer  (playMorph)="addToObs($event)"></app-canvasjs-cancer>
+  <div *ngIf="loadinBackend">
+    <app-loading-anim></app-loading-anim>
+  </div>
+  <app-canvasjs-cancer (backendLoading)="loadinBackend = $event"  (playMorph)="addToObs($event)"></app-canvasjs-cancer>
 </div>
 
 
