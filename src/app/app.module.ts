@@ -46,7 +46,7 @@ import {MatTabsModule} from "@angular/material/tabs";
         OneIcebergComponent,
         AdminNavigationComponent,
         MorphingSingleIcebergComponent,
-        MorphingSingleIcebergComponent
+        MorphingSingleIcebergComponent,
     ],
   imports: [
     SharedModule,

@@ -5,7 +5,7 @@
   <app-file-drag  [mimeTypes]="['audio/*']" [justOneFile]="true" titleString="File to analyze" (addFile)="fileToFile($event)" [hideFiles]="false"></app-file-drag>
 
 
-<div  *ngIf="!_isLoading">
+<div *ngIf="!_isLoading">
   <div class="flex justify-center mt-4 mb-4 items-center">
     <div class="flex-1"></div>
     <div class="flex-1"></div>
@@ -37,16 +37,17 @@
   <div class="flex flex-col">
     <div class="flex justify-center">
       <div>
-        <div>
+        <div class="flex">
           <button mat-icon-button (click)="play()">
             <mat-icon [color]="playButotnsState.playing? 'warn' : null">play_arrow</mat-icon>
           </button>
           <button mat-icon-button (click)="stop()">
             <mat-icon>stop</mat-icon>
           </button>
-          <button mat-icon-button (click)="pauseSelect()" [color]="playButotnsState.paused? 'warn' : null">
+          <button  mat-icon-button (click)="pauseSelect()" [color]="playButotnsState.paused? 'warn' : null">
             <mat-icon>pause</mat-icon>
           </button>
+          <mat-spinner *ngIf="_isLoadingSegment"  diameter="40" color="warn"></mat-spinner>
         </div>
         <div class="text-center">
           <mat-label id="time">{{sec}}  /{{audioLengthInSec}} </mat-label>
@@ -68,7 +69,6 @@
     ><mat-icon>info</mat-icon></button>
   </div>
 </div>
-
 <app-loading-anim  *ngIf="_isLoading"></app-loading-anim>
 <!--  <div #specTest id="spec"></div>-->
 

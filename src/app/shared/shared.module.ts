@@ -13,7 +13,7 @@ import { LoadingAnimComponent } from './animations/loading-anim/loading-anim.com
 import { EmoChartComponent } from './components/emo-chart/emo-chart.component';
 import {NgChartsModule} from "ng2-charts";
 import {MatTooltipModule} from "@angular/material/tooltip";
-
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 
 @NgModule({
@@ -21,12 +21,12 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     FileDragComponent,
     CanvasjsCancerComponent,
     LoadingAnimComponent,
-    EmoChartComponent
+    EmoChartComponent,
   ],
   exports: [
     CanvasjsCancerComponent,
     EmoChartComponent,
-    LoadingAnimComponent
+    LoadingAnimComponent,
   ],
     imports: [
         CoreModule,
@@ -38,7 +38,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
         MatSliderModule,
         MatButtonModule,
         NgChartsModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatProgressSpinnerModule
     ]
 })
 export class SharedModule { }

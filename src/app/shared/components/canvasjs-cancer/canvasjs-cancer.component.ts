@@ -56,6 +56,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   @Output() durationSelected: EventEmitter<number> = new EventEmitter<number>();
   @Output() playMorph: EventEmitter<CCCOutputToMorph> = new EventEmitter<CCCOutputToMorph>();
   @Output() backendLoading: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() segmentLoading: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   cccOutputToMorph: CCCOutputToMorph={
     start: false,
@@ -89,6 +90,7 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
 
   _isLoading = false;
   _isLoadingBackend = false;
+  _isLoadingSegment = false;
 
   set isLoading(il: boolean) {
     this._isLoading = il;
@@ -98,6 +100,12 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
   set ilBackend(il: boolean) {
     this._isLoadingBackend = il;
     this.backendLoading.emit(il);
+  }
+
+
+  set loadSegment(load: boolean){
+    this._isLoadingSegment = load;
+    this.segmentLoading.emit(load);
   }
 
   playState = new PLayState();
@@ -211,9 +219,10 @@ export class CanvasjsCancerComponent implements OnInit, AfterViewInit {
     this.stop();
     this.waveFormService.click(event, this.twoCanvas)
       if(this.waveFormService.selectedInterval != undefined){
-        console.log(this.audioSrc)
+       this.loadSegment = true;
        this.backend.getModelOutputForSelected(this.waveFormService.selectedInterval.start, this.waveFormService.selectedInterval.end, this.selectedDuration, this.fileName).subscribe(
           (next) => {
+            this.loadSegment = false;
             this.cccOutputToMorph.selectedIceParams = new ModelOutput(next['fields'])
             this.setCCCParamsAndEmit(true, undefined, true, this.waveFormService.selectedInterval!.start)
             this.audiService.playSelection(this.audioBuffer!, this.waveFormService.selectedInterval!.start, this.waveFormService.selectedInterval!.end-this.waveFormService.selectedInterval!.start);
