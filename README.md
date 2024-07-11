@@ -2,6 +2,8 @@
 
 This project aims to provide a vizualization system for emotional data. It works with an model, trained in  [this repo](https://github.com/ckwdani/masterarbeit_programming) using soundstream and an transformer. The data used by this vizualization system are 3 dimensional. 
 
+![The Emotion Visualization tool](screenshots/Emoviz.png)
+
 ## Software Architecture
 
 The Emotion Visualization System is built using the Angular framework. A significant part of the visualization relies on [Two.js](two.js.org/), a powerful open-source JavaScript library. Two.js specializes in rendering two-dimensional graphics in modern web browsers, leveraging the capabilities of the HTML5 Canvas element. It's renderer-agnostic, supporting SVG, Canvas, and WebGL contexts through a unified API. With Two.js, creating, animating, and manipulating shapes becomes effortless. It also offers compatibility with most modern web browsers and is apt for vector-based graphics, ensuring visuals remain sharp regardless of transformation or scaling.
